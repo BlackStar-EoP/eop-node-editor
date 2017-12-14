@@ -9,6 +9,6 @@ public:
 	~Node();
 
 private:
-	QVector m_input_ports;
-	QVector m_output_ports;
-}
+	QVector<int> m_input_ports;
+	QVector<int> m_output_ports;
+};
