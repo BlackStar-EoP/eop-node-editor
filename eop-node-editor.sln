@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eop-node-editor", "eop-node-editor.vcxproj", "{C0AF6373-B57D-32BF-99F1-0576CEFF3D61}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C0AF6373-B57D-32BF-99F1-0576CEFF3D61}.Debug|x86.ActiveCfg = Debug|x64
+		{C0AF6373-B57D-32BF-99F1-0576CEFF3D61}.Release|x86.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {111A0B8E-1505-4D68-9776-4F6BC42E29E2}
+	EndGlobalSection
+EndGlobal

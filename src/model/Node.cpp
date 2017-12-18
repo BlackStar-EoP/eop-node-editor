@@ -1,14 +1,20 @@
-#pragma once
+#include "Node.h"
 
-#include <QVector>
-
-class Node
+Node::Node()
 {
-public:
-	Node();
-	~Node();
 
-private:
-	QVector<int> m_input_ports;
-	QVector<int> m_output_ports;
-};
+}
+
+Node::~Node()
+{
+
+}
+void Node::add_input(const NodeInput& input)
+{
+	m_input_ports.push_back(input);
+}
+
+void Node::add_output(const NodeOutput& output)
+{
+	m_output_ports.push_back(output);
+}

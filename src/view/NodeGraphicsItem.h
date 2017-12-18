@@ -5,4 +5,4 @@
 class NodeGraphicsItem : public QGraphicsItem
 {
 public:
-}
+};
