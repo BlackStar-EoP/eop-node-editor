@@ -13,6 +13,5 @@ NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 	m_view = new QGraphicsView(m_scene);
 	layout->addWidget(m_view);
 
-	QWidget *widget = new QWidget;
-	widget->setLayout(layout);
+	setLayout(layout);
 }
