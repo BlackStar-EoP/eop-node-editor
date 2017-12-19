@@ -1,5 +1,7 @@
 #include "NodeGraphicsItem.h"
 
+#include "NodePortGraphicsItem.h"
+
 #include <QPainter>
 
 NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem* parent)
@@ -22,6 +24,11 @@ NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem* parent)
 NodeGraphicsItem::NodeGraphicsItem()
 {
 	setFlags(ItemIsMovable | ItemIsSelectable);
+	NodePortGraphicsItem* inp = new NodePortGraphicsItem(this);
+	inp->setPos(10, 10);
+
+	NodePortGraphicsItem* outp = new NodePortGraphicsItem(this);
+	outp->setPos(30, 20);
 }
 
 QRectF NodeGraphicsItem::boundingRect() const

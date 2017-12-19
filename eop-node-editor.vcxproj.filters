@@ -48,6 +48,9 @@
     <ClCompile Include="src\model\NodeOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\view\NodePortGraphicsItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\app\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\model\NodeOutput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\view\NodePortGraphicsItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\app\mainwindow.h">
