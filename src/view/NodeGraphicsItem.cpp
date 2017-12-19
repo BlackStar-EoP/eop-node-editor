@@ -2,33 +2,31 @@
 
 #include "NodePortGraphicsItem.h"
 
+#include "model/NodePort.h"
+#include "model/Node.h"
+
 #include <QPainter>
 
-NodeGraphicsItem::NodeGraphicsItem(QGraphicsItem* parent)
-: QGraphicsItem(parent)
+NodeGraphicsItem::NodeGraphicsItem(const Node& node)
+: m_node(node)
 {
-		//QPainterPath p;
-		//p.addRoundedRect(-50, -15, 100, 30, 5, 5);
-		//setPath(p);
-		//setPen(QPen(Qt::darkGreen));
-		//setBrush(Qt::green);
-		//setFlag(QGraphicsItem::ItemIsMovable);
-		//setFlag(QGraphicsItem::ItemIsSelectable);
-		//horzMargin = 20;
-		//vertMargin = 5;
-		//width = horzMargin;
-		//height = vertMargin;
+	setPos(node.position());
 	setFlags(ItemIsMovable | ItemIsSelectable);
-}
+	const QVector<NodePort>& input_ports = node.input_ports();
+	const QVector<NodePort>& output_ports = node.output_ports();
 
-NodeGraphicsItem::NodeGraphicsItem()
-{
-	setFlags(ItemIsMovable | ItemIsSelectable);
-	NodePortGraphicsItem* inp = new NodePortGraphicsItem(this);
-	inp->setPos(10, 10);
+	uint32_t port_index = 0;
+	for (const NodePort& port : input_ports)
+	{
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port, port_index++);
+	}
 
-	NodePortGraphicsItem* outp = new NodePortGraphicsItem(this);
-	outp->setPos(30, 20);
+	for (const NodePort& port : output_ports)
+	{
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port, port_index++);
+	}
+
+	recalculate_size();
 }
 
 QRectF NodeGraphicsItem::boundingRect() const
@@ -39,4 +37,14 @@ QRectF NodeGraphicsItem::boundingRect() const
 void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
+}
+
+void NodeGraphicsItem::recalculate_size()
+{
+	const uint32_t WIDTH = 200;
+	const uint32_t HEIGHT = 50;
+	const uint32_t PORT_HEIGHT = 20;
+
+	uint32_t port_height = PORT_HEIGHT * m_node.num_ports();
+	m_bounding_rect = QRectF(0, 0, WIDTH, port_height + HEIGHT);
 }

@@ -2,12 +2,15 @@
 
 #include "NodeGraphicsItem.h"
 
+#include "controllers/NodeGraphController.h"
+#include "model/Node.h"
+
 #include <QGraphicsSceneMouseEvent>
 
-NodeGraphScene::NodeGraphScene(QObject* parent)
+NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
+, m_controller(controller)
 {
-	addItem(new NodeGraphicsItem());
 }
 
 void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -15,8 +18,8 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
 	if (item == nullptr)
 	{
-		NodeGraphicsItem* item = new NodeGraphicsItem();
-		item->setPos(event->scenePos());
+		Node* node = m_controller.add_node(event->scenePos());
+		NodeGraphicsItem* item = new NodeGraphicsItem(*node);
 		addItem(item);
 	}
 	else

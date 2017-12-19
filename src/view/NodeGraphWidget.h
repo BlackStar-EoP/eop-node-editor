@@ -1,5 +1,7 @@
 #pragma once
 
+#include "controllers/NodeGraphController.h"
+
 #include <QWidget>
 
 class QGraphicsView;
@@ -13,4 +15,5 @@ public:
 private:
 	QGraphicsView* m_view = nullptr;
 	NodeGraphScene* m_scene = nullptr;
+	NodeGraphController m_controller;
 };

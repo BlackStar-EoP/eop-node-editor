@@ -56,7 +56,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtWidgets;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtGui;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtANGLE;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtCore;release;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;src;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtWidgets;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtGui;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtANGLE;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtCore;release;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -97,7 +97,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtWidgets;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtGui;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtANGLE;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtCore;debug;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;src;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtWidgets;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtGui;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtANGLE;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\include\QtCore;debug;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -137,11 +137,11 @@
   <ItemGroup>
     <ClCompile Include="src\model\Node.cpp" />
     <ClCompile Include="src\model\NodeGraph.cpp" />
+    <ClCompile Include="src\controllers\NodeGraphController.cpp" />
     <ClCompile Include="src\view\NodeGraphScene.cpp" />
     <ClCompile Include="src\view\NodeGraphWidget.cpp" />
     <ClCompile Include="src\view\NodeGraphicsItem.cpp" />
-    <ClCompile Include="src\model\NodeInput.cpp" />
-    <ClCompile Include="src\model\NodeOutput.cpp" />
+    <ClCompile Include="src\model\NodePort.cpp" />
     <ClCompile Include="src\view\NodePortGraphicsItem.cpp" />
     <ClCompile Include="src\app\main.cpp" />
     <ClCompile Include="src\app\mainwindow.cpp" />
@@ -149,11 +149,11 @@
   <ItemGroup>
     <ClInclude Include="src\model\Node.h" />
     <ClInclude Include="src\model\NodeGraph.h" />
+    <ClInclude Include="src\controllers\NodeGraphController.h" />
     <ClInclude Include="src\view\NodeGraphScene.h" />
     <ClInclude Include="src\view\NodeGraphWidget.h" />
     <ClInclude Include="src\view\NodeGraphicsItem.h" />
-    <ClInclude Include="src\model\NodeInput.h" />
-    <ClInclude Include="src\model\NodeOutput.h" />
+    <ClInclude Include="src\model\NodePort.h" />
     <ClInclude Include="src\view\NodePortGraphicsItem.h" />
     <ClInclude Include="src\app\mainwindow.h" />
   </ItemGroup>

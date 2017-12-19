@@ -33,6 +33,9 @@
     <ClCompile Include="src\model\NodeGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\controllers\NodeGraphController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\view\NodeGraphScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,10 +45,7 @@
     <ClCompile Include="src\view\NodeGraphicsItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\model\NodeInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\model\NodeOutput.cpp">
+    <ClCompile Include="src\model\NodePort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\view\NodePortGraphicsItem.cpp">
@@ -65,6 +65,9 @@
     <ClInclude Include="src\model\NodeGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\controllers\NodeGraphController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\view\NodeGraphScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -74,10 +77,7 @@
     <ClInclude Include="src\view\NodeGraphicsItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\model\NodeInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\model\NodeOutput.h">
+    <ClInclude Include="src\model\NodePort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\view\NodePortGraphicsItem.h">
