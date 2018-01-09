@@ -7,7 +7,7 @@
 
 #include <QPainter>
 
-NodeGraphicsItem::NodeGraphicsItem(const Node& node)
+NodeGraphicsItem::NodeGraphicsItem(Node& node)
 : m_node(node)
 {
 	setPos(node.position());
@@ -43,8 +43,17 @@ void NodeGraphicsItem::recalculate_size()
 {
 	const uint32_t WIDTH = 200;
 	const uint32_t HEIGHT = 50;
-	const uint32_t PORT_HEIGHT = 20;
+	const uint32_t PORT_HEIGHT = 25;
 
 	uint32_t port_height = PORT_HEIGHT * m_node.num_ports();
 	m_bounding_rect = QRectF(0, 0, WIDTH, port_height + HEIGHT);
+}
+
+QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+	if (change == ItemPositionChange)
+	{
+		m_node.set_position(pos());
+	}
+	return QGraphicsItem::itemChange(change, value);
 }

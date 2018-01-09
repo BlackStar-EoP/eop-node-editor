@@ -13,12 +13,14 @@ public:
 
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+	void select();
 
 private:
 	void set_port_position();
 
 private:
-	QRectF m_bounding_rect = QRect(0, 0, 10, 10);
+	QRectF m_bounding_rect = QRect(0, 0, 20, 20);
 	const NodePort& m_node_port;
 	uint32_t m_port_index = 0;
+	uint32_t m_selected = false;
 };

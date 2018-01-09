@@ -21,6 +21,11 @@ void Node::add_output(const QString& port_label)
 	m_output_ports.push_back(NodePort(NodePort::OUTPUT, port_label));
 }
 
+void Node::set_position(const QPointF& position)
+{
+	m_position = position;
+}
+
 const QPointF& Node::position() const
 {
 	return m_position;

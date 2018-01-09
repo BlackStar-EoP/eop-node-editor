@@ -14,6 +14,7 @@ public:
 	void add_input(const QString& port_label);
 	void add_output(const QString& port_label);
 
+	void set_position(const QPointF& position);
 	const QPointF& position() const;
 	const QVector<NodePort>& input_ports() const;
 	const QVector<NodePort>& output_ports() const;
