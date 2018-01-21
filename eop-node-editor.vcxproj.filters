@@ -51,10 +51,16 @@
     <ClCompile Include="src\view\NodeGraphicsItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\model\NodeModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\model\NodePort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\view\NodePortGraphicsItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model\NodePortModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\app\main.cpp">
@@ -89,10 +95,16 @@
     <ClInclude Include="src\view\NodeGraphicsItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\model\NodeModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\model\NodePort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\view\NodePortGraphicsItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\NodePortModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\app\mainwindow.h">

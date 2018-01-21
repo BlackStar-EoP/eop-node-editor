@@ -26,6 +26,7 @@ const NodeConnection* NodeGraphController::create_connection()
 	if (m_first_connection_port == nullptr || m_second_connection_port == nullptr)
 		return nullptr;
 
+	// TODO, input ports can only have 1 connection, but output ports can have multiple
 	if (m_first_connection_port->connection() != nullptr || m_second_connection_port->connection() != nullptr)
 		return nullptr;
 
@@ -70,7 +71,7 @@ Node* NodeGraphController::add_node(const QPointF& position)
 {
 	const char* names[] = { "Node1", "Node2", "Node3", "Node4", "Node5", "Node6", "Node7", };
 	static int zooi = 0;
-	Node* n = new Node(names[zooi++], position);
+	Node* n = new Node(names[zooi++], position, nullptr);
 	m_node_graph.give_node(n);
 	int inputs = rand() % 9 + 1;
 	int outputs = rand() % 9 + 1;

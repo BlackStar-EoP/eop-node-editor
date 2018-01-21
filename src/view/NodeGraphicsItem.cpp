@@ -39,7 +39,10 @@ QRectF NodeGraphicsItem::boundingRect() const
 void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
-	painter->drawText(QPoint(10, 10), m_node.name());
+	QString name = m_node.name();
+	if (m_node.is_orphan())
+		name += " (Orphan)";
+	painter->drawText(QPoint(20, 20), name);
 }
 
 void NodeGraphicsItem::recalculate_size()

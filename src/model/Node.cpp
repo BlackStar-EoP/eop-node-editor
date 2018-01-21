@@ -1,15 +1,18 @@
 #include "Node.h"
 
-Node::Node(const QString& name, const QPointF& position)
+#include "NodeModel.h"
+
+Node::Node(const QString& name, const QPointF& position, NodeModel* model)
 : m_position(position)
 , m_name(name)
+, m_model(model)
 {
 
 }
 
 Node::~Node()
 {
-
+	delete m_model;
 }
 
 void Node::add_input(const QString& port_label)
@@ -50,4 +53,21 @@ const QVector<NodePort*>& Node::output_ports() const
 uint32_t Node::num_ports() const
 {
 	return m_input_ports.size() + m_output_ports.size();
+}
+
+bool Node::is_orphan() const
+{
+	for (NodePort* input : m_input_ports)
+	{
+		if (input->connection() != nullptr)
+			return false;
+	}
+
+	for (NodePort* output : m_output_ports)
+	{
+		if (output->connection() != nullptr)
+			return false;
+	}
+
+	return true;
 }

@@ -143,8 +143,10 @@
     <ClCompile Include="src\view\NodeGraphScene.cpp" />
     <ClCompile Include="src\view\NodeGraphWidget.cpp" />
     <ClCompile Include="src\view\NodeGraphicsItem.cpp" />
+    <ClCompile Include="src\model\NodeModel.cpp" />
     <ClCompile Include="src\model\NodePort.cpp" />
     <ClCompile Include="src\view\NodePortGraphicsItem.cpp" />
+    <ClCompile Include="src\model\NodePortModel.cpp" />
     <ClCompile Include="src\app\main.cpp" />
     <ClCompile Include="src\app\mainwindow.cpp" />
   </ItemGroup>
@@ -157,8 +159,10 @@
     <ClInclude Include="src\view\NodeGraphScene.h" />
     <ClInclude Include="src\view\NodeGraphWidget.h" />
     <ClInclude Include="src\view\NodeGraphicsItem.h" />
+    <ClInclude Include="src\model\NodeModel.h" />
     <ClInclude Include="src\model\NodePort.h" />
     <ClInclude Include="src\view\NodePortGraphicsItem.h" />
+    <ClInclude Include="src\model\NodePortModel.h" />
     <ClInclude Include="src\app\mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
