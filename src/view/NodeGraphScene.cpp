@@ -21,6 +21,7 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
 	{
 		NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
+		m_controller.set_first_connection_port(port->node_port());
 		port->select();
 		const QPointF& mouse_pos = port->scenePos() + QPointF(10, 10);
 		m_line_start_pos = mouse_pos;
@@ -55,10 +56,15 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 	bool found = false;
 	for (QGraphicsItem* item : itemlist)
 	{
-		if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
+		NodePortGraphicsItem* port_gfx_item = dynamic_cast<NodePortGraphicsItem*>(item);
+		if (port_gfx_item != nullptr)
 		{
-			m_line_edit_item->setLine(QLineF(m_line_start_pos, item->scenePos() + QPointF(10, 10)));
-			found = true;
+			m_controller.set_second_connection_port(port_gfx_item->node_port());
+			if (m_controller.create_connection())
+			{
+				m_line_edit_item->setLine(QLineF(m_line_start_pos, item->scenePos() + QPointF(10, 10)));
+				found = true;
+			}
 		}
 	}
 

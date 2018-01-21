@@ -30,6 +30,9 @@
     <ClCompile Include="src\model\Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\model\NodeConnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\model\NodeGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\model\Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\NodeConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\model\NodeGraph.h">

@@ -4,6 +4,8 @@
 
 #include <QString>
 
+class Node;
+
 class NodePort
 {
 public:
@@ -14,13 +16,15 @@ public:
 	};
 public:
 	NodePort() = default;
-	NodePort(EPortType port_type, const QString& port_label);
-	~NodePort();
+	NodePort(EPortType port_type, const QString& port_label, const Node* const node);
+	~NodePort() = default;
 
 	EPortType port_type() const;
 	const QString& port_label() const;
+	const Node* const node() const;
 
 private:
 	EPortType m_port_type = INPUT;
 	QString m_port_label;
+	const Node* const m_node = nullptr;
 };

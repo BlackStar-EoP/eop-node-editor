@@ -60,6 +60,11 @@ void NodePortGraphicsItem::select()
 	update();
 }
 
+const NodePort& NodePortGraphicsItem::node_port() const
+{
+	return m_node_port;
+}
+
 void NodePortGraphicsItem::set_port_position()
 {
 	switch (m_node_port.port_type())

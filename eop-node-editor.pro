@@ -9,6 +9,7 @@ SOURCES += $$PWD/src/app/main.cpp \
            $$PWD/src/app/mainwindow.cpp \
            $$PWD/src/controllers/NodeGraphController.cpp \
            $$PWD/src/model/Node.cpp \
+           $$PWD/src/model/NodeConnection.cpp \
            $$PWD/src/model/NodePort.cpp \
 		       $$PWD/src/model/NodeGraph.cpp \
 		       $$PWD/src/view/NodeGraphicsItem.cpp \
@@ -19,6 +20,7 @@ SOURCES += $$PWD/src/app/main.cpp \
 HEADERS += $$PWD/src/app/mainwindow.h \
            $$PWD/src/controllers/NodeGraphController.h \
            $$PWD/src/model/Node.h \
+           $$PWD/src/model/NodeConnection.h \
            $$PWD/src/model/NodePort.h \
 		       $$PWD/src/model/NodeGraph.h \
            $$PWD/src/view/NodeGraphicsItem.h \

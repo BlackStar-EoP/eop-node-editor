@@ -13,12 +13,12 @@ Node::~Node()
 
 void Node::add_input(const QString& port_label)
 {
-	m_input_ports.push_back(NodePort(NodePort::INPUT, port_label));
+	m_input_ports.push_back(new NodePort(NodePort::INPUT, port_label, this));
 }
 
 void Node::add_output(const QString& port_label)
 {
-	m_output_ports.push_back(NodePort(NodePort::OUTPUT, port_label));
+	m_output_ports.push_back(new NodePort(NodePort::OUTPUT, port_label, this));
 }
 
 void Node::set_position(const QPointF& position)
@@ -31,12 +31,12 @@ const QPointF& Node::position() const
 	return m_position;
 }
 
-const QVector<NodePort>& Node::input_ports() const
+const QVector<NodePort*>& Node::input_ports() const
 {
 	return m_input_ports;
 }
 
-const QVector<NodePort>& Node::output_ports() const
+const QVector<NodePort*>& Node::output_ports() const
 {
 	return m_output_ports;
 }

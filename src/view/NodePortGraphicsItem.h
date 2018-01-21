@@ -14,6 +14,7 @@ public:
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 	void select();
+	const NodePort& node_port() const;
 
 private:
 	void set_port_position();

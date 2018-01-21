@@ -12,18 +12,18 @@ NodeGraphicsItem::NodeGraphicsItem(Node& node)
 {
 	setPos(node.position());
 	setFlags(ItemIsMovable | ItemIsSelectable);
-	const QVector<NodePort>& input_ports = node.input_ports();
-	const QVector<NodePort>& output_ports = node.output_ports();
+	const QVector<NodePort*>& input_ports = node.input_ports();
+	const QVector<NodePort*>& output_ports = node.output_ports();
 
 	uint32_t port_index = 0;
-	for (const NodePort& port : input_ports)
+	for (const NodePort* port : input_ports)
 	{
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port, port_index++);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, port_index++);
 	}
 
-	for (const NodePort& port : output_ports)
+	for (const NodePort* port : output_ports)
 	{
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port, port_index++);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, port_index++);
 	}
 
 	recalculate_size();

@@ -16,12 +16,12 @@ public:
 
 	void set_position(const QPointF& position);
 	const QPointF& position() const;
-	const QVector<NodePort>& input_ports() const;
-	const QVector<NodePort>& output_ports() const;
+	const QVector<NodePort*>& input_ports() const;
+	const QVector<NodePort*>& output_ports() const;
 	uint32_t num_ports() const;
 
 private:
 	QPointF m_position;
-	QVector<NodePort> m_input_ports;
-	QVector<NodePort> m_output_ports;
+	QVector<NodePort*> m_input_ports;
+	QVector<NodePort*> m_output_ports;
 };
