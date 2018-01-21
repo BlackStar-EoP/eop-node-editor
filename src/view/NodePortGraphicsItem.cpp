@@ -7,14 +7,13 @@
 
 #include <assert.h>
 
-NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, const NodePort& node_port, uint32_t port_index)
+NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePort& node_port, uint32_t port_index)
 : QGraphicsItem(parent)
 , m_node_port(node_port)
 , m_port_index(port_index)
 {
-	setFlags(ItemIsMovable | ItemIsSelectable);
-
 	set_port_position();
+	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsScenePositionChanges);
 }
 
 QRectF NodePortGraphicsItem::boundingRect() const
@@ -54,15 +53,36 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	painter->drawText(text_pos, m_node_port.port_label());
 }
 
+QVariant NodePortGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+	if (change == ItemScenePositionHasChanged)
+	{
+		notify_position_listeners();
+	}
+
+	return QGraphicsItem::itemChange(change, value);
+}
+
+
 void NodePortGraphicsItem::select()
 {
 	m_selected = !m_selected;
 	update();
 }
 
-const NodePort& NodePortGraphicsItem::node_port() const
+NodePort& NodePortGraphicsItem::node_port() const
 {
 	return m_node_port;
+}
+
+void NodePortGraphicsItem::add_port_position_listener(PortPositionListener* listener)
+{
+	m_port_position_listeners.insert(listener);
+}
+
+void NodePortGraphicsItem::remove_port_position_listener(PortPositionListener* listener)
+{
+	m_port_position_listeners.erase(listener);
 }
 
 void NodePortGraphicsItem::set_port_position()
@@ -81,4 +101,10 @@ void NodePortGraphicsItem::set_port_position()
 		assert(false);
 		break;
 	}
+}
+
+void NodePortGraphicsItem::notify_position_listeners()
+{
+	for (PortPositionListener* l : m_port_position_listeners)
+		l->portPositionChanged();
 }

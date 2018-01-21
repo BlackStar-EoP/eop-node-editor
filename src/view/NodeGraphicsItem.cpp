@@ -16,17 +16,19 @@ NodeGraphicsItem::NodeGraphicsItem(Node& node)
 	const QVector<NodePort*>& output_ports = node.output_ports();
 
 	uint32_t port_index = 0;
-	for (const NodePort* port : input_ports)
+	for (NodePort* port : input_ports)
 	{
 		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, port_index++);
 	}
 
-	for (const NodePort* port : output_ports)
+	for (NodePort* port : output_ports)
 	{
 		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, port_index++);
 	}
 
 	recalculate_size();
+
+	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }
 
 QRectF NodeGraphicsItem::boundingRect() const
@@ -37,6 +39,7 @@ QRectF NodeGraphicsItem::boundingRect() const
 void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
+	painter->drawText(QPoint(10, 10), m_node.name());
 }
 
 void NodeGraphicsItem::recalculate_size()
@@ -51,9 +54,10 @@ void NodeGraphicsItem::recalculate_size()
 
 QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
 {
-	if (change == ItemPositionChange)
+	if (change == ItemPositionHasChanged)
 	{
 		m_node.set_position(pos());
 	}
+
 	return QGraphicsItem::itemChange(change, value);
 }

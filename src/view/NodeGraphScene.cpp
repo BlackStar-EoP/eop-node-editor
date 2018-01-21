@@ -1,5 +1,6 @@
 #include "NodeGraphScene.h"
 
+#include "NodeConnectionGraphicsItem.h"
 #include "NodeGraphicsItem.h"
 #include "NodePortGraphicsItem.h"
 
@@ -7,7 +8,6 @@
 #include "model/Node.h"
 
 #include <QGraphicsSceneMouseEvent>
-#include <QGraphicsLineItem>
 
 NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
@@ -21,11 +21,11 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
 	{
 		NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
-		m_controller.set_first_connection_port(port->node_port());
+		m_controller.set_first_connection_port(&port->node_port());
 		port->select();
-		const QPointF& mouse_pos = port->scenePos() + QPointF(10, 10);
-		m_line_start_pos = mouse_pos;
-		m_line_edit_item = new QGraphicsLineItem(mouse_pos.x(), mouse_pos.y(), mouse_pos.x(), mouse_pos.y());
+
+		m_line_edit_item = new NodeConnectionGraphicsItem();
+		m_line_edit_item->set_first_port(port);
 		addItem(m_line_edit_item);
 	}
 	else if (item == nullptr)
@@ -45,7 +45,7 @@ void NodeGraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 	if (m_line_edit_item != nullptr)
 	{
 		const QPointF& mouse_pos = event->scenePos();
-		m_line_edit_item->setLine(QLineF(m_line_start_pos, mouse_pos));
+		m_line_edit_item->update_line(mouse_pos);
 	}
 	QGraphicsScene::mouseMoveEvent(event);
 }
@@ -59,10 +59,10 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 		NodePortGraphicsItem* port_gfx_item = dynamic_cast<NodePortGraphicsItem*>(item);
 		if (port_gfx_item != nullptr)
 		{
-			m_controller.set_second_connection_port(port_gfx_item->node_port());
-			if (m_controller.create_connection())
+			m_controller.set_second_connection_port(&port_gfx_item->node_port());
+			if (m_controller.create_connection() != nullptr)
 			{
-				m_line_edit_item->setLine(QLineF(m_line_start_pos, item->scenePos() + QPointF(10, 10)));
+				m_line_edit_item->set_second_port(port_gfx_item);
 				found = true;
 			}
 		}

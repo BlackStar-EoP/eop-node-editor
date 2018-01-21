@@ -3,6 +3,7 @@
 #include<QGraphicsScene>
 
 class NodeGraphController;
+class NodeConnectionGraphicsItem;
 
 class NodeGraphScene : public QGraphicsScene
 {
@@ -17,6 +18,6 @@ private:
 private:
 	NodeGraphController& m_controller;
 
-	QGraphicsLineItem* m_line_edit_item = nullptr;
+	NodeConnectionGraphicsItem* m_line_edit_item = nullptr;
 	QPointF m_line_start_pos;
 };

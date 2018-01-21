@@ -1,7 +1,8 @@
 #include "Node.h"
 
-Node::Node(const QPointF& position)
+Node::Node(const QString& name, const QPointF& position)
 : m_position(position)
+, m_name(name)
 {
 
 }
@@ -24,6 +25,11 @@ void Node::add_output(const QString& port_label)
 void Node::set_position(const QPointF& position)
 {
 	m_position = position;
+}
+
+const QString& Node::name() const
+{
+	return m_name;
 }
 
 const QPointF& Node::position() const

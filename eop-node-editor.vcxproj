@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="src\model\Node.cpp" />
     <ClCompile Include="src\model\NodeConnection.cpp" />
+    <ClCompile Include="src\view\NodeConnectionGraphicsItem.cpp" />
     <ClCompile Include="src\model\NodeGraph.cpp" />
     <ClCompile Include="src\controllers\NodeGraphController.cpp" />
     <ClCompile Include="src\view\NodeGraphScene.cpp" />
@@ -150,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="src\model\Node.h" />
     <ClInclude Include="src\model\NodeConnection.h" />
+    <ClInclude Include="src\view\NodeConnectionGraphicsItem.h" />
     <ClInclude Include="src\model\NodeGraph.h" />
     <ClInclude Include="src\controllers\NodeGraphController.h" />
     <ClInclude Include="src\view\NodeGraphScene.h" />

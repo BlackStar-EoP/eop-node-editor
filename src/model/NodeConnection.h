@@ -5,10 +5,13 @@ class NodePort;
 class NodeConnection
 {
 public:
-	NodeConnection(const NodePort& input, const NodePort& output);
-	~NodeConnection() = default;
+	NodeConnection(NodePort& input, NodePort& output);
+	~NodeConnection();
+
+	const NodePort& input() const;
+	const NodePort& output() const;
 
 private:
-	const NodePort& m_input;
-	const NodePort& m_output;
+	NodePort& m_input;
+	NodePort& m_output;
 };
