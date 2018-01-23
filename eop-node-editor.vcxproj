@@ -149,6 +149,8 @@
     <ClCompile Include="src\model\NodePortModel.cpp" />
     <ClCompile Include="src\app\main.cpp" />
     <ClCompile Include="src\app\mainwindow.cpp" />
+    <ClCompile Include="src\examples\pipeline\material.cpp" />
+    <ClCompile Include="src\examples\pipeline\materialnodemodel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\model\Node.h" />
@@ -164,6 +166,8 @@
     <ClInclude Include="src\view\NodePortGraphicsItem.h" />
     <ClInclude Include="src\model\NodePortModel.h" />
     <ClInclude Include="src\app\mainwindow.h" />
+    <ClInclude Include="src\examples\pipeline\material.h" />
+    <ClInclude Include="src\examples\pipeline\materialnodemodel.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">

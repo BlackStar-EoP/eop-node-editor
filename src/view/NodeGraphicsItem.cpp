@@ -4,6 +4,7 @@
 
 #include "model/NodePort.h"
 #include "model/Node.h"
+#include "model/NodeModel.h"
 
 #include <QPainter>
 
@@ -12,18 +13,15 @@ NodeGraphicsItem::NodeGraphicsItem(Node& node)
 {
 	setPos(node.position());
 	setFlags(ItemIsMovable | ItemIsSelectable);
-	const QVector<NodePort*>& input_ports = node.input_ports();
-	const QVector<NodePort*>& output_ports = node.output_ports();
 
-	uint32_t port_index = 0;
-	for (NodePort* port : input_ports)
-	{
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, port_index++);
-	}
+	NodeModel* model = m_node.model();
 
-	for (NodePort* port : output_ports)
+	uint32_t num_ports = model->num_ports();
+
+	for (uint32_t i = 0; i < num_ports; ++i)
 	{
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, port_index++);
+		NodePort* port = new NodePort(model->port_model(i), &m_node);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, i);
 	}
 
 	recalculate_size();
@@ -39,7 +37,7 @@ QRectF NodeGraphicsItem::boundingRect() const
 void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
-	QString name = m_node.name();
+	QString name = m_node.title();
 	if (m_node.is_orphan())
 		name += " (Orphan)";
 	painter->drawText(QPoint(20, 20), name);
@@ -51,7 +49,7 @@ void NodeGraphicsItem::recalculate_size()
 	const uint32_t HEIGHT = 50;
 	const uint32_t PORT_HEIGHT = 25;
 
-	uint32_t port_height = PORT_HEIGHT * m_node.num_ports();
+	uint32_t port_height = PORT_HEIGHT * m_node.model()->num_ports();
 	m_bounding_rect = QRectF(0, 0, WIDTH, port_height + HEIGHT);
 }
 

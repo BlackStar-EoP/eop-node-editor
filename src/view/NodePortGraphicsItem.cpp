@@ -38,11 +38,11 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	QPointF text_pos = QPointF(0, 15);
 	switch (m_node_port.port_type())
 	{
-	case NodePort::INPUT:
+	case NodePortModel::INPUT:
 		text_pos += QPointF(20, 0);
 		break;
 
-	case NodePort::OUTPUT:
+	case NodePortModel::OUTPUT:
 		text_pos += QPointF(-50, 0);
 		break;
 
@@ -89,11 +89,11 @@ void NodePortGraphicsItem::set_port_position()
 {
 	switch (m_node_port.port_type())
 	{
-	case NodePort::INPUT:
+	case NodePortModel::INPUT:
 		setPos(10, 10 + (25 * m_port_index));
 		break;
 
-	case NodePort::OUTPUT:
+	case NodePortModel::OUTPUT:
 		setPos(170, 10 + (25 * m_port_index));
 		break;
 

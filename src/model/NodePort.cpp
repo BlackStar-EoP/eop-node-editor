@@ -1,21 +1,20 @@
 #include "NodePort.h"
 
-NodePort::NodePort(EPortType port_type, const QString& port_label, const Node* const node)
-: m_port_type(port_type)
-, m_port_label(port_label)
+NodePort::NodePort(NodePortModel* model, const Node* const node)
+: m_model(model)
 , m_node(node)
 {
 
 }
 
-NodePort::EPortType NodePort::port_type() const
+NodePortModel::EPortType NodePort::port_type() const
 {
-	return m_port_type;
+	return m_model->port_type();
 }
 
-const QString& NodePort::port_label() const
+QString NodePort::port_label() const
 {
-	return m_port_label;
+	return m_model->port_label();
 }
 
 const Node* const NodePort::node() const

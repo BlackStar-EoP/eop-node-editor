@@ -8,6 +8,8 @@ TEMPLATE = app
 SOURCES += $$PWD/src/app/main.cpp \
            $$PWD/src/app/mainwindow.cpp \
            $$PWD/src/controllers/NodeGraphController.cpp \
+           $$PWD/src/examples/pipeline/materialnodemodel.cpp \
+           $$PWD/src/examples/pipeline/material.cpp \
            $$PWD/src/model/Node.cpp \
            $$PWD/src/model/NodeConnection.cpp \
            $$PWD/src/model/NodePort.cpp \
@@ -22,6 +24,8 @@ SOURCES += $$PWD/src/app/main.cpp \
 
 HEADERS += $$PWD/src/app/mainwindow.h \
            $$PWD/src/controllers/NodeGraphController.h \
+           $$PWD/src/examples/pipeline/materialnodemodel.h \
+           $$PWD/src/examples/pipeline/material.h \
            $$PWD/src/model/Node.h \
            $$PWD/src/model/NodeConnection.h \
            $$PWD/src/model/NodePort.h \
