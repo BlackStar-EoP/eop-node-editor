@@ -25,6 +25,12 @@ void MaterialNodeModel::create_port_models()
 			case MaterialUniform::SAMPLER_2D: m_port_models.push_back(new TexturePortModel(uniform.m_name)); break;
 		}
 	}
+
+	const QVector<ShaderOutput>& outputs = m_material->outputs();
+	for (const ShaderOutput& output : outputs)
+	{
+		m_port_models.push_back(new ShaderOutputPortModel(output.toString())); break;
+	}
 }
 
 void MaterialNodeModel::destroy_port_models()

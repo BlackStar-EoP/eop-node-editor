@@ -61,6 +61,17 @@ void Material::setParameters(DeviseMaterialParameters& parameters)
 {
 }
 
+const QVector<ShaderOutput>& Material::outputs() const
+{
+	return outputs_;
+}
+
+void Material::addOutput(const ShaderOutput& output)
+{
+	outputs_.push_back(output);
+}
+
+
 const QVector<MaterialUniform>& Material::uniforms() const
 {
     return uniforms_;
@@ -80,6 +91,8 @@ void Material::addUniform(const MaterialUniform& uniform)
 {
 	uniforms_.push_back(uniform);
 }
+
+
 
 void Material::copyUniformsAndValuesFromMaterial(Material* m)
 {

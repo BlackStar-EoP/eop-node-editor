@@ -76,7 +76,7 @@ Node* NodeGraphController::add_node(const QPointF& position)
 	static int materialnr = 0;
 	Material* material = new Material(materialnr++, "Material");
 
-	uint32_t num_flt = rand() % 2;
+	uint32_t num_flt = rand() % 2 + 1;
 	uint32_t num_vec2 = rand() % 2;
 	uint32_t num_vec3 = rand() % 2;
 	uint32_t num_vec4 = rand() % 2;
@@ -92,6 +92,11 @@ Node* NodeGraphController::add_node(const QPointF& position)
 		material->addUniform(MaterialUniform(MaterialUniform::VEC3, "Vec4 var"));
 	for (uint32_t i = 0; i < num_tex; ++i)
 		material->addUniform(MaterialUniform(MaterialUniform::VEC4, "Float var"));
+
+	uint32_t num_outputs = rand() % 2 + 1;
+	for (uint32_t i = 0; i < num_outputs; ++i)
+		material->addOutput(ShaderOutput(i, MaterialUniform::VEC4, "fragcolor"));
+
 
 	MaterialNodeModel* model = new MaterialNodeModel(material);
 	model->create_port_models();

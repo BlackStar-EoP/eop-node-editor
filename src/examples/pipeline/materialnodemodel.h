@@ -58,6 +58,18 @@ public:
 private:
 	QString m_name;
 };
+
+class ShaderOutputPortModel : public NodePortModel
+{
+public:
+	ShaderOutputPortModel(const QString& name) : m_name(name) {}
+	EPortType port_type() const override { return NodePortModel::OUTPUT; }
+	QString port_label() const override { return m_name; }
+
+private:
+	QString m_name;
+};
+
 class MaterialNodeModel : public NodeModel
 {
 public:

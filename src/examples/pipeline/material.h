@@ -25,7 +25,6 @@ public:
 
 	EUniformType m_type = FLOAT;
 	QString m_name = "";
-
 	MaterialUniform(EUniformType type, const QString& name)
 	: m_type(type)
 	, m_name(name)
@@ -35,6 +34,35 @@ public:
 	MaterialUniform() = default;
 
 };
+
+class ShaderOutput
+{
+public:
+	ShaderOutput(int32_t location, MaterialUniform::EUniformType type, const QString& name)
+	: m_location(location)
+	, m_type(type)
+	, m_name(name)
+	{
+	}
+
+	ShaderOutput() = default;
+
+	QString toString() const
+	{
+		return QString::number(m_location) + QString(" - vec4 ") + name();
+	}
+
+public:
+	int32_t location() const { return m_location; }
+	MaterialUniform::EUniformType type() { return m_type; }
+	const QString& name() const { return m_name; }
+
+private:
+	int32_t m_location = -1;
+	MaterialUniform::EUniformType m_type = MaterialUniform::UNSUPPORTED_UNIFORM;
+	QString m_name;
+};
+
 
 class vec2
 {
@@ -77,6 +105,10 @@ public:
 
 	DeviseMaterialParameters* createParameters();
 	void setParameters(DeviseMaterialParameters& parameters);
+
+	const QVector<ShaderOutput>& outputs() const;
+	void addOutput(const ShaderOutput& output);
+
 	const QVector<MaterialUniform>& uniforms() const;
 	void getUniformsSortedByTypeAndName(QVector<MaterialUniform>& uniforms);
     void addUniform(const MaterialUniform& uniform);
@@ -119,6 +151,7 @@ public:
 	Shader* geometryShader_ = nullptr;
 	Shader* tessControlShader_ = nullptr;
 	Shader* tessEvalShader_ = nullptr;
+	QVector<ShaderOutput> outputs_;
 	QVector<MaterialUniform> uniforms_;
 
 	// This is not the neatest solution, but one that works =)

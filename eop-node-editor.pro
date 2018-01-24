@@ -10,6 +10,8 @@ SOURCES += $$PWD/src/app/main.cpp \
            $$PWD/src/controllers/NodeGraphController.cpp \
            $$PWD/src/examples/pipeline/materialnodemodel.cpp \
            $$PWD/src/examples/pipeline/material.cpp \
+           $$PWD/src/examples/pipeline/rendertarget.cpp \
+           $$PWD/src/examples/pipeline/rendertargetmodel.cpp \
            $$PWD/src/model/Node.cpp \
            $$PWD/src/model/NodeConnection.cpp \
            $$PWD/src/model/NodePort.cpp \
@@ -26,6 +28,8 @@ HEADERS += $$PWD/src/app/mainwindow.h \
            $$PWD/src/controllers/NodeGraphController.h \
            $$PWD/src/examples/pipeline/materialnodemodel.h \
            $$PWD/src/examples/pipeline/material.h \
+           $$PWD/src/examples/pipeline/rendertarget.h \
+           $$PWD/src/examples/pipeline/rendertargetmodel.h \
            $$PWD/src/model/Node.h \
            $$PWD/src/model/NodeConnection.h \
            $$PWD/src/model/NodePort.h \

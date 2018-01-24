@@ -151,6 +151,8 @@
     <ClCompile Include="src\app\mainwindow.cpp" />
     <ClCompile Include="src\examples\pipeline\material.cpp" />
     <ClCompile Include="src\examples\pipeline\materialnodemodel.cpp" />
+    <ClCompile Include="src\examples\pipeline\rendertarget.cpp" />
+    <ClCompile Include="src\examples\pipeline\rendertargetmodel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\model\Node.h" />
@@ -168,6 +170,8 @@
     <ClInclude Include="src\app\mainwindow.h" />
     <ClInclude Include="src\examples\pipeline\material.h" />
     <ClInclude Include="src\examples\pipeline\materialnodemodel.h" />
+    <ClInclude Include="src\examples\pipeline\rendertarget.h" />
+    <ClInclude Include="src\examples\pipeline\rendertargetmodel.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
