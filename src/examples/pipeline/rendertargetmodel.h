@@ -16,6 +16,18 @@ private:
 	QString m_name;
 };
 
+class RenderTargetTexturePortModel : public NodePortModel
+{
+public:
+	RenderTargetTexturePortModel(const QString& name) : m_name(name) {}
+	EPortType port_type() const override { return NodePortModel::OUTPUT; }
+	QString port_label() const override { return m_name; }
+
+private:
+	QString m_name;
+};
+
+
 
 class RenderTargetNodeModel : public NodeModel
 {
