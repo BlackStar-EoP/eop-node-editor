@@ -36,12 +36,12 @@ void RenderTargetNodeModel::create_port_models()
 
 void RenderTargetNodeModel::destroy_port_models()
 {
-	//qDeleteAll(m_port_models);
+	qDeleteAll(m_port_models);
 }
 
 QString RenderTargetNodeModel::title() const
 {
-	return "Rendertarget";
+	return "RenderTarget";
 }
 
 uint32_t RenderTargetNodeModel::num_ports() const
@@ -53,4 +53,6 @@ NodePortModel* RenderTargetNodeModel::port_model(uint32_t port_nr)
 {
 	if (num_ports() > port_nr)
 		return m_port_models[port_nr];
+
+	return nullptr;
 }
