@@ -36,6 +36,9 @@
     <ClCompile Include="src\view\NodeConnectionGraphicsItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\model\NodeFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\model\NodeGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,6 +78,9 @@
     <ClCompile Include="src\examples\pipeline\materialnodemodel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\examples\pipeline\pipelinenodefactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\examples\pipeline\rendertarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +96,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\view\NodeConnectionGraphicsItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\NodeFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\model\NodeGraph.h">
@@ -126,6 +135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\examples\pipeline\materialnodemodel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\examples\pipeline\pipelinenodefactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\examples\pipeline\rendertarget.h">

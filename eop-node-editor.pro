@@ -12,9 +12,11 @@ SOURCES += $$PWD/src/app/main.cpp \
            $$PWD/src/examples/pipeline/material.cpp \
            $$PWD/src/examples/pipeline/rendertarget.cpp \
            $$PWD/src/examples/pipeline/rendertargetmodel.cpp \
+           $$PWD/src/examples/pipeline/pipelinenodefactory.cpp \
            $$PWD/src/model/Node.cpp \
            $$PWD/src/model/NodeConnection.cpp \
            $$PWD/src/model/NodePort.cpp \
+           $$PWD/src/model/NodeFactory.cpp \
 		       $$PWD/src/model/NodeGraph.cpp \
            $$PWD/src/model/NodeModel.cpp \
            $$PWD/src/model/NodePortModel.cpp \
@@ -30,9 +32,11 @@ HEADERS += $$PWD/src/app/mainwindow.h \
            $$PWD/src/examples/pipeline/material.h \
            $$PWD/src/examples/pipeline/rendertarget.h \
            $$PWD/src/examples/pipeline/rendertargetmodel.h \
+           $$PWD/src/examples/pipeline/pipelinenodefactory.h \
            $$PWD/src/model/Node.h \
            $$PWD/src/model/NodeConnection.h \
            $$PWD/src/model/NodePort.h \
+           $$PWD/src/model/NodeFactory.h \
 		       $$PWD/src/model/NodeGraph.h \
            $$PWD/src/model/NodeModel.h \
            $$PWD/src/model/NodePortModel.h \

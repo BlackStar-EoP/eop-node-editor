@@ -12,6 +12,8 @@ public:
 	FloatPortModel(const QString& name)	: m_name(name)	{}
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override	{ return m_name; }
+	QString name() override { return "float"; }
+
 
 private:
 	QString m_name;
@@ -23,6 +25,7 @@ public:
 	Vec2PortModel(const QString& name) : m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
+	QString name() override { return "vec2"; }
 
 private:
 	QString m_name;
@@ -33,6 +36,7 @@ public:
 	Vec3PortModel(const QString& name) : m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
+	QString name() override { return "vec3"; }
 
 private:
 	QString m_name;
@@ -43,6 +47,7 @@ public:
 	Vec4PortModel(const QString& name) : m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
+	QString name() override { return "vec3"; }
 
 private:
 	QString m_name;
@@ -54,6 +59,7 @@ public:
 	TexturePortModel(const QString& name) : m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
+	QString name() override { return "texture"; }
 
 private:
 	QString m_name;
@@ -65,6 +71,7 @@ public:
 	ShaderOutputPortModel(const QString& name) : m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::OUTPUT; }
 	QString port_label() const override { return m_name; }
+	QString name() override { return "shaderoutput"; }
 
 private:
 	QString m_name;

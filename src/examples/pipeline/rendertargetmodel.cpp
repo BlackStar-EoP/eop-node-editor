@@ -12,6 +12,7 @@ RenderTargetNodeModel::RenderTargetNodeModel(RenderTarget* target)
 
 void RenderTargetNodeModel::create_port_models()
 {
+	m_port_models.push_back(new RenderTargetInputPortModel("Shader input"));
 	//QVector<MaterialUniform> uniforms;
 	//m_material->getUniformsSortedByTypeAndName(uniforms);
 	//for (MaterialUniform& uniform : uniforms)
@@ -40,20 +41,16 @@ void RenderTargetNodeModel::destroy_port_models()
 
 QString RenderTargetNodeModel::title() const
 {
-	//return m_material->toString();
-	return "";
+	return "Rendertarget";
 }
 
 uint32_t RenderTargetNodeModel::num_ports() const
 {
-	return 0;
-	//return m_port_models.size();
+	return m_port_models.size();
 }
 
 NodePortModel* RenderTargetNodeModel::port_model(uint32_t port_nr)
 {
-	//if (num_ports() > port_nr)
-	//	return m_port_models[port_nr];
-
-	return nullptr;
+	if (num_ports() > port_nr)
+		return m_port_models[port_nr];
 }

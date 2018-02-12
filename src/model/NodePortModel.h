@@ -15,4 +15,5 @@ public:
 	virtual ~NodePortModel() = default;
 	virtual EPortType port_type() const = 0;
 	virtual QString port_label() const = 0;
+	virtual QString name() = 0;
 };

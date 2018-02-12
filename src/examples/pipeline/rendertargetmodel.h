@@ -11,6 +11,7 @@ public:
 	RenderTargetInputPortModel(const QString& name) : m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
+	QString name() override { return "rendertargetinput"; }
 
 private:
 	QString m_name;
