@@ -36,3 +36,8 @@ void NodePort::remove_connection()
 {
 	m_connection = nullptr;
 }
+
+bool NodePort::may_connect_to(NodePort* port) const
+{
+	return m_model->may_connect_to(*port->m_model);
+}

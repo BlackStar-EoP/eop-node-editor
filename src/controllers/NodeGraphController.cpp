@@ -34,6 +34,12 @@ const NodeConnection* NodeGraphController::create_connection()
 	if (m_first_connection_port == nullptr || m_second_connection_port == nullptr)
 		return nullptr;
 
+	// TODO, input ports can only have 1 connection, but output ports can have multiple
+	// TODO, make connections vector, put method has_connections() return size > 0 in
+	// TODO check for connections here, put method multiple_connections_allowed() in
+	if (m_first_connection_port->connection() != nullptr || m_second_connection_port->connection() != nullptr)
+		return nullptr;
+
 	if (m_first_connection_port == m_second_connection_port)
 		return nullptr;
 
@@ -57,9 +63,14 @@ const NodeConnection* NodeGraphController::create_connection()
 		output_port = m_first_connection_port;
 	}
 
+	if (!input_port->may_connect_to(output_port) || !output_port->may_connect_to(input_port))
+		return nullptr;
+
+
 	// If output goes to an input of node earlier in graph, we have a circular dependency
 	if (m_node_graph.scan_left(output_port->node(), input_port->node()))
 		return nullptr;
+
 
 	// If input comes from node later in graph, we also have a circular dependency
 

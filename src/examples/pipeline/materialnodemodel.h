@@ -13,6 +13,7 @@ public:
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override	{ return m_name; }
 	QString name() override { return "float"; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 
 private:
@@ -26,6 +27,7 @@ public:
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
 	QString name() override { return "vec2"; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 private:
 	QString m_name;
@@ -37,6 +39,7 @@ public:
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
 	QString name() override { return "vec3"; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 private:
 	QString m_name;
@@ -48,6 +51,7 @@ public:
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
 	QString name() override { return "vec3"; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 private:
 	QString m_name;
@@ -60,6 +64,7 @@ public:
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
 	QString name() override { return "texture"; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 private:
 	QString m_name;
@@ -72,6 +77,7 @@ public:
 	EPortType port_type() const override { return NodePortModel::OUTPUT; }
 	QString port_label() const override { return m_name; }
 	QString name() override { return "shaderoutput"; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 private:
 	QString m_name;

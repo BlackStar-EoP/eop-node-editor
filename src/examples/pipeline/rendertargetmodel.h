@@ -12,6 +12,7 @@ public:
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
 	QString name() override { return "rendertargetinput"; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 private:
 	QString m_name;
@@ -23,6 +24,7 @@ public:
 	RenderTargetTexturePortModel(const QString& name) : m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::OUTPUT; }
 	QString port_label() const override { return m_name; }
+	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
 
 private:
 	QString m_name;

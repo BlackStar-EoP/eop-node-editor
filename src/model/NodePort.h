@@ -23,6 +23,7 @@ public:
 	const NodeConnection* const connection() const;
 	void set_connection(const NodeConnection* const connection);
 	void remove_connection();
+	bool may_connect_to(NodePort* port) const;
 
 private:
 	const NodePortModel* m_model = nullptr;
