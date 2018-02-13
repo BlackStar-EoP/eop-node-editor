@@ -32,6 +32,7 @@ public:
 private:
 	QString m_name;
 };
+
 class Vec3PortModel : public NodePortModel
 {
 public:
@@ -93,7 +94,9 @@ public:
 	QString title() const override;
 	uint32_t num_ports() const override;
 	NodePortModel* port_model(uint32_t port_nr) override;
+	void on_connection(NodeModel* target_model, NodePortModel* target_port_model) override;
 
+	Material* material() const;
 private:
 	Material* m_material = nullptr;
 	QVector<NodePortModel*> m_port_models;

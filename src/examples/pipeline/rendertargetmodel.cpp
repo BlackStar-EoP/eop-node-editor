@@ -2,6 +2,8 @@
 
 #include "material.h"
 
+#include "materialnodemodel.h"
+
 #include <src/model/NodePort.h>
 
 RenderTargetNodeModel::RenderTargetNodeModel(RenderTarget* target)
@@ -13,25 +15,14 @@ RenderTargetNodeModel::RenderTargetNodeModel(RenderTarget* target)
 void RenderTargetNodeModel::create_port_models()
 {
 	m_port_models.push_back(new RenderTargetInputPortModel("Shader input"));
-	//QVector<MaterialUniform> uniforms;
-	//m_material->getUniformsSortedByTypeAndName(uniforms);
-	//for (MaterialUniform& uniform : uniforms)
-	//{
-	//	switch (uniform.m_type)
-	//	{
-	//	case MaterialUniform::FLOAT: m_port_models.push_back(new FloatPortModel(uniform.m_name)); break;
-	//	case MaterialUniform::VEC2: m_port_models.push_back(new Vec2PortModel(uniform.m_name)); break;
-	//	case MaterialUniform::VEC3: m_port_models.push_back(new Vec3PortModel(uniform.m_name)); break;
-	//	case MaterialUniform::VEC4: m_port_models.push_back(new Vec4PortModel(uniform.m_name)); break;
-	//	case MaterialUniform::SAMPLER_2D: m_port_models.push_back(new TexturePortModel(uniform.m_name)); break;
-	//	}
-	//}
-
-	//const QVector<ShaderOutput>& outputs = m_material->outputs();
-	//for (const ShaderOutput& output : outputs)
-	//{
-	//	m_port_models.push_back(new ShaderOutputPortModel(output.toString())); break;
-	//}
+	if (m_material != nullptr)
+	{
+		const QVector<ShaderOutput>& textures = m_material->outputs();
+		for (const ShaderOutput& output : textures)
+		{
+			m_port_models.push_back(new RenderTargetTexturePortModel(output.toString()));
+		}
+	}
 }
 
 void RenderTargetNodeModel::destroy_port_models()
@@ -55,4 +46,16 @@ NodePortModel* RenderTargetNodeModel::port_model(uint32_t port_nr)
 		return m_port_models[port_nr];
 
 	return nullptr;
+}
+
+void RenderTargetNodeModel::on_connection(NodeModel* target_model, NodePortModel* target_port_model)
+{
+	MaterialNodeModel* material_node_model = dynamic_cast<MaterialNodeModel*>(target_model);
+	if (material_node_model != nullptr)
+	{
+		m_material = material_node_model->material();
+		destroy_port_models();
+		create_port_models();
+		node_model_changed();
+	}
 }

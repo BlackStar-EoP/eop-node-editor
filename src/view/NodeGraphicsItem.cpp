@@ -15,9 +15,16 @@ NodeGraphicsItem::NodeGraphicsItem(Node& node)
 	setPos(node.position());
 	setFlags(ItemIsMovable | ItemIsSelectable);
 
+	initUI();
+
+	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+}
+
+void NodeGraphicsItem::initUI()
+{
 	QString name = m_node.title();
 	if (m_node.is_orphan())
-		name += " (Orphan)";
+	name += " (Orphan)";
 
 	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
 
@@ -32,8 +39,6 @@ NodeGraphicsItem::NodeGraphicsItem(Node& node)
 	}
 
 	recalculate_size();
-
-	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }
 
 QRectF NodeGraphicsItem::boundingRect() const
@@ -64,4 +69,10 @@ QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant&
 	}
 
 	return QGraphicsItem::itemChange(change, value);
+}
+
+void NodeGraphicsItem::node_model_changed()
+{
+	qDeleteAll(childItems());
+	initUI();
 }

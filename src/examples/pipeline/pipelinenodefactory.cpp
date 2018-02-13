@@ -26,11 +26,11 @@ NodeModel* PipeLineNodeFactory::create_node_model()
 		for (uint32_t i = 0; i < num_vec2; ++i)
 			material->addUniform(MaterialUniform(MaterialUniform::VEC2, "Vec2 var"));
 		for (uint32_t i = 0; i < num_vec3; ++i)
-			material->addUniform(MaterialUniform(MaterialUniform::VEC2, "Vec3 var"));
+			material->addUniform(MaterialUniform(MaterialUniform::VEC3, "Vec3 var"));
 		for (uint32_t i = 0; i < num_vec4; ++i)
-			material->addUniform(MaterialUniform(MaterialUniform::VEC3, "Vec4 var"));
+			material->addUniform(MaterialUniform(MaterialUniform::VEC4, "Vec4 var"));
 		for (uint32_t i = 0; i < num_tex; ++i)
-			material->addUniform(MaterialUniform(MaterialUniform::VEC4, "Float var"));
+			material->addUniform(MaterialUniform(MaterialUniform::SAMPLER_2D, "Texture"));
 
 		uint32_t num_outputs = rand() % 2 + 1;
 		for (uint32_t i = 0; i < num_outputs; ++i)

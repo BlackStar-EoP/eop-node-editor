@@ -32,6 +32,7 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	{
 		Node* node = m_controller.add_node(event->scenePos());
 		NodeGraphicsItem* item = new NodeGraphicsItem(*node);
+		node->model()->register_node_model_listener(item);
 		addItem(item);
 	}
 	else

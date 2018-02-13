@@ -55,3 +55,13 @@ NodePortModel* MaterialNodeModel::port_model(uint32_t port_nr)
 
 	return nullptr;
 }
+
+void MaterialNodeModel::on_connection(NodeModel* target_model, NodePortModel* target_port_model)
+{
+
+}
+
+Material* MaterialNodeModel::material() const
+{
+	return m_material;
+}
