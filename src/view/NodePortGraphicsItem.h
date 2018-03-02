@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <QGraphicsItem>
 
 #include <stdint.h>
@@ -15,8 +16,9 @@ public:
 	virtual void portPositionChanged() = 0;
 };
 
-class NodePortGraphicsItem : public QGraphicsItem
+class NodePortGraphicsItem :public QObject, public QGraphicsItem
 {
+	Q_OBJECT
 public:
 	NodePortGraphicsItem(QGraphicsItem* parent, NodePort& node_port, uint32_t port_index);
 
@@ -33,6 +35,9 @@ public:
 private:
 	void set_port_position();
 	void notify_position_listeners();
+
+private slots:
+	void selfdestruct();
 
 private:
 	QRectF m_bounding_rect = QRect(0, 0, 20, 20);

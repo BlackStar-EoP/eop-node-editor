@@ -1,12 +1,14 @@
 #pragma once
 
+#include <QObject>
 #include <src/model/NodeModel.h>
 #include <QGraphicsItem>
 
 class Node;
 
-class NodeGraphicsItem : public QGraphicsItem, public INodeModelListener
+class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModelListener
 {
+	Q_OBJECT
 public:
 	NodeGraphicsItem(Node& node);
 	void initUI();
@@ -18,6 +20,9 @@ private:
 	void recalculate_size();
 	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 	virtual void node_model_changed() override;
+
+private slots:
+	void self_destruct();
 
 private:
 	QRectF m_bounding_rect = QRect(0, 0, 100, 50);

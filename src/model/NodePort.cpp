@@ -22,6 +22,11 @@ const Node* const NodePort::node() const
 	return m_node;
 }
 
+NodePortModel* NodePort::model()
+{
+	return m_model;
+}
+
 const NodeConnection* const NodePort::connection() const
 {
 	return m_connection;

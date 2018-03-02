@@ -19,6 +19,7 @@ public:
 	NodePortModel::EPortType port_type() const;
 	QString port_label() const;
 	const Node* const node() const;
+	NodePortModel* model();
 
 	const NodeConnection* const connection() const;
 	void set_connection(const NodeConnection* const connection);
@@ -26,7 +27,7 @@ public:
 	bool may_connect_to(NodePort* port) const;
 
 private:
-	const NodePortModel* m_model = nullptr;
+	NodePortModel* m_model = nullptr;
 	const Node* const m_node = nullptr;
 	const NodeConnection* m_connection = nullptr;
 

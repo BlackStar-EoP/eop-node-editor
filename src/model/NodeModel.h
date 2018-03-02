@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <QVector>
 
 class NodePort;
@@ -11,10 +12,11 @@ public:
 	virtual void node_model_changed() = 0;
 };
 
-class NodeModel
+class NodeModel : public QObject
 {
+	Q_OBJECT
 public:
-	virtual ~NodeModel() = default;
+	virtual ~NodeModel();
 	virtual void create_port_models() = 0;
 	virtual void destroy_port_models() = 0;
 
@@ -25,6 +27,9 @@ public:
 
 	void node_model_changed();
 	void register_node_model_listener(INodeModelListener* listener);
+
+signals:
+	void node_model_destroyed();
 
 private:
 	QVector<INodeModelListener*> m_node_model_listeners;

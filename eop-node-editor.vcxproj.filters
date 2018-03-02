@@ -113,21 +113,21 @@
     <ClInclude Include="src\view\NodeGraphWidget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\view\NodeGraphicsItem.h">
+    <CustomBuild Include="src\view\NodeGraphicsItem.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\model\NodeModel.h">
+    </CustomBuild>
+    <CustomBuild Include="src\model\NodeModel.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </CustomBuild>
     <ClInclude Include="src\model\NodePort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\view\NodePortGraphicsItem.h">
+    <CustomBuild Include="src\view\NodePortGraphicsItem.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\model\NodePortModel.h">
+    </CustomBuild>
+    <CustomBuild Include="src\model\NodePortModel.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </CustomBuild>
     <ClInclude Include="src\app\mainwindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -148,6 +148,30 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="debug\moc_NodeGraphicsItem.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_NodeGraphicsItem.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_NodeModel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_NodeModel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_NodePortGraphicsItem.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_NodePortGraphicsItem.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_NodePortModel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_NodePortModel.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>

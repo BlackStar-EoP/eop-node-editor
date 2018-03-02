@@ -18,6 +18,8 @@ NodeGraphicsItem::NodeGraphicsItem(Node& node)
 	initUI();
 
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+
+	connect(node.model(), SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
 }
 
 void NodeGraphicsItem::initUI()
@@ -73,6 +75,12 @@ QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant&
 
 void NodeGraphicsItem::node_model_changed()
 {
+	auto kak = childItems().size();
 	qDeleteAll(childItems());
 	initUI();
+}
+
+void NodeGraphicsItem::self_destruct()
+{
+	delete this;
 }

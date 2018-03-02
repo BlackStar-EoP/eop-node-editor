@@ -28,6 +28,7 @@ void RenderTargetNodeModel::create_port_models()
 void RenderTargetNodeModel::destroy_port_models()
 {
 	qDeleteAll(m_port_models);
+	m_port_models.clear();
 }
 
 QString RenderTargetNodeModel::title() const
@@ -54,7 +55,7 @@ void RenderTargetNodeModel::on_connection(NodeModel* target_model, NodePortModel
 	if (material_node_model != nullptr)
 	{
 		m_material = material_node_model->material();
-		destroy_port_models();
+		for (NodePortModel* port_model : m_port_models)
 		create_port_models();
 		node_model_changed();
 	}

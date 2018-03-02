@@ -14,6 +14,8 @@ NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePort& node
 {
 	set_port_position();
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsScenePositionChanges);
+
+	connect(node_port.model(), SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
 }
 
 QRectF NodePortGraphicsItem::boundingRect() const
@@ -107,4 +109,9 @@ void NodePortGraphicsItem::notify_position_listeners()
 {
 	for (PortPositionListener* l : m_port_position_listeners)
 		l->portPositionChanged();
+}
+
+void NodePortGraphicsItem::selfdestruct()
+{
+	delete this;
 }

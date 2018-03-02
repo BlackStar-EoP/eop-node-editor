@@ -1,5 +1,10 @@
 #include "NodeModel.h"
 
+NodeModel::~NodeModel()
+{
+	emit node_model_destroyed();
+}
+
 void NodeModel::node_model_changed()
 {
 	for (INodeModelListener* l : m_node_model_listeners)
