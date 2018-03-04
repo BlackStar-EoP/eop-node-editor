@@ -4,7 +4,7 @@
 
 #include "materialnodemodel.h"
 
-#include <src/model/NodePort.h>
+#include <src/model/NodePortModel.h>
 
 RenderTargetNodeModel::RenderTargetNodeModel(RenderTarget* target)
 : m_target(target)

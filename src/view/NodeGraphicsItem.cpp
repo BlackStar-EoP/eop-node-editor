@@ -2,42 +2,41 @@
 
 #include "NodePortGraphicsItem.h"
 
-#include "model/NodePort.h"
-#include "model/Node.h"
+#include "model/NodePortModel.h"
 #include "model/NodeModel.h"
 
 #include <QPainter>
 #include <QGraphicsTextItem>
 
-NodeGraphicsItem::NodeGraphicsItem(Node& node)
-: m_node(node)
+class NodeModel;
+
+NodeGraphicsItem::NodeGraphicsItem(NodeModel& node_model)
+: m_node_model(node_model)
 {
-	setPos(node.position());
+	setPos(node_model.position());
 	setFlags(ItemIsMovable | ItemIsSelectable);
 
 	initUI();
 
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
-	connect(node.model(), SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
+	connect(&node_model, SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
 }
 
 void NodeGraphicsItem::initUI()
 {
-	QString name = m_node.title();
-	if (m_node.is_orphan())
+	QString name = m_node_model.title();
+	if (m_node_model.is_orphan())
 	name += " (Orphan)";
 
 	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
 
-	NodeModel* model = m_node.model();
-
-	uint32_t num_ports = model->num_ports();
+	uint32_t num_ports = m_node_model.num_ports();
 
 	for (uint32_t i = 0; i < num_ports; ++i)
 	{
-		NodePort* port = new NodePort(model->port_model(i), &m_node);
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port, i);
+		NodePortModel* port_model = m_node_model.port_model(i);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
 	}
 
 	recalculate_size();
@@ -59,7 +58,7 @@ void NodeGraphicsItem::recalculate_size()
 	const uint32_t HEIGHT = 50;
 	const uint32_t PORT_HEIGHT = 25;
 
-	uint32_t port_height = PORT_HEIGHT * m_node.model()->num_ports();
+	uint32_t port_height = PORT_HEIGHT * m_node_model.num_ports();
 	m_bounding_rect = QRectF(0, 0, WIDTH, port_height + HEIGHT);
 }
 
@@ -67,7 +66,7 @@ QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant&
 {
 	if (change == ItemPositionHasChanged)
 	{
-		m_node.set_position(pos());
+		m_node_model.set_position(pos());
 	}
 
 	return QGraphicsItem::itemChange(change, value);

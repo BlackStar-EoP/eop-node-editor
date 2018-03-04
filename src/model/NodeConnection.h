@@ -1,17 +1,17 @@
 #pragma once
 
-class NodePort;
+class NodePortModel;
 
 class NodeConnection
 {
 public:
-	NodeConnection(NodePort& input, NodePort& output);
+	NodeConnection(NodePortModel& input, NodePortModel& output);
 	~NodeConnection();
 
-	const NodePort& input() const;
-	const NodePort& output() const;
+	const NodePortModel& input() const;
+	const NodePortModel& output() const;
 
 private:
-	NodePort& m_input;
-	NodePort& m_output;
+	NodePortModel& m_input;
+	NodePortModel& m_output;
 };

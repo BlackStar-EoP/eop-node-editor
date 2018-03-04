@@ -2,7 +2,7 @@
 
 #include "material.h"
 
-#include <src/model/NodePort.h>
+#include <src/model/NodePortModel.h>
 
 MaterialNodeModel::MaterialNodeModel(Material* material)
 : m_material(material)

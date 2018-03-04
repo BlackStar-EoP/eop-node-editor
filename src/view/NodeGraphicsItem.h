@@ -4,13 +4,11 @@
 #include <src/model/NodeModel.h>
 #include <QGraphicsItem>
 
-class Node;
-
 class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModelListener
 {
 	Q_OBJECT
 public:
-	NodeGraphicsItem(Node& node);
+	NodeGraphicsItem(NodeModel& node_model);
 	void initUI();
 
 	QRectF boundingRect() const override;
@@ -26,5 +24,5 @@ private slots:
 
 private:
 	QRectF m_bounding_rect = QRect(0, 0, 100, 50);
-	Node& m_node;
+	NodeModel& m_node_model;
 };

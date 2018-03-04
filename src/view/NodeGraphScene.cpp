@@ -5,7 +5,6 @@
 #include "NodePortGraphicsItem.h"
 
 #include "controllers/NodeGraphController.h"
-#include "model/Node.h"
 
 #include <QGraphicsSceneMouseEvent>
 
@@ -21,7 +20,7 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
 	{
 		NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
-		m_controller.set_first_connection_port(&port->node_port());
+		m_controller.set_first_connection_port(&port->node_port_model());
 		port->select();
 
 		m_line_edit_item = new NodeConnectionGraphicsItem();
@@ -30,9 +29,9 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	}
 	else if (item == nullptr)
 	{
-		Node* node = m_controller.add_node(event->scenePos());
-		NodeGraphicsItem* item = new NodeGraphicsItem(*node);
-		node->model()->register_node_model_listener(item);
+		NodeModel* model = m_controller.add_node(event->scenePos());
+		NodeGraphicsItem* item = new NodeGraphicsItem(*model);
+		model->register_node_model_listener(item);
 		addItem(item);
 	}
 	else
@@ -60,7 +59,7 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 		NodePortGraphicsItem* port_gfx_item = dynamic_cast<NodePortGraphicsItem*>(item);
 		if (port_gfx_item != nullptr)
 		{
-			m_controller.set_second_connection_port(&port_gfx_item->node_port());
+			m_controller.set_second_connection_port(&port_gfx_item->node_port_model());
 			if (m_controller.create_connection() != nullptr)
 			{
 				m_line_edit_item->set_second_port(port_gfx_item);

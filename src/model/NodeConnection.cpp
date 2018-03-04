@@ -1,8 +1,8 @@
 #include "NodeConnection.h"
 
-#include "model/NodePort.h"
+#include "model/NodePortModel.h"
 
-NodeConnection::NodeConnection(NodePort& input, NodePort& output)
+NodeConnection::NodeConnection(NodePortModel& input, NodePortModel& output)
 : m_input(input)
 , m_output(output)
 {
@@ -16,12 +16,12 @@ NodeConnection::~NodeConnection()
 	m_output.remove_connection();
 }
 
-const NodePort& NodeConnection::input() const
+const NodePortModel& NodeConnection::input() const
 {
 	return m_input;
 }
 
-const NodePort& NodeConnection::output() const
+const NodePortModel& NodeConnection::output() const
 {
 	return m_output;
 }

@@ -1,21 +1,21 @@
 #include "NodePortGraphicsItem.h"
 
-#include "model/NodePort.h"
+#include "model/NodePortModel.h"
 
 #include "NodeGraphicsItem.h"
 #include <QPainter>
 
 #include <assert.h>
 
-NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePort& node_port, uint32_t port_index)
+NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel& node_port_model, uint32_t port_index)
 : QGraphicsItem(parent)
-, m_node_port(node_port)
+, m_node_port_model(node_port_model)
 , m_port_index(port_index)
 {
 	set_port_position();
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsScenePositionChanges);
 
-	connect(node_port.model(), SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
+	connect(&node_port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
 }
 
 QRectF NodePortGraphicsItem::boundingRect() const
@@ -38,7 +38,7 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	painter->setPen(Qt::black);
 	painter->drawRect(m_bounding_rect);
 	QPointF text_pos = QPointF(0, 15);
-	switch (m_node_port.port_type())
+	switch (m_node_port_model.port_type())
 	{
 	case NodePortModel::INPUT:
 		text_pos += QPointF(20, 0);
@@ -52,7 +52,7 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 		assert(false);
 		break;
 	}
-	painter->drawText(text_pos, m_node_port.port_label());
+	painter->drawText(text_pos, m_node_port_model.port_label());
 }
 
 QVariant NodePortGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
@@ -72,9 +72,9 @@ void NodePortGraphicsItem::select()
 	update();
 }
 
-NodePort& NodePortGraphicsItem::node_port() const
+NodePortModel& NodePortGraphicsItem::node_port_model() const
 {
-	return m_node_port;
+	return m_node_port_model;
 }
 
 void NodePortGraphicsItem::add_port_position_listener(PortPositionListener* listener)
@@ -89,7 +89,7 @@ void NodePortGraphicsItem::remove_port_position_listener(PortPositionListener* l
 
 void NodePortGraphicsItem::set_port_position()
 {
-	switch (m_node_port.port_type())
+	switch (m_node_port_model.port_type())
 	{
 	case NodePortModel::INPUT:
 		setPos(10, 10 + (25 * m_port_index));

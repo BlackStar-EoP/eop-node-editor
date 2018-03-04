@@ -9,7 +9,7 @@ class NodePortModel;
 class FloatPortModel : public NodePortModel
 {
 public:
-	FloatPortModel(const QString& name)	: m_name(name)	{}
+	FloatPortModel(const QString& name)	: m_name(name) {}
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override	{ return m_name; }
 	QString name() override { return "float"; }

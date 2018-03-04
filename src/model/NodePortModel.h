@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QString>
 
+class NodeConnection;
+class NodeModel;
+
 class NodePortModel : public QObject
 {
 	Q_OBJECT
@@ -22,4 +25,17 @@ public:
 
 signals:
 	void node_port_model_destroyed();
+
+public:
+	void set_node_model(NodeModel* node_model);
+
+	NodeModel* node_model() const;
+
+	NodeConnection* connection() const;
+	void set_connection(NodeConnection* connection);
+	void remove_connection();
+
+private:
+	NodeModel* m_node_model = nullptr;
+	NodeConnection* m_connection = nullptr;
 };

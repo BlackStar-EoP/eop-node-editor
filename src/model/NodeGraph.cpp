@@ -1,8 +1,8 @@
 #include "NodeGraph.h"
 
-#include "model/Node.h"
+#include "model/NodeModel.h"
 #include "model/NodeConnection.h"
-#include "model/NodePort.h"
+#include "model/NodePortModel.h"
 
 #include <assert.h>
 
@@ -14,7 +14,7 @@ NodeGraph::~NodeGraph()
 {
 }
 
-void NodeGraph::give_node(Node* node)
+void NodeGraph::give_node(NodeModel* node)
 {
 	m_nodes.push_back(node);
 }
@@ -25,7 +25,7 @@ void NodeGraph::give_connection(NodeConnection* connection)
 	m_connections.push_back(connection);
 }
 
-bool NodeGraph::scan_left(const Node* start, const Node* target) const
+bool NodeGraph::scan_left(const NodeModel* start, const NodeModel* target) const
 {
 	// TODO fix
 	//const QVector<NodePort*>& input_ports = start->input_ports();
@@ -46,7 +46,7 @@ bool NodeGraph::scan_left(const Node* start, const Node* target) const
 	return false;
 }
 
-bool NodeGraph::scan_right(const Node* start, const Node* target) const
+bool NodeGraph::scan_right(const NodeModel* start, const NodeModel* target) const
 {
 	return false;
 }

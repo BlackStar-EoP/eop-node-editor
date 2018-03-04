@@ -27,9 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\model\Node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\model\NodeConnection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -55,9 +52,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\model\NodeModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\model\NodePort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\view\NodePortGraphicsItem.cpp">
@@ -89,9 +83,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\model\Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\model\NodeConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -119,9 +110,6 @@
     <CustomBuild Include="src\model\NodeModel.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <ClInclude Include="src\model\NodePort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <CustomBuild Include="src\view\NodePortGraphicsItem.h">
       <Filter>Header Files</Filter>
     </CustomBuild>

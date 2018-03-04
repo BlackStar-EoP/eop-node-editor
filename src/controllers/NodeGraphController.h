@@ -6,9 +6,9 @@ class QPointF;
 
 class NodeGraph;
 class NodeFactory;
-class Node;
-class NodePort;
 class NodeConnection;
+class NodeModel;
+class NodePortModel;
 
 class NodeGraphController
 {
@@ -17,15 +17,15 @@ public:
 	~NodeGraphController() = default;
 
 	void set_node_factory(NodeFactory* factory);
-	Node* add_node(const QPointF& position);
+	NodeModel* add_node(const QPointF& position);
 
-	void set_first_connection_port(NodePort* port);
-	void set_second_connection_port(NodePort* port);
+	void set_first_connection_port(NodePortModel* port);
+	void set_second_connection_port(NodePortModel* port);
 	const NodeConnection* create_connection();
 
 private:
 	NodeGraph& m_node_graph;
 	NodeFactory* m_node_factory = nullptr;
-	NodePort* m_first_connection_port = nullptr;
-	NodePort* m_second_connection_port = nullptr;
+	NodePortModel* m_first_connection_port = nullptr;
+	NodePortModel* m_second_connection_port = nullptr;
 };
