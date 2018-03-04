@@ -18,12 +18,24 @@ class NodeModel : public QObject
 public:
 
 	virtual ~NodeModel();
-	virtual void create_port_models() = 0;
-	virtual void destroy_port_models() = 0;
-
+	virtual void create_input_port_models() = 0;
+	virtual void create_output_port_models() = 0;
 	virtual QString title() const = 0;
-	virtual uint32_t num_ports() const = 0;
-	virtual NodePortModel* port_model(uint32_t port_nr) = 0;
+	
+	void create_port_models();
+
+	uint32_t num_input_ports() const;
+	NodePortModel* input_port_model(uint32_t port_nr);
+	void add_input_port_model(NodePortModel* port_model);
+	void destroy_input_port_models();
+
+	uint32_t num_output_ports() const;
+	NodePortModel* output_port_model(uint32_t port_nr);
+	void add_output_port_model(NodePortModel* port_model);
+	void destroy_output_port_models();
+
+	uint32_t num_ports() const;
+
 	virtual void on_connection(NodeModel* target_model, NodePortModel* target_port_model) = 0;
 
 	void node_model_changed();
@@ -40,4 +52,8 @@ signals:
 private:
 	QVector<INodeModelListener*> m_node_model_listeners;
 	QPointF m_position;
+
+	QVector<NodePortModel*> m_input_port_models;
+	QVector<NodePortModel*> m_output_port_models;
+
 };

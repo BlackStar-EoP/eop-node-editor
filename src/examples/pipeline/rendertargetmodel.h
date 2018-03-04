@@ -39,16 +39,12 @@ class RenderTargetNodeModel : public NodeModel
 public:
 	RenderTargetNodeModel(RenderTarget* rendertarget);
 
-	void create_port_models() override;
-	void destroy_port_models() override;
+	void create_input_port_models() override;
+	void create_output_port_models() override;
 	QString title() const override;
-	uint32_t num_ports() const override;
-	NodePortModel* port_model(uint32_t port_nr) override;
 	void on_connection(NodeModel* target_model, NodePortModel* target_port_model) override;
 
 private:
 	RenderTarget* m_target = nullptr;
 	Material* m_material = nullptr;
-	QVector<NodePortModel*> m_port_models;
-
 };

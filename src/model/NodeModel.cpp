@@ -1,8 +1,67 @@
 #include "NodeModel.h"
 
+#include "NodePortModel.h"
+
 NodeModel::~NodeModel()
 {
 	emit node_model_destroyed();
+}
+
+void NodeModel::create_port_models()
+{
+	create_input_port_models();
+	create_output_port_models();
+}
+
+uint32_t NodeModel::num_input_ports() const
+{
+	return m_input_port_models.size();
+}
+
+NodePortModel* NodeModel::input_port_model(uint32_t port_nr)
+{
+	if (num_input_ports() > port_nr)
+		return m_input_port_models[port_nr];
+
+	return nullptr;
+}
+
+void NodeModel::add_input_port_model(NodePortModel* port_model)
+{
+	m_input_port_models.push_back(port_model);
+}
+
+void NodeModel::destroy_input_port_models()
+{
+	qDeleteAll(m_input_port_models);
+}
+
+uint32_t NodeModel::num_output_ports() const
+{
+	return m_output_port_models.size();
+}
+
+NodePortModel* NodeModel::output_port_model(uint32_t port_nr)
+{
+	if (num_output_ports() > port_nr)
+		return m_output_port_models[port_nr];
+
+	return nullptr;
+}
+
+void NodeModel::add_output_port_model(NodePortModel* port_model)
+{
+	m_output_port_models.push_back(port_model);
+}
+
+void NodeModel::destroy_output_port_models()
+{
+	qDeleteAll(m_output_port_models);
+}
+
+uint32_t NodeModel::num_ports() const
+{
+	return m_input_port_models.size() + m_output_port_models.size();
 }
 
 void NodeModel::node_model_changed()

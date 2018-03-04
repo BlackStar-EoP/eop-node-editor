@@ -31,11 +31,17 @@ void NodeGraphicsItem::initUI()
 
 	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
 
-	uint32_t num_ports = m_node_model.num_ports();
-
-	for (uint32_t i = 0; i < num_ports; ++i)
+	uint32_t num_input_ports = m_node_model.num_input_ports();
+	for (uint32_t i = 0; i < num_input_ports; ++i)
 	{
-		NodePortModel* port_model = m_node_model.port_model(i);
+		NodePortModel* port_model = m_node_model.input_port_model(i);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
+	}
+
+	uint32_t num_output_ports = m_node_model.num_output_ports();
+	for (uint32_t i = 0; i < num_output_ports; ++i)
+	{
+		NodePortModel* port_model = m_node_model.output_port_model(i);
 		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
 	}
 
