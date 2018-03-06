@@ -55,6 +55,7 @@ QRectF NodeGraphicsItem::boundingRect() const
 
 void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+	painter->setBrush(QBrush(Qt::white));
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
 }
 

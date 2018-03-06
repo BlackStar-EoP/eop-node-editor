@@ -7,6 +7,7 @@
 #include "controllers/NodeGraphController.h"
 
 #include <QGraphicsSceneMouseEvent>
+#include <QPainter>
 
 NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
@@ -90,7 +91,7 @@ void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)
     for (qreal y = top; y < rect.bottom(); y += gridSize)
         lines.append(QLineF(rect.left(), y, rect.right(), y));
 
-    qDebug() << lines.size();
+//    qDebug() << lines.size();
 
     painter->drawLines(lines.data(), lines.size());
 }
