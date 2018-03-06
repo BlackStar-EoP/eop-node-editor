@@ -36,12 +36,12 @@ QString RenderTargetNodeModel::title() const
 
 void RenderTargetNodeModel::on_connection(NodeModel* target_model, NodePortModel* target_port_model)
 {
-	//MaterialNodeModel* material_node_model = dynamic_cast<MaterialNodeModel*>(target_model);
-	//if (material_node_model != nullptr)
-	//{
-	//	m_material = material_node_model->material();
-	//	for (NodePortModel* port_model : m_port_models)
-	//	create_port_models();
-	//	node_model_changed();
-	//}
+	MaterialNodeModel* material_node_model = dynamic_cast<MaterialNodeModel*>(target_model);
+	if (material_node_model != nullptr)
+	{
+		m_material = material_node_model->material();
+		destroy_output_port_models();
+		create_output_port_models();
+		node_model_changed();
+	}
 }

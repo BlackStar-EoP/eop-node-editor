@@ -11,6 +11,20 @@ void NodeModel::create_port_models()
 {
 	create_input_port_models();
 	create_output_port_models();
+	apply_node_model_to_ports_hack();
+}
+
+void NodeModel::apply_node_model_to_ports_hack()
+{
+	for (NodePortModel* port_model : m_input_port_models)
+	{
+		port_model->set_node_model(this);
+	}
+
+	for (NodePortModel* port_model : m_output_port_models)
+	{
+		port_model->set_node_model(this);
+	}
 }
 
 uint32_t NodeModel::num_input_ports() const

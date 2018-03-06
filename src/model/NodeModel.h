@@ -23,6 +23,7 @@ public:
 	virtual QString title() const = 0;
 	
 	void create_port_models();
+	void apply_node_model_to_ports_hack();
 
 	uint32_t num_input_ports() const;
 	NodePortModel* input_port_model(uint32_t port_nr);
