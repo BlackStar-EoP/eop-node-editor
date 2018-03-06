@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QVector>
 
+#include "model/NodeConnection.h"
+
 class NodePortModel;
 class QPointF;
 
@@ -10,6 +12,7 @@ class INodeModelListener
 {
 public:
 	virtual void node_model_changed() = 0;
+	virtual void output_nodes_changed() = 0;
 };
 
 class NodeModel : public QObject
@@ -37,9 +40,10 @@ public:
 
 	uint32_t num_ports() const;
 
-	virtual void on_connection(NodeModel* target_model, NodePortModel* target_port_model) = 0;
+	virtual void on_connection(NodeConnection::EDirection direction, NodeModel* target_model, NodePortModel* target_port_model) = 0;
 
 	void node_model_changed();
+	void output_nodes_changed();
 	void register_node_model_listener(INodeModelListener* listener);
 
 public:

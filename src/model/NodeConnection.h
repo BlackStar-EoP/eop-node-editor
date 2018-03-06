@@ -5,6 +5,12 @@ class NodePortModel;
 class NodeConnection
 {
 public:
+	enum EDirection
+	{
+		INCOMING,
+		OUTGOING
+	};
+
 	NodeConnection(NodePortModel& input, NodePortModel& output);
 	~NodeConnection();
 

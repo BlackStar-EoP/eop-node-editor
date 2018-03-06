@@ -77,8 +77,8 @@ const NodeConnection* NodeGraphController::create_connection()
 	m_first_connection_port = nullptr;
 	m_second_connection_port = nullptr;
 
-	input_port->node_model()->on_connection(output_port->node_model(), nullptr);
-	output_port->node_model()->on_connection(input_port->node_model(), nullptr);
+	input_port->node_model()->on_connection(NodeConnection::INCOMING, output_port->node_model(), nullptr);
+	output_port->node_model()->on_connection(NodeConnection::OUTGOING, input_port->node_model(), nullptr);
 
 	NodeConnection* connection = new NodeConnection(*input_port, *output_port);
 	m_node_graph.give_connection(connection);

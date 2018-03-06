@@ -2,6 +2,7 @@
 
 #include "model/NodePortModel.h"
 
+#include "EditorColorScheme.h"
 #include "NodeGraphicsItem.h"
 #include <QPainter>
 
@@ -25,6 +26,7 @@ QRectF NodePortGraphicsItem::boundingRect() const
 
 void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+	painter->setPen(EditorColorScheme::gridMajorColor_);
 	if (m_selected)
 	{
 		painter->setBrush(Qt::red);
@@ -35,8 +37,8 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 		painter->drawEllipse(0, 0, 20, 20);
 	}
 	painter->setBrush(Qt::NoBrush);
-	painter->setPen(Qt::black);
-	painter->drawRect(m_bounding_rect);
+	painter->setPen(EditorColorScheme::labelColor_);
+//	painter->drawRect(m_bounding_rect);
 	QPointF text_pos = QPointF(0, 15);
 	switch (m_node_port_model.port_type())
 	{

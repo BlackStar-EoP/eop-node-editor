@@ -3,7 +3,7 @@
 #include "NodeConnectionGraphicsItem.h"
 #include "NodeGraphicsItem.h"
 #include "NodePortGraphicsItem.h"
-
+#include "EditorColorScheme.h"
 #include "controllers/NodeGraphController.h"
 
 #include <QGraphicsSceneMouseEvent>
@@ -79,8 +79,10 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
+	painter->fillRect(rect, EditorColorScheme::gridMinorColor_);
     const int gridSize = 25;
-
+	painter->setPen(EditorColorScheme::contentBackgroundColor_);
+	
     qreal left = int(rect.left()) - (int(rect.left()) % gridSize);
     qreal top = int(rect.top()) - (int(rect.top()) % gridSize);
 

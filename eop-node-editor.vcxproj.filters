@@ -27,6 +27,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\view\EditorColorScheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\model\NodeConnection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,6 +86,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\view\EditorColorScheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\model\NodeConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>

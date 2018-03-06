@@ -18,6 +18,7 @@ SOURCES += $$PWD/src/app/main.cpp \
 		       $$PWD/src/model/NodeGraph.cpp \
            $$PWD/src/model/NodeModel.cpp \
            $$PWD/src/model/NodePortModel.cpp \
+           $$PWD/src/view/EditorColorScheme.cpp \
            $$PWD/src/view/NodeConnectionGraphicsItem.cpp \
 		       $$PWD/src/view/NodeGraphicsItem.cpp \
 		       $$PWD/src/view/NodeGraphWidget.cpp \
@@ -36,6 +37,7 @@ HEADERS += $$PWD/src/app/mainwindow.h \
 		       $$PWD/src/model/NodeGraph.h \
            $$PWD/src/model/NodeModel.h \
            $$PWD/src/model/NodePortModel.h \
+           $$PWD/src/view/EditorColorScheme.h \
            $$PWD/src/view/NodeConnectionGraphicsItem.h \
            $$PWD/src/view/NodeGraphicsItem.h \
            $$PWD/src/view/NodeGraphWidget.h \

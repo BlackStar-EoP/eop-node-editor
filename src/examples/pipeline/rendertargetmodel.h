@@ -42,7 +42,7 @@ public:
 	void create_input_port_models() override;
 	void create_output_port_models() override;
 	QString title() const override;
-	void on_connection(NodeModel* target_model, NodePortModel* target_port_model) override;
+	void on_connection(NodeConnection::EDirection direction, NodeModel* target_model, NodePortModel* target_port_model) override;
 
 private:
 	RenderTarget* m_target = nullptr;

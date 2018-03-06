@@ -1,12 +1,15 @@
 #include "NodeGraphicsItem.h"
 
 #include "NodePortGraphicsItem.h"
+#include "EditorColorScheme.h"
 
 #include "model/NodePortModel.h"
 #include "model/NodeModel.h"
 
 #include <QPainter>
 #include <QGraphicsTextItem>
+
+#include <assert.h>
 
 class NodeModel;
 
@@ -23,31 +26,6 @@ NodeGraphicsItem::NodeGraphicsItem(NodeModel& node_model)
 	connect(&node_model, SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
 }
 
-void NodeGraphicsItem::initUI()
-{
-	QString name = m_node_model.title();
-	if (m_node_model.is_orphan())
-	name += " (Orphan)";
-
-	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
-
-	uint32_t num_input_ports = m_node_model.num_input_ports();
-	for (uint32_t i = 0; i < num_input_ports; ++i)
-	{
-		NodePortModel* port_model = m_node_model.input_port_model(i);
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
-	}
-
-	uint32_t num_output_ports = m_node_model.num_output_ports();
-	for (uint32_t i = 0; i < num_output_ports; ++i)
-	{
-		NodePortModel* port_model = m_node_model.output_port_model(i);
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
-	}
-
-	recalculate_size();
-}
-
 QRectF NodeGraphicsItem::boundingRect() const
 {
 	return m_bounding_rect;
@@ -55,9 +33,48 @@ QRectF NodeGraphicsItem::boundingRect() const
 
 void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-	painter->setBrush(QBrush(Qt::white));
+	painter->setBrush(QBrush(EditorColorScheme::rulerBackgroundColor_));
+	painter->setPen(EditorColorScheme::labelColor_);
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
 }
+
+void NodeGraphicsItem::initUI()
+{
+	QString name = m_node_model.title();
+	if (m_node_model.is_orphan())
+		name += " (Orphan)";
+
+	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
+	title->setDefaultTextColor(EditorColorScheme::labelTitleColor_);
+
+	init_input_ports();
+	init_output_ports();
+
+	recalculate_size();
+}
+
+void NodeGraphicsItem::init_input_ports()
+{
+	uint32_t num_input_ports = m_node_model.num_input_ports();
+	for (uint32_t i = 0; i < num_input_ports; ++i)
+	{
+		NodePortModel* port_model = m_node_model.input_port_model(i);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
+		m_input_ports.push_back(port_item);
+	}
+}
+
+void NodeGraphicsItem::init_output_ports()
+{
+	uint32_t num_output_ports = m_node_model.num_output_ports();
+	for (uint32_t i = 0; i < num_output_ports; ++i)
+	{
+		NodePortModel* port_model = m_node_model.output_port_model(i);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
+		m_output_ports.push_back(port_item);
+	}
+}
+
 
 void NodeGraphicsItem::recalculate_size()
 {
@@ -81,9 +98,15 @@ QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant&
 
 void NodeGraphicsItem::node_model_changed()
 {
-	auto kak = childItems().size();
-	qDeleteAll(childItems());
-	initUI();
+	assert(false);
+}
+
+void NodeGraphicsItem::output_nodes_changed()
+{
+	// This works because the output port items are last. if input changes or node model needs to change for whatever reason, 
+	// this solution is not adequate, so, basically a TODO if ever.
+	qDeleteAll(m_output_ports);
+	init_output_ports();
 }
 
 void NodeGraphicsItem::self_destruct()

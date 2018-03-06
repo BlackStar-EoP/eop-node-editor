@@ -34,14 +34,18 @@ QString RenderTargetNodeModel::title() const
 	return "RenderTarget";
 }
 
-void RenderTargetNodeModel::on_connection(NodeModel* target_model, NodePortModel* target_port_model)
+void RenderTargetNodeModel::on_connection(NodeConnection::EDirection direction, NodeModel* target_model, NodePortModel* target_port_model)
 {
-	MaterialNodeModel* material_node_model = dynamic_cast<MaterialNodeModel*>(target_model);
-	if (material_node_model != nullptr)
+	if (direction == NodeConnection::INCOMING)
 	{
-		m_material = material_node_model->material();
-		destroy_output_port_models();
-		create_output_port_models();
-		node_model_changed();
+		MaterialNodeModel* material_node_model = dynamic_cast<MaterialNodeModel*>(target_model);
+		if (material_node_model != nullptr)
+		{
+			m_material = material_node_model->material();
+			destroy_output_port_models();
+			create_output_port_models();
+			apply_node_model_to_ports_hack(); // TODO this needs a better solution
+			output_nodes_changed();
+		}
 	}
 }

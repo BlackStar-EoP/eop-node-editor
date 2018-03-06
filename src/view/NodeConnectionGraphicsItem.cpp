@@ -1,11 +1,16 @@
 #include "NodeConnectionGraphicsItem.h"
+
+#include "EditorColorScheme.h"
+
+#include <QPen>
+
 #include <assert.h>
 
 NodeConnectionGraphicsItem::~NodeConnectionGraphicsItem()
 {
 	assert(m_first_port != nullptr);
 	assert(m_second_port != nullptr);
-
+	setPen(EditorColorScheme::labelSublineColor_);
 	//m_first_port->remove_port_position_listener(this);
 	//m_second_port->remove_port_position_listener(this);
 }

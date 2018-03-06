@@ -41,7 +41,7 @@ QString MaterialNodeModel::title() const
 	return m_material->toString();
 }
 
-void MaterialNodeModel::on_connection(NodeModel* target_model, NodePortModel* target_port_model)
+void MaterialNodeModel::on_connection(NodeConnection::EDirection direction, NodeModel* target_model, NodePortModel* target_port_model)
 {
 
 }
