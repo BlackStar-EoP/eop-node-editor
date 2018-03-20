@@ -35,6 +35,7 @@ void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 {
 	painter->setBrush(QBrush(EditorColorScheme::rulerBackgroundColor_));
 	painter->setPen(EditorColorScheme::labelColor_);
+
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
 }
 

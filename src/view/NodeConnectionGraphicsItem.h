@@ -11,7 +11,7 @@ class NodeConnectionGraphicsItem : public QGraphicsLineItem, public PortPosition
 
 public:
 
-	NodeConnectionGraphicsItem() = default;
+	NodeConnectionGraphicsItem();
 	~NodeConnectionGraphicsItem();
 
 	void set_first_port(NodePortGraphicsItem* port);

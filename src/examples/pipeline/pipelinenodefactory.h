@@ -4,5 +4,7 @@
 
 class PipeLineNodeFactory : public NodeFactory
 {
+public:
+	PipeLineNodeFactory();
 	virtual NodeModel* create_node_model() override;
 };

@@ -14,7 +14,7 @@ public:
 	QString port_label() const override	{ return m_name; }
 	QString name() override { return "float"; }
 	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
-
+	QString type() const override { return "float_input"; }
 
 private:
 	QString m_name;
@@ -28,6 +28,7 @@ public:
 	QString port_label() const override { return m_name; }
 	QString name() override { return "vec2"; }
 	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
+	QString type() const override { return "vec2_input"; }
 
 private:
 	QString m_name;
@@ -41,6 +42,7 @@ public:
 	QString port_label() const override { return m_name; }
 	QString name() override { return "vec3"; }
 	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
+	QString type() const override { return "vec3_input"; }
 
 private:
 	QString m_name;
@@ -53,6 +55,7 @@ public:
 	QString port_label() const override { return m_name; }
 	QString name() override { return "vec3"; }
 	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
+	QString type() const override { return "vec4_input"; }
 
 private:
 	QString m_name;
@@ -65,7 +68,14 @@ public:
 	EPortType port_type() const override { return NodePortModel::INPUT; }
 	QString port_label() const override { return m_name; }
 	QString name() override { return "texture"; }
-	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
+	bool may_connect_to(const NodePortModel& port_model) const override
+	{
+		return (port_model.type() == "rendertarget_output") ||
+			   (port_model.type() == "texture_output");
+	}
+
+
+	QString type() const override { return "texture_input"; }
 
 private:
 	QString m_name;
@@ -79,6 +89,7 @@ public:
 	QString port_label() const override { return m_name; }
 	QString name() override { return "shaderoutput"; }
 	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
+	QString type() const override { return "shader_output"; }
 
 private:
 	QString m_name;
@@ -86,6 +97,9 @@ private:
 
 class MaterialNodeModel : public NodeModel
 {
+public:
+	static const QString TYPE_NAME;
+
 public:
 	MaterialNodeModel(Material* material);
 

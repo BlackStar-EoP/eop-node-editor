@@ -25,28 +25,26 @@ void NodeGraph::give_connection(NodeConnection* connection)
 	m_connections.push_back(connection);
 }
 
-bool NodeGraph::scan_left(const NodeModel* start, const NodeModel* target) const
+bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 {
-	// TODO fix
-	//const QVector<NodePort*>& input_ports = start->input_ports();
-	//
-	//if (start == target)
-	//	return true;
+	if (start == target)
+		return true;
 
-	//for (const NodePort* port : input_ports)
-	//{
-	//	if (port->connection() == nullptr)
-	//		continue;
-	//	
-	//	const Node* left_node = port->connection()->output().node();
-	//	if (scan_left(left_node, target))
-	//		return true;
-	//}
+	for (uint32_t i = 0; i < start->num_input_ports(); ++i)
+	{
+		const NodePortModel* port_model = start->input_port_model(i);
+		if (port_model->connection() == nullptr)
+			continue;
+		
+		NodeModel* left_node = port_model->connection()->output().node_model();
+		if (scan_left(left_node, target))
+			return true;
+	}
 
 	return false;
 }
 
-bool NodeGraph::scan_right(const NodeModel* start, const NodeModel* target) const
+bool NodeGraph::scan_right(NodeModel* start, NodeModel* target) const
 {
 	return false;
 }

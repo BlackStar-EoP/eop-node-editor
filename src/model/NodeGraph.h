@@ -16,8 +16,8 @@ public:
 	void give_connection(NodeConnection* connection);
 
 	// Circular dependency checks
-	bool scan_left(const NodeModel* start, const NodeModel* target) const;
-	bool scan_right(const NodeModel* start, const NodeModel* target) const;
+	bool scan_left(NodeModel* start, NodeModel* target) const;
+	bool scan_right(NodeModel* start, NodeModel* target) const;
 
 private:
 	std::vector<NodeModel*> m_nodes;

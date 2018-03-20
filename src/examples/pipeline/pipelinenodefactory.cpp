@@ -5,6 +5,12 @@
 #include "rendertargetmodel.h"
 #include "rendertarget.h"
 
+PipeLineNodeFactory::PipeLineNodeFactory()
+{
+	register_node_type(MaterialNodeModel::TYPE_NAME);
+	register_node_type(RenderTargetNodeModel::TYPE_NAME);
+}
+
 NodeModel* PipeLineNodeFactory::create_node_model()
 {
 	static int type = 0;

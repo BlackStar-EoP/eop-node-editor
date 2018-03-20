@@ -14,6 +14,7 @@ public:
 	QString port_label() const override { return m_name; }
 	QString name() override { return "rendertargetinput"; }
 	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
+	QString type() const override { return "rendertarget_input"; }
 
 private:
 	QString m_name;
@@ -27,6 +28,7 @@ public:
 	QString port_label() const override { return m_name; }
 	QString name() override { return "rendertargettexture"; }
 	bool may_connect_to(const NodePortModel& port_model) const override { return true; }
+	QString type() const override { return "rendertarget_output"; }
 
 private:
 	QString m_name;
@@ -36,6 +38,9 @@ private:
 
 class RenderTargetNodeModel : public NodeModel
 {
+public:
+	static const QString TYPE_NAME;
+
 public:
 	RenderTargetNodeModel(RenderTarget* rendertarget);
 

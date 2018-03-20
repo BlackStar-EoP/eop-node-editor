@@ -6,6 +6,8 @@
 
 #include <src/model/NodePortModel.h>
 
+const QString RenderTargetNodeModel::TYPE_NAME = "RenderTargetNodeModel";
+
 RenderTargetNodeModel::RenderTargetNodeModel(RenderTarget* target)
 : m_target(target)
 {

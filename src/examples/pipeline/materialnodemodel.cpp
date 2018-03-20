@@ -4,6 +4,8 @@
 
 #include <src/model/NodePortModel.h>
 
+const QString MaterialNodeModel::TYPE_NAME = "MaterialNodeModel";
+
 MaterialNodeModel::MaterialNodeModel(Material* material)
 : m_material(material)
 {
