@@ -46,10 +46,11 @@ public:
 	void output_nodes_changed();
 	void register_node_model_listener(INodeModelListener* listener);
 
-public:
 	void set_position(const QPointF& position);
 	const QPointF& position() const;
 	bool is_orphan() const;
+	void set_widget(QWidget* widget);
+	QWidget* widget() const;
 
 signals:
 	void node_model_destroyed();
@@ -60,5 +61,5 @@ private:
 
 	QVector<NodePortModel*> m_input_port_models;
 	QVector<NodePortModel*> m_output_port_models;
-
+	QWidget* m_widget = nullptr;
 };

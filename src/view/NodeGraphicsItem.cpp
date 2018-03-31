@@ -8,6 +8,7 @@
 
 #include <QPainter>
 #include <QGraphicsTextItem>
+#include <QGraphicsProxyWidget>
 
 #include <assert.h>
 
@@ -47,6 +48,12 @@ void NodeGraphicsItem::initUI()
 
 	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
 	title->setDefaultTextColor(EditorColorScheme::labelTitleColor_);
+
+	if (m_node_model.widget() != nullptr)
+	{
+		QGraphicsProxyWidget* proxy_widget = new QGraphicsProxyWidget(this);
+		proxy_widget->setWidget(m_node_model.widget());
+	}
 
 	init_input_ports();
 	init_output_ports();

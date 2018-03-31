@@ -125,3 +125,14 @@ bool NodeModel::is_orphan() const
 
 	return true;
 }
+
+void NodeModel::set_widget(QWidget* widget)
+{
+	m_widget = widget;
+	// TODO model_changed()?
+}
+
+QWidget* NodeModel::widget() const
+{
+	return m_widget;
+}
