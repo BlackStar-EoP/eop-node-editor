@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <src/model/NodeModel.h>
+#include <model/NodeModel.h>
 #include <QGraphicsItem>
 #include <QVector>
 

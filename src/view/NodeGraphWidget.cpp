@@ -2,7 +2,7 @@
 
 #include "NodeGraphScene.h"
 
-#include <src/model/NodeFactory.h>
+#include <model/NodeFactory.h>
 
 #include <QBoxLayout>
 #include <QGraphicsView>
