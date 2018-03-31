@@ -1,8 +1,6 @@
 INCLUDEPATH += $$PWD/src
 
-SOURCES += $$PWD/src/app/main.cpp \
-           $$PWD/src/app/mainwindow.cpp \
-           $$PWD/src/controllers/NodeGraphController.cpp \
+SOURCES += $$PWD/src/controllers/NodeGraphController.cpp \
            $$PWD/src/model/NodeConnection.cpp \
            $$PWD/src/model/NodeFactory.cpp \
 		       $$PWD/src/model/NodeGraph.cpp \
@@ -15,8 +13,7 @@ SOURCES += $$PWD/src/app/main.cpp \
 		       $$PWD/src/view/NodeGraphScene.cpp \
            $$PWD/src/view/NodePortGraphicsItem.cpp
 
-HEADERS += $$PWD/src/app/mainwindow.h \
-           $$PWD/src/controllers/NodeGraphController.h \
+HEADERS += $$PWD/src/controllers/NodeGraphController.h \
            $$PWD/src/model/NodeConnection.h \
            $$PWD/src/model/NodeFactory.h \
 		       $$PWD/src/model/NodeGraph.h \

@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QVector>
 
-#include "model/NodeConnection.h"
+#include "NodeConnection.h"
 
 class NodePortModel;
 class QPointF;

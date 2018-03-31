@@ -1,7 +1,7 @@
 #pragma once
 
-#include "controllers/NodeGraphController.h"
-#include "model/NodeGraph.h"
+#include "../controllers/NodeGraphController.h"
+#include "../model/NodeGraph.h"
 
 #include <QWidget>
 
