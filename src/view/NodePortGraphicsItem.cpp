@@ -13,7 +13,6 @@ NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel&
 , m_node_port_model(node_port_model)
 , m_port_index(port_index)
 {
-	set_port_position();
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsScenePositionChanges);
 
 	connect(&node_port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
@@ -27,9 +26,9 @@ QRectF NodePortGraphicsItem::boundingRect() const
 void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	painter->setPen(EditorColorScheme::gridMajorColor_);
-	if (m_selected)
+	if (m_node_port_model.connection() != nullptr)
 	{
-		painter->setBrush(Qt::red);
+		painter->setBrush(EditorColorScheme::connection_color);
 		painter->drawEllipse(0, 0, 20, 20);
 	}
 	else
@@ -87,24 +86,6 @@ void NodePortGraphicsItem::add_port_position_listener(PortPositionListener* list
 void NodePortGraphicsItem::remove_port_position_listener(PortPositionListener* listener)
 {
 	m_port_position_listeners.erase(listener);
-}
-
-void NodePortGraphicsItem::set_port_position()
-{
-	switch (m_node_port_model.port_type())
-	{
-	case NodePortModel::INPUT:
-		setPos(10, 10 + (25 * m_port_index));
-		break;
-
-	case NodePortModel::OUTPUT:
-		setPos(170, 10 + (25 * m_port_index));
-		break;
-
-	default:
-		assert(false);
-		break;
-	}
 }
 
 void NodePortGraphicsItem::notify_position_listeners()

@@ -11,11 +11,15 @@ class NodeFactory;
 
 class NodeGraphWidget : public QWidget
 {
+	Q_OBJECT
 public:
 	NodeGraphWidget(QWidget* parent = nullptr);
 	~NodeGraphWidget();
 
 	void give_node_factory(NodeFactory* factory);
+
+signals:
+	void message(const QString& message);
 
 private:
 	QGraphicsView* m_view = nullptr;

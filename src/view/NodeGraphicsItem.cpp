@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QGraphicsTextItem>
 #include <QGraphicsProxyWidget>
+#include <QWidget>
 
 #include <assert.h>
 
@@ -42,23 +43,30 @@ void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 
 void NodeGraphicsItem::initUI()
 {
+	recalculate_size();
+	m_current_item_y = 20;
+
 	QString name = m_node_model.title();
 	if (m_node_model.is_orphan())
 		name += " (Orphan)";
 
 	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
 	title->setDefaultTextColor(EditorColorScheme::labelTitleColor_);
+	title->setPos(QPointF(10, m_current_item_y));
+	m_current_item_y += 25;
 
 	if (m_node_model.widget() != nullptr)
 	{
 		QGraphicsProxyWidget* proxy_widget = new QGraphicsProxyWidget(this);
 		proxy_widget->setWidget(m_node_model.widget());
+		proxy_widget->setPos(QPointF(10, m_current_item_y));
+		m_current_item_y += 25;
 	}
 
 	init_input_ports();
 	init_output_ports();
 
-	recalculate_size();
+	
 }
 
 void NodeGraphicsItem::init_input_ports()
@@ -68,6 +76,8 @@ void NodeGraphicsItem::init_input_ports()
 	{
 		NodePortModel* port_model = m_node_model.input_port_model(i);
 		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
+		port_item->setPos(QPointF(10, m_current_item_y));
+		m_current_item_y += 25;
 		m_input_ports.push_back(port_item);
 	}
 }
@@ -79,6 +89,8 @@ void NodeGraphicsItem::init_output_ports()
 	{
 		NodePortModel* port_model = m_node_model.output_port_model(i);
 		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
+		port_item->setPos(QPointF(m_bounding_rect.width() - 60, m_current_item_y));
+		m_current_item_y += 25;
 		m_output_ports.push_back(port_item);
 	}
 }
@@ -87,11 +99,18 @@ void NodeGraphicsItem::init_output_ports()
 void NodeGraphicsItem::recalculate_size()
 {
 	const uint32_t WIDTH = 200;
-	const uint32_t HEIGHT = 50;
+	const uint32_t HEIGHT = 80;
 	const uint32_t PORT_HEIGHT = 25;
 
+	uint32_t width = WIDTH;
+	if (m_node_model.widget() != nullptr)
+	{
+		width = m_node_model.widget()->size().width();
+		width += 20;
+	}
+
 	uint32_t port_height = PORT_HEIGHT * m_node_model.num_ports();
-	m_bounding_rect = QRectF(0, 0, WIDTH, port_height + HEIGHT);
+	m_bounding_rect = QRectF(0, 0, width, port_height + HEIGHT);
 }
 
 QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)

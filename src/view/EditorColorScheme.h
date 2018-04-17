@@ -18,5 +18,7 @@ public:
 	static const QColor labelSublineColor_;
 	static const QColor labelTitleColor_;
 	static const QColor labelErrorColor_;
+
+	static const QColor connection_color;
 };
 

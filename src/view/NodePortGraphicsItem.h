@@ -33,7 +33,6 @@ public:
 	void remove_port_position_listener(PortPositionListener* listener);
 
 private:
-	void set_port_position();
 	void notify_position_listeners();
 
 private slots:

@@ -34,4 +34,6 @@ private:
 	NodeModel& m_node_model;
 	QVector<NodePortGraphicsItem*> m_input_ports;
 	QVector<NodePortGraphicsItem*> m_output_ports;
+
+	uint32_t m_current_item_y = 0;
 };
