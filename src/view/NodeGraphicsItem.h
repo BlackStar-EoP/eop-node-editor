@@ -35,5 +35,5 @@ private:
 	QVector<NodePortGraphicsItem*> m_input_ports;
 	QVector<NodePortGraphicsItem*> m_output_ports;
 
-	uint32_t m_current_item_y = 0;
+	uint32_t m_port_start_y = 0;
 };

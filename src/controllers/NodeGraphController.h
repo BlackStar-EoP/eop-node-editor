@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <vector>
 
 class QPointF;
@@ -10,8 +11,9 @@ class NodeConnection;
 class NodeModel;
 class NodePortModel;
 
-class NodeGraphController
+class NodeGraphController : public QObject
 {
+	Q_OBJECT
 public:
 	NodeGraphController(NodeGraph& node_graph);
 	~NodeGraphController() = default;
@@ -22,6 +24,9 @@ public:
 	void set_first_connection_port(NodePortModel* port);
 	void set_second_connection_port(NodePortModel* port);
 	const NodeConnection* create_connection();
+
+signals:
+	void message(const QString& message);
 
 private:
 	NodeGraph& m_node_graph;

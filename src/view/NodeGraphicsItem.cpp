@@ -44,7 +44,7 @@ void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 void NodeGraphicsItem::initUI()
 {
 	recalculate_size();
-	m_current_item_y = 20;
+	m_port_start_y = 20;
 
 	QString name = m_node_model.title();
 	if (m_node_model.is_orphan())
@@ -52,15 +52,15 @@ void NodeGraphicsItem::initUI()
 
 	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
 	title->setDefaultTextColor(EditorColorScheme::labelTitleColor_);
-	title->setPos(QPointF(10, m_current_item_y));
-	m_current_item_y += 25;
+	title->setPos(QPointF(10, m_port_start_y));
+	m_port_start_y += 25;
 
 	if (m_node_model.widget() != nullptr)
 	{
 		QGraphicsProxyWidget* proxy_widget = new QGraphicsProxyWidget(this);
 		proxy_widget->setWidget(m_node_model.widget());
-		proxy_widget->setPos(QPointF(10, m_current_item_y));
-		m_current_item_y += 25;
+		proxy_widget->setPos(QPointF(10, m_port_start_y));
+		m_port_start_y += m_node_model.widget()->height();
 	}
 
 	init_input_ports();
@@ -71,26 +71,28 @@ void NodeGraphicsItem::initUI()
 
 void NodeGraphicsItem::init_input_ports()
 {
+	uint32_t current_port_y = m_port_start_y;
 	uint32_t num_input_ports = m_node_model.num_input_ports();
 	for (uint32_t i = 0; i < num_input_ports; ++i)
 	{
 		NodePortModel* port_model = m_node_model.input_port_model(i);
 		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
-		port_item->setPos(QPointF(10, m_current_item_y));
-		m_current_item_y += 25;
+		port_item->setPos(QPointF(10, current_port_y));
+		current_port_y += 25;
 		m_input_ports.push_back(port_item);
 	}
 }
 
 void NodeGraphicsItem::init_output_ports()
 {
+	uint32_t current_port_y = m_port_start_y + (m_node_model.num_input_ports() * 25);
 	uint32_t num_output_ports = m_node_model.num_output_ports();
 	for (uint32_t i = 0; i < num_output_ports; ++i)
 	{
 		NodePortModel* port_model = m_node_model.output_port_model(i);
 		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
-		port_item->setPos(QPointF(m_bounding_rect.width() - 60, m_current_item_y));
-		m_current_item_y += 25;
+		port_item->setPos(QPointF(m_bounding_rect.width() - 60, current_port_y));
+		current_port_y += 25;
 		m_output_ports.push_back(port_item);
 	}
 }
@@ -103,14 +105,16 @@ void NodeGraphicsItem::recalculate_size()
 	const uint32_t PORT_HEIGHT = 25;
 
 	uint32_t width = WIDTH;
+	uint32_t widgetHeight = 0;
 	if (m_node_model.widget() != nullptr)
 	{
+		widgetHeight = m_node_model.widget()->size().height();
 		width = m_node_model.widget()->size().width();
 		width += 20;
 	}
 
 	uint32_t port_height = PORT_HEIGHT * m_node_model.num_ports();
-	m_bounding_rect = QRectF(0, 0, width, port_height + HEIGHT);
+	m_bounding_rect = QRectF(0, 0, width, port_height + HEIGHT + widgetHeight);
 }
 
 QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
@@ -125,14 +129,24 @@ QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant&
 
 void NodeGraphicsItem::node_model_changed()
 {
-	assert(false);
+	//qDeleteAll(m_input_ports);
+	m_input_ports.clear();
+
+	//qDeleteAll(m_output_ports);
+	m_output_ports.clear();
+
+	init_input_ports();
+	init_output_ports();
+
+	recalculate_size();
 }
 
 void NodeGraphicsItem::output_nodes_changed()
 {
 	// This works because the output port items are last. if input changes or node model needs to change for whatever reason, 
 	// this solution is not adequate, so, basically a TODO if ever.
-	qDeleteAll(m_output_ports);
+	//qDeleteAll(m_output_ports);
+	m_output_ports.clear();
 	init_output_ports();
 }
 

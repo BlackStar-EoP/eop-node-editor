@@ -48,6 +48,7 @@ void NodeModel::add_input_port_model(NodePortModel* port_model)
 void NodeModel::destroy_input_port_models()
 {
 	qDeleteAll(m_input_port_models);
+	m_input_port_models.clear();
 }
 
 uint32_t NodeModel::num_output_ports() const
@@ -71,6 +72,7 @@ void NodeModel::add_output_port_model(NodePortModel* port_model)
 void NodeModel::destroy_output_port_models()
 {
 	qDeleteAll(m_output_port_models);
+	m_output_port_models.clear();
 }
 
 uint32_t NodeModel::num_ports() const

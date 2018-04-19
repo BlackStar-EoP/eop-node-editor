@@ -91,9 +91,10 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 	NodeModel* model = m_node_factory->create_node_model();
 	if (model == nullptr)
 	{
-		assert(false);
+		emit message("No node type selected!");
 		return nullptr;
 	}
+
 	model->set_position(position);
 	model->create_port_models();
 	m_node_graph.give_node(model);
