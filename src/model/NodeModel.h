@@ -4,6 +4,7 @@
 #include <QVector>
 
 #include "NodeConnection.h"
+#include "NodeType.h"
 
 class NodePortModel;
 class QPointF;
@@ -24,6 +25,7 @@ public:
 	virtual void create_input_port_models() = 0;
 	virtual void create_output_port_models() = 0;
 	virtual QString title() const = 0;
+	const NodeType& node_type() const;
 	
 	void create_port_models();
 	void apply_node_model_to_ports_hack();
@@ -52,6 +54,8 @@ public:
 	void set_widget(QWidget* widget);
 	QWidget* widget() const;
 
+	void set_node_type(const NodeType& node_type);
+
 signals:
 	void node_model_destroyed();
 
@@ -62,4 +66,5 @@ private:
 	QVector<NodePortModel*> m_input_port_models;
 	QVector<NodePortModel*> m_output_port_models;
 	QWidget* m_widget = nullptr;
+	NodeType m_node_type;
 };

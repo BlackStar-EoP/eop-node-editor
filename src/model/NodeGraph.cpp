@@ -3,6 +3,7 @@
 #include "model/NodeModel.h"
 #include "model/NodeConnection.h"
 #include "model/NodePortModel.h"
+#include "model/NodeFactory.h"
 
 #include <assert.h>
 
@@ -47,4 +48,21 @@ bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 bool NodeGraph::scan_right(NodeModel* start, NodeModel* target) const
 {
 	return false;
+}
+
+bool NodeGraph::is_add_allowed(NodeModel* model) const
+{
+	if (model->node_type().node_policy() == NodeType::POLICY_MIN_ONE_MAX_ONE)
+	{
+		uint32_t num_policy_one_max_one_nodes = 0;
+		for (NodeModel* m : m_nodes)
+		{
+			if (m->node_type() == model->node_type())
+				++num_policy_one_max_one_nodes;
+		}
+		assert(num_policy_one_max_one_nodes <= 1);
+		return num_policy_one_max_one_nodes < 1;
+	}
+
+	return true;
 }

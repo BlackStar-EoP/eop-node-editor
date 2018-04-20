@@ -88,10 +88,16 @@ const NodeConnection* NodeGraphController::create_connection()
 NodeModel* NodeGraphController::add_node(const QPointF& position)
 {
 	assert(m_node_factory != nullptr);
-	NodeModel* model = m_node_factory->create_node_model();
+	NodeModel* model = m_node_factory->create_node_model_and_set_type();
 	if (model == nullptr)
 	{
 		emit message("No node type selected!");
+		return nullptr;
+	}
+
+	if (!m_node_graph.is_add_allowed(model))
+	{
+		delete model;
 		return nullptr;
 	}
 

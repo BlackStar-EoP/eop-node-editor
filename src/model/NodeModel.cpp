@@ -7,6 +7,11 @@ NodeModel::~NodeModel()
 	emit node_model_destroyed();
 }
 
+const NodeType& NodeModel::node_type() const
+{
+	return m_node_type;
+}
+
 void NodeModel::create_port_models()
 {
 	create_input_port_models();
@@ -137,4 +142,9 @@ void NodeModel::set_widget(QWidget* widget)
 QWidget* NodeModel::widget() const
 {
 	return m_widget;
+}
+
+void NodeModel::set_node_type(const NodeType& node_type)
+{
+	m_node_type = node_type;
 }

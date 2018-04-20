@@ -5,6 +5,7 @@
 
 class NodeConnection;
 class NodeModel;
+class NodePolicy;
 
 class NodeGraph
 {
@@ -18,6 +19,8 @@ public:
 	// Circular dependency checks
 	bool scan_left(NodeModel* start, NodeModel* target) const;
 	bool scan_right(NodeModel* start, NodeModel* target) const;
+
+	bool is_add_allowed(NodeModel* model) const;
 
 private:
 	std::vector<NodeModel*> m_nodes;
