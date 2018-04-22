@@ -31,3 +31,8 @@ void NodeGraphWidget::give_node_factory(NodeFactory* factory)
 	m_controller.set_node_factory(factory);
 	m_node_factory = factory;
 }
+
+const QVector<NodeModel*>& NodeGraphWidget::nodes() const
+{
+	return m_node_graph.nodes();
+}

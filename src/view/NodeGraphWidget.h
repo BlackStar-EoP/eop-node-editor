@@ -4,10 +4,12 @@
 #include <model/NodeGraph.h>
 
 #include <QWidget>
+#include <QVector>
 
 class QGraphicsView;
 class NodeGraphScene;
 class NodeFactory;
+class NodeModel;
 
 class NodeGraphWidget : public QWidget
 {
@@ -17,6 +19,9 @@ public:
 	~NodeGraphWidget();
 
 	void give_node_factory(NodeFactory* factory);
+
+public:
+	const QVector<NodeModel*>& nodes() const;
 
 signals:
 	void message(const QString& message);

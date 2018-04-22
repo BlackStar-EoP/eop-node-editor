@@ -1,7 +1,6 @@
 #pragma once
 
-#include "NodeConnection.h"
-#include <vector>
+#include <QVector>
 
 class NodeConnection;
 class NodeModel;
@@ -22,7 +21,10 @@ public:
 
 	bool is_add_allowed(NodeModel* model) const;
 
+public:
+	const QVector<NodeModel*>& nodes() const;
+
 private:
-	std::vector<NodeModel*> m_nodes;
-	std::vector<NodeConnection*> m_connections;
+	QVector<NodeModel*> m_nodes;
+	QVector<NodeConnection*> m_connections;
 };

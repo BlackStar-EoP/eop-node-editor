@@ -66,3 +66,8 @@ bool NodeGraph::is_add_allowed(NodeModel* model) const
 
 	return true;
 }
+
+const QVector<NodeModel*>& NodeGraph::nodes() const
+{
+	return m_nodes;
+}

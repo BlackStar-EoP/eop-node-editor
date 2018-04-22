@@ -20,9 +20,18 @@ const NodeType& NodeFactory::current_node_type() const
 	return m_current_node_type;
 }
 
-void NodeFactory::set_current_node_type(const NodeType& node_type)
+void NodeFactory::set_current_node_type(const QString& node_type)
 {
-	m_current_node_type = node_type;
+	for (const NodeType& type : m_node_types)
+	{
+		if (type.node_type() == node_type)
+		{
+			m_current_node_type = type;
+			return;
+		}
+	}
+
+	assert(false);
 }
 
 void NodeFactory::register_node_type(const NodeType& node_type)

@@ -18,7 +18,7 @@ public:
 
 	const QSet<NodeType>& node_types() const;
 	const NodeType& current_node_type() const;
-	void set_current_node_type(const NodeType& node_type);
+	void set_current_node_type(const QString& node_type);
 
 protected:
 	void register_node_type(const NodeType& nodeType);
