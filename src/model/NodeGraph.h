@@ -13,7 +13,9 @@ public:
 	~NodeGraph();
 
 	void give_node(NodeModel* node);
+	void remove_node(NodeModel* node);
 	void give_connection(NodeConnection* connection);
+	void remove_connection(NodeConnection* connection);
 
 	// Circular dependency checks
 	bool scan_left(NodeModel* start, NodeModel* target) const;

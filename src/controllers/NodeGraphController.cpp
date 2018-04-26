@@ -45,12 +45,12 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 
 void NodeGraphController::delete_node(NodeModel* node_model)
 {
-	delete node_model;
+	m_node_graph.remove_node(node_model);
 }
 
 void NodeGraphController::delete_connection(NodeConnection* connection)
 {
-	delete connection;
+	m_node_graph.remove_connection(connection);
 }
 
 void NodeGraphController::set_first_connection_port(NodePortModel* port)

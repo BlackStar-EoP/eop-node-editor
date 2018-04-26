@@ -20,10 +20,30 @@ void NodeGraph::give_node(NodeModel* node)
 	m_nodes.push_back(node);
 }
 
+void NodeGraph::remove_node(NodeModel* node)
+{
+	int index = m_nodes.lastIndexOf(node);
+	if (index != -1)
+	{
+		m_nodes.remove(index);
+		delete node;
+	}
+}
+
 void NodeGraph::give_connection(NodeConnection* connection)
 {
 	assert(connection);
 	m_connections.push_back(connection);
+}
+
+void NodeGraph::remove_connection(NodeConnection* connection)
+{
+	int index = m_connections.lastIndexOf(connection);
+	if (index != -1)
+	{
+		m_connections.remove(index);
+		delete connection;
+	}
 }
 
 bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
