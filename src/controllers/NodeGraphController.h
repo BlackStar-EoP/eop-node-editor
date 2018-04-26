@@ -20,10 +20,12 @@ public:
 
 	void set_node_factory(NodeFactory* factory);
 	NodeModel* add_node(const QPointF& position);
+	void delete_node(NodeModel* node_model);
+	void delete_connection(NodeConnection* connection);
 
 	void set_first_connection_port(NodePortModel* port);
 	void set_second_connection_port(NodePortModel* port);
-	const NodeConnection* create_connection();
+	NodeConnection* create_connection();
 
 signals:
 	void message(const QString& message);

@@ -1,9 +1,12 @@
 #pragma once
 
+#include <QObject>
+
 class NodePortModel;
 
-class NodeConnection
+class NodeConnection : public QObject
 {
+	Q_OBJECT
 public:
 	enum EDirection
 	{
@@ -16,6 +19,9 @@ public:
 
 	const NodePortModel& input() const;
 	const NodePortModel& output() const;
+
+signals:
+	void connection_destroyed();
 
 private:
 	NodePortModel& m_input;

@@ -8,6 +8,7 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+#include <QKeyEvent>
 
 NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
@@ -33,7 +34,7 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 		NodeModel* model = m_controller.add_node(event->scenePos());
 		if (model != nullptr)
 		{
-			NodeGraphicsItem* nodeitem = new NodeGraphicsItem(*model);
+			NodeGraphicsItem* nodeitem = new NodeGraphicsItem(model);
 			model->register_node_model_listener(nodeitem);
 			addItem(nodeitem);
 		}
@@ -64,9 +65,11 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 		if (port_gfx_item != nullptr)
 		{
 			m_controller.set_second_connection_port(&port_gfx_item->node_port_model());
-			if (m_controller.create_connection() != nullptr)
+			NodeConnection* connection = m_controller.create_connection();
+			if (connection != nullptr)
 			{
 				m_line_edit_item->set_second_port(port_gfx_item);
+				m_line_edit_item->set_connection(connection);
 				found = true;
 			}
 		}
@@ -78,6 +81,33 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 	m_line_edit_item = nullptr;
 	QGraphicsScene::mouseReleaseEvent(event);
+}
+
+void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
+{
+	if (keyEvent->key() == Qt::Key_Delete)
+	{
+		QList<QGraphicsItem*> items = selectedItems();
+		for (QGraphicsItem* item : items)
+		{
+			if (dynamic_cast<NodeGraphicsItem*>(item) != nullptr)
+			{
+				NodeGraphicsItem* nodeGraphicsItem = dynamic_cast<NodeGraphicsItem*>(item);
+				m_controller.delete_node(nodeGraphicsItem->node_model());
+			}
+			//else if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
+			//{
+			//	NodePortGraphicsItem* nodePortGraphicsItem = dynamic_cast<NodePortGraphicsItem*>(item);
+			//}
+			else if (dynamic_cast<NodeConnectionGraphicsItem*>(item) != nullptr)
+			{
+				NodeConnectionGraphicsItem* nodeConnectionGraphicsItem = dynamic_cast<NodeConnectionGraphicsItem*>(item);
+				m_controller.delete_connection(nodeConnectionGraphicsItem->connection());
+			}
+		}
+		return;
+	}
+	QGraphicsScene::keyPressEvent(keyEvent);
 }
 
 void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)

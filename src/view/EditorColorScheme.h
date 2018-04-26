@@ -20,5 +20,6 @@ public:
 	static const QColor labelErrorColor_;
 
 	static const QColor connection_color;
+	static const QColor selectedColor;
 };
 

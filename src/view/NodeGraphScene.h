@@ -14,6 +14,7 @@ private:
 	void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+	void keyPressEvent(QKeyEvent* keyEvent) override;
 	void drawBackground(QPainter* painter, const QRectF& rect) override;
 
 private:

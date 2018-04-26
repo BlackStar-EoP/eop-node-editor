@@ -14,6 +14,7 @@ NodeConnection::~NodeConnection()
 {
 	m_input.remove_connection();
 	m_output.remove_connection();
+	emit connection_destroyed();
 }
 
 const NodePortModel& NodeConnection::input() const

@@ -19,6 +19,40 @@ void NodeGraphController::set_node_factory(NodeFactory* factory)
 	m_node_factory = factory;
 }
 
+
+
+NodeModel* NodeGraphController::add_node(const QPointF& position)
+{
+	assert(m_node_factory != nullptr);
+	NodeModel* model = m_node_factory->create_node_model_and_set_type();
+	if (model == nullptr)
+	{
+		emit message("No node type selected!");
+		return nullptr;
+	}
+
+	if (!m_node_graph.is_add_allowed(model))
+	{
+		delete model;
+		return nullptr;
+	}
+
+	model->set_position(position);
+	model->create_port_models();
+	m_node_graph.give_node(model);
+	return model;
+}
+
+void NodeGraphController::delete_node(NodeModel* node_model)
+{
+	delete node_model;
+}
+
+void NodeGraphController::delete_connection(NodeConnection* connection)
+{
+	delete connection;
+}
+
 void NodeGraphController::set_first_connection_port(NodePortModel* port)
 {
 	m_first_connection_port = port;
@@ -29,7 +63,7 @@ void NodeGraphController::set_second_connection_port(NodePortModel* port)
 	m_second_connection_port = port;
 }
 
-const NodeConnection* NodeGraphController::create_connection()
+NodeConnection* NodeGraphController::create_connection()
 {
 	if (m_first_connection_port == nullptr || m_second_connection_port == nullptr)
 		return nullptr;
@@ -66,7 +100,6 @@ const NodeConnection* NodeGraphController::create_connection()
 	if (!input_port->may_connect_to(*output_port) || !output_port->may_connect_to(*input_port))
 		return nullptr;
 
-
 	// If output goes to an input of node earlier in graph, we have a circular dependency
 	if (m_node_graph.scan_left(output_port->node_model(), input_port->node_model()))
 		return nullptr;
@@ -83,26 +116,4 @@ const NodeConnection* NodeGraphController::create_connection()
 	NodeConnection* connection = new NodeConnection(*input_port, *output_port);
 	m_node_graph.give_connection(connection);
 	return connection;
-}
-
-NodeModel* NodeGraphController::add_node(const QPointF& position)
-{
-	assert(m_node_factory != nullptr);
-	NodeModel* model = m_node_factory->create_node_model_and_set_type();
-	if (model == nullptr)
-	{
-		emit message("No node type selected!");
-		return nullptr;
-	}
-
-	if (!m_node_graph.is_add_allowed(model))
-	{
-		delete model;
-		return nullptr;
-	}
-
-	model->set_position(position);
-	model->create_port_models();
-	m_node_graph.give_node(model);
-	return model;
 }

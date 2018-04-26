@@ -6,7 +6,8 @@
 NodeModel* NodeFactory::create_node_model_and_set_type()
 {
 	NodeModel* model = create_node_model();
-	model->set_node_type(current_node_type());
+	if (model != nullptr)
+		model->set_node_type(current_node_type());
 	return model;
 }
 

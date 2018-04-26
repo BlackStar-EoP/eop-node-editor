@@ -11,10 +11,10 @@ class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModel
 {
 	Q_OBJECT
 public:
-	NodeGraphicsItem(NodeModel& node_model);
+	NodeGraphicsItem(NodeModel* node_model);
 
 	QRectF boundingRect() const override;
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
 private:
 	void initUI();
@@ -23,17 +23,24 @@ private:
 
 	void recalculate_size();
 	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+	void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+	void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
 	void node_model_changed() override;
 	void output_nodes_changed() override;
 
 private slots:
 	void self_destruct();
 
+public:
+	NodeModel* node_model();
+
 private:
 	QRectF m_bounding_rect = QRect(0, 0, 100, 50);
-	NodeModel& m_node_model;
+	NodeModel* m_node_model = nullptr;
 	QVector<NodePortGraphicsItem*> m_input_ports;
 	QVector<NodePortGraphicsItem*> m_output_ports;
 
 	uint32_t m_port_start_y = 0;
+	bool m_hover = false;
 };

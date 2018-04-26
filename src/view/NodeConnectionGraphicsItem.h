@@ -4,9 +4,12 @@
 
 #include "NodePortGraphicsItem.h"
 
+class NodeConnection;
 
-class NodeConnectionGraphicsItem : public QGraphicsLineItem, public PortPositionListener
+class NodeConnectionGraphicsItem : public QObject, public QGraphicsLineItem, public PortPositionListener
 {
+Q_OBJECT
+
 	const QPointF OFFSET = QPointF(10, 10);
 
 public:
@@ -20,7 +23,19 @@ public:
 
 	void portPositionChanged() override;
 
+	void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+	void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
+private slots:
+	void self_destruct();
+
+public:
+	void set_connection(NodeConnection* connection);
+	NodeConnection* connection();
+
 private:
+	NodeConnection* m_connection = nullptr;
 	NodePortGraphicsItem* m_first_port = nullptr;
 	NodePortGraphicsItem* m_second_port = nullptr;
+	bool m_hover = false;
 };
