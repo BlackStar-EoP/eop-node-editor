@@ -22,7 +22,7 @@ void NodeGraph::give_node(NodeModel* node)
 
 void NodeGraph::remove_node(NodeModel* node)
 {
-	int index = m_nodes.lastIndexOf(node);
+	int index = m_nodes.indexOf(node);
 	if (index != -1)
 	{
 		m_nodes.remove(index);
@@ -38,7 +38,7 @@ void NodeGraph::give_connection(NodeConnection* connection)
 
 void NodeGraph::remove_connection(NodeConnection* connection)
 {
-	int index = m_connections.lastIndexOf(connection);
+	int index = m_connections.indexOf(connection);
 	if (index != -1)
 	{
 		m_connections.remove(index);
@@ -54,12 +54,16 @@ bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 	for (uint32_t i = 0; i < start->num_input_ports(); ++i)
 	{
 		const NodePortModel* port_model = start->input_port_model(i);
-		if (port_model->connection() == nullptr)
+		uint32_t num_connections = port_model->num_connections();
+		if (num_connections == 0)
 			continue;
 		
-		NodeModel* left_node = port_model->connection()->output().node_model();
-		if (scan_left(left_node, target))
-			return true;
+		for (uint32_t connection = 0; connection < num_connections; ++connection)
+		{
+			NodeModel* left_node = port_model->connection(connection)->output().node_model();
+			if (scan_left(left_node, target))
+				return true;
+		}
 	}
 
 	return false;

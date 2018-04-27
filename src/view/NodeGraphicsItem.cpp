@@ -170,6 +170,7 @@ void NodeGraphicsItem::output_nodes_changed()
 	//qDeleteAll(m_output_ports);
 	m_output_ports.clear();
 	init_output_ports();
+	recalculate_size();
 	update();
 }
 

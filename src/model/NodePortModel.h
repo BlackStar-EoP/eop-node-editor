@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <QObject>
 #include <QString>
+#include <QVector>
 
 class NodeConnection;
 class NodeModel;
@@ -33,11 +34,12 @@ public:
 
 	NodeModel* node_model() const;
 
-	NodeConnection* connection() const;
-	void set_connection(NodeConnection* connection);
-	void remove_connection();
+	NodeConnection* connection(uint32_t index) const;
+	uint32_t num_connections() const;
+	void add_connection(NodeConnection* connection);
+	void remove_connection(NodeConnection* connection);
 
 private:
 	NodeModel* m_node_model = nullptr;
-	NodeConnection* m_connection = nullptr;
+	QVector<NodeConnection*> m_connections;
 };

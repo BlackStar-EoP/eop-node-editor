@@ -6,14 +6,14 @@ NodeConnection::NodeConnection(NodePortModel& input, NodePortModel& output)
 : m_input(input)
 , m_output(output)
 {
-	m_input.set_connection(this);
-	m_output.set_connection(this);
+	m_input.add_connection(this);
+	m_output.add_connection(this);
 }
 
 NodeConnection::~NodeConnection()
 {
-	m_input.remove_connection();
-	m_output.remove_connection();
+	m_input.remove_connection(this);
+	m_output.remove_connection(this);
 	emit connection_destroyed();
 }
 

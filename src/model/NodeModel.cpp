@@ -120,13 +120,13 @@ bool NodeModel::is_orphan() const
 {
 	for (NodePortModel* input : m_input_port_models)
 	{
-		if (input->connection() != nullptr)
+		if (input->num_connections() > 0)
 			return false;
 	}
 
 	for (NodePortModel* output : m_output_port_models)
 	{
-		if (output->connection() != nullptr)
+		if (output->num_connections() > 0)
 			return false;
 	}
 

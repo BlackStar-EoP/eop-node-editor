@@ -26,7 +26,7 @@ QRectF NodePortGraphicsItem::boundingRect() const
 void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	painter->setPen(EditorColorScheme::gridMajorColor_);
-	if (m_node_port_model.connection() != nullptr)
+	if (m_node_port_model.num_connections() > 0)
 	{
 		painter->setBrush(EditorColorScheme::connection_color);
 		painter->drawEllipse(0, 0, 20, 20);

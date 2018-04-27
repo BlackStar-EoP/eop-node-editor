@@ -68,11 +68,17 @@ NodeConnection* NodeGraphController::create_connection()
 	if (m_first_connection_port == nullptr || m_second_connection_port == nullptr)
 		return nullptr;
 
-	// TODO, input ports can only have 1 connection, but output ports can have multiple
-	// TODO, make connections vector, put method has_connections() return size > 0 in
-	// TODO check for connections here, put method multiple_connections_allowed() in
-	if (m_first_connection_port->connection() != nullptr || m_second_connection_port->connection() != nullptr)
+	if ((m_first_connection_port->num_connections() > 0) && (!m_first_connection_port->supports_multiple_connections()))
+	{
+		assert(m_first_connection_port->num_connections() == 1);
 		return nullptr;
+	}
+
+	if ((m_second_connection_port->num_connections() > 0) && (!m_second_connection_port->supports_multiple_connections()))
+	{
+		assert(m_second_connection_port->num_connections() == 1);
+		return nullptr;
+	}
 
 	if (m_first_connection_port == m_second_connection_port)
 		return nullptr;
