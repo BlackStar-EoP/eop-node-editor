@@ -14,16 +14,17 @@ public:
 		OUTGOING
 	};
 
-	NodeConnection(NodePortModel& input, NodePortModel& output);
+	NodeConnection(NodePortModel* input, NodePortModel* output);
 	~NodeConnection();
 
-	const NodePortModel& input() const;
-	const NodePortModel& output() const;
+	bool composed_by(NodePortModel* first_port, NodePortModel* second_port) const;
+	NodePortModel* input() const;
+	NodePortModel* output() const;
 
 signals:
 	void connection_destroyed();
 
 private:
-	NodePortModel& m_input;
-	NodePortModel& m_output;
+	NodePortModel* m_input;
+	NodePortModel* m_output;
 };

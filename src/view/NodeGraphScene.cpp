@@ -18,18 +18,27 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 
 void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-	QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
-	if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
-	{
-		NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
-		m_controller.set_first_connection_port(&port->node_port_model());
-		port->select();
+	QList<QGraphicsItem*> item_list = items(event->scenePos());
 
-		m_line_edit_item = new NodeConnectionGraphicsItem();
-		m_line_edit_item->set_first_port(port);
-		addItem(m_line_edit_item);
+	bool clickHandled = false;
+	if (item_list.size() > 0)
+	{
+		for (QGraphicsItem* item : item_list)
+		{
+			if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
+			{
+				NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
+				m_controller.set_first_connection_port(&port->node_port_model());
+				port->select();
+
+				m_line_edit_item = new NodeConnectionGraphicsItem();
+				m_line_edit_item->set_first_port(port);
+				addItem(m_line_edit_item);
+				return;
+			}
+		}
 	}
-	else if (item == nullptr)
+	else
 	{
 		NodeModel* model = m_controller.add_node(event->scenePos());
 		if (model != nullptr)
@@ -37,12 +46,11 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 			NodeGraphicsItem* nodeitem = new NodeGraphicsItem(model);
 			model->register_node_model_listener(nodeitem);
 			addItem(nodeitem);
+			return;
 		}
 	}
-	else
-	{
-		QGraphicsScene::mousePressEvent(event);
-	}
+
+	QGraphicsScene::mousePressEvent(event);
 }
 
 void NodeGraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

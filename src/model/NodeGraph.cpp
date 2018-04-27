@@ -60,7 +60,7 @@ bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 		
 		for (uint32_t connection = 0; connection < num_connections; ++connection)
 		{
-			NodeModel* left_node = port_model->connection(connection)->output().node_model();
+			NodeModel* left_node = port_model->connection(connection)->output()->node_model();
 			if (scan_left(left_node, target))
 				return true;
 		}

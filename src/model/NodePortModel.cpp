@@ -1,5 +1,7 @@
 #include "NodePortModel.h"
 
+#include "NodeConnection.h"
+
 #include <assert.h>
 
 NodePortModel::~NodePortModel()
@@ -39,4 +41,15 @@ void NodePortModel::remove_connection(NodeConnection* connection)
 uint32_t NodePortModel::num_connections() const
 {
 	return static_cast<uint32_t>(m_connections.size());
+}
+
+bool NodePortModel::has_connection(NodePortModel* other_port_model)
+{
+	for (NodeConnection* connection : m_connections)
+	{
+		if (connection->composed_by(this, other_port_model))
+			return true;
+	}
+
+	return false;
 }

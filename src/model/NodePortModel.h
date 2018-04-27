@@ -38,6 +38,7 @@ public:
 	uint32_t num_connections() const;
 	void add_connection(NodeConnection* connection);
 	void remove_connection(NodeConnection* connection);
+	bool has_connection(NodePortModel* other_port_model);
 
 private:
 	NodeModel* m_node_model = nullptr;
