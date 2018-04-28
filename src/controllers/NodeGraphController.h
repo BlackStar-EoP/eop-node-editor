@@ -27,8 +27,11 @@ public:
 	void set_second_connection_port(NodePortModel* port);
 	NodeConnection* create_connection();
 
+	void notify_node_graph_changed();
+
 signals:
 	void message(const QString& message);
+	void node_graph_changed();
 
 private:
 	NodeGraph& m_node_graph;

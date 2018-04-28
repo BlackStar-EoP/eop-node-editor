@@ -18,6 +18,7 @@ NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 
 	setLayout(layout);
 
+	connect(&m_controller, SIGNAL(node_graph_changed()), this, SIGNAL(node_graph_changed()));
 	connect(&m_controller, SIGNAL(message(const QString&)), this, SIGNAL(message(const QString&)));
 }
 

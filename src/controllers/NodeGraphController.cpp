@@ -19,8 +19,6 @@ void NodeGraphController::set_node_factory(NodeFactory* factory)
 	m_node_factory = factory;
 }
 
-
-
 NodeModel* NodeGraphController::add_node(const QPointF& position)
 {
 	assert(m_node_factory != nullptr);
@@ -40,6 +38,7 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 	model->set_position(position);
 	model->create_port_models();
 	m_node_graph.give_node(model);
+	notify_node_graph_changed();
 	return model;
 }
 
@@ -145,5 +144,11 @@ NodeConnection* NodeGraphController::create_connection()
 	NodeConnection* connection = new NodeConnection(input_port, output_port);
 	m_node_graph.give_connection(connection);
 	emit message("Connection created!");
+	notify_node_graph_changed();
 	return connection;
+}
+
+void NodeGraphController::notify_node_graph_changed()
+{
+	emit node_graph_changed();
 }

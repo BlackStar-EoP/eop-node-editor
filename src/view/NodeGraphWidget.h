@@ -24,6 +24,7 @@ public:
 	const QVector<NodeModel*>& nodes() const;
 
 signals:
+	void node_graph_changed();
 	void message(const QString& message);
 
 private:

@@ -164,6 +164,7 @@ void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
 		}
 
 		update();
+		m_controller.notify_node_graph_changed();
 		return;
 	}
 	QGraphicsScene::keyPressEvent(keyEvent);
