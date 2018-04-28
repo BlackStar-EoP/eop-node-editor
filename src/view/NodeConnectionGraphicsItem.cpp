@@ -109,6 +109,7 @@ void NodeConnectionGraphicsItem::paint(QPainter* painter, const QStyleOptionGrap
 	painter->drawPath(path);
 
 	// TODO debug troep goed krijgen
+	//painter->drawPath(shape());
 	//painter->drawRect(boundingRect());
 }
 

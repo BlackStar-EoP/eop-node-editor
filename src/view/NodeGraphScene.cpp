@@ -6,6 +6,9 @@
 #include "EditorColorScheme.h"
 #include "controllers/NodeGraphController.h"
 
+//#include "model/NodeModel.h" TODO al geinclude in nodegraphicsitem vanwege interface
+#include "model/NodePortModel.h"
+
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QKeyEvent>
@@ -20,7 +23,6 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	QList<QGraphicsItem*> item_list = items(event->scenePos());
 
-	bool clickHandled = false;
 	if (item_list.size() > 0)
 	{
 		for (QGraphicsItem* item : item_list)
@@ -88,8 +90,10 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 	}
 
 	if (!found)
+	{
 		removeItem(m_line_edit_item);
-
+		update();
+	}
 
 	m_line_edit_item = nullptr;
 	QGraphicsScene::mouseReleaseEvent(event);
@@ -100,25 +104,66 @@ void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
 	if (keyEvent->key() == Qt::Key_Delete)
 	{
 		QList<QGraphicsItem*> items = selectedItems();
+		QList<NodeGraphicsItem*> nodeItemsToBeDeleted;
+		QList<NodeConnectionGraphicsItem*> connectionItemsToBeDeleted;
+
 		for (QGraphicsItem* item : items)
 		{
 			if (dynamic_cast<NodeGraphicsItem*>(item) != nullptr)
 			{
 				NodeGraphicsItem* nodeGraphicsItem = dynamic_cast<NodeGraphicsItem*>(item);
-				m_controller.delete_node(nodeGraphicsItem->node_model());
-				update();
+				nodeItemsToBeDeleted.push_back(nodeGraphicsItem);
 			}
-			//else if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
-			//{
-			//	NodePortGraphicsItem* nodePortGraphicsItem = dynamic_cast<NodePortGraphicsItem*>(item);
-			//}
 			else if (dynamic_cast<NodeConnectionGraphicsItem*>(item) != nullptr)
 			{
 				NodeConnectionGraphicsItem* nodeConnectionGraphicsItem = dynamic_cast<NodeConnectionGraphicsItem*>(item);
-				m_controller.delete_connection(nodeConnectionGraphicsItem->connection());
-				update();
+				connectionItemsToBeDeleted.push_back(nodeConnectionGraphicsItem);
 			}
 		}
+
+		for (NodeGraphicsItem* nodeGraphicsItem : nodeItemsToBeDeleted)
+		{
+			NodeModel* model = nodeGraphicsItem->node_model();
+			QVector<NodeConnection*> connections;
+			// Add all connections to one big list
+			for (uint32_t port_nr = 0; port_nr < model->num_input_ports(); ++port_nr)
+			{
+				NodePortModel* port_model = model->input_port_model(port_nr);
+				for (uint32_t con = 0; con < port_model->num_connections(); ++con)
+				{
+					connections.push_back(port_model->connection(con));
+				}
+			}
+
+			for (uint32_t port_nr = 0; port_nr < model->num_output_ports(); ++port_nr)
+			{
+				NodePortModel* port_model = model->output_port_model(port_nr);
+				for (uint32_t con = 0; con < port_model->num_connections(); ++con)
+				{
+					connections.push_back(port_model->connection(con));
+				}
+			}
+
+			// Traverse all connection graphics items that will be deleted, in reversed order since we will remove them if they match
+			// Otherwise they will be deleted when the node is deleted and then the loop that deletes the connections crashes
+			for (int32_t con = connectionItemsToBeDeleted.size() - 1; con >= 0; --con)
+			{
+				NodeConnectionGraphicsItem* connectionGraphicsItem = connectionItemsToBeDeleted[con];
+				if (connections.contains(connectionGraphicsItem->connection()))
+				{
+					connectionItemsToBeDeleted.removeAt(con);
+				}
+			}
+
+			m_controller.delete_node(nodeGraphicsItem->node_model());
+		}
+
+		for (NodeConnectionGraphicsItem* nodeConnectionGraphicsItem : connectionItemsToBeDeleted)
+		{
+			m_controller.delete_connection(nodeConnectionGraphicsItem->connection());
+		}
+
+		update();
 		return;
 	}
 	QGraphicsScene::keyPressEvent(keyEvent);
