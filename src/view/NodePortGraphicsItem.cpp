@@ -13,7 +13,7 @@ NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel&
 , m_node_port_model(node_port_model)
 , m_port_index(port_index)
 {
-	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsScenePositionChanges);
+	setFlags(ItemIsSelectable | ItemSendsScenePositionChanges);
 
 	connect(&node_port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
 }

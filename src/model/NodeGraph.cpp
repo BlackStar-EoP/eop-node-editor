@@ -88,6 +88,7 @@ bool NodeGraph::is_add_allowed(NodeModel* model) const
 		return num_policy_one_max_one_nodes < 1;
 	}
 
+	// TODO add the rest
 	return true;
 }
 
