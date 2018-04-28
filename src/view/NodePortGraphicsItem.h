@@ -20,14 +20,14 @@ class NodePortGraphicsItem :public QObject, public QGraphicsItem
 {
 	Q_OBJECT
 public:
-	NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel& node_port_model, uint32_t port_index);
+	NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel* port_model, uint32_t port_index);
 
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
 	void select();
-	NodePortModel& node_port_model() const;
+	NodePortModel* port_model() const;
 
 	void add_port_position_listener(PortPositionListener* listener);
 	void remove_port_position_listener(PortPositionListener* listener);
@@ -40,9 +40,10 @@ private slots:
 
 private:
 	QRectF m_bounding_rect = QRect(0, 0, 20, 20);
-	NodePortModel& m_node_port_model;
+	NodePortModel* m_port_model;
 	uint32_t m_port_index = 0;
 	uint32_t m_selected = false;
 
+	// TODO ? NodeGraphicsItem* m_parent = nullptr;
 	std::set<PortPositionListener*> m_port_position_listeners;
 };

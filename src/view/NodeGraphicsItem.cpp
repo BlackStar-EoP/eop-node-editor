@@ -19,11 +19,8 @@ NodeGraphicsItem::NodeGraphicsItem(NodeModel* node_model)
 : m_node_model(node_model)
 {
 	setPos(node_model->position());
-	setFlags(ItemIsMovable | ItemIsSelectable);
-
+	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
 	initUI();
-
-	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 	setAcceptHoverEvents(true);
 	connect(node_model, SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
 }
@@ -84,7 +81,7 @@ void NodeGraphicsItem::init_input_ports()
 	for (uint32_t i = 0; i < num_input_ports; ++i)
 	{
 		NodePortModel* port_model = m_node_model->input_port_model(i);
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port_model, i);
 		port_item->setPos(QPointF(10, current_port_y));
 		current_port_y += 25;
 		m_input_ports.push_back(port_item);
@@ -98,8 +95,8 @@ void NodeGraphicsItem::init_output_ports()
 	for (uint32_t i = 0; i < num_output_ports; ++i)
 	{
 		NodePortModel* port_model = m_node_model->output_port_model(i);
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, *port_model, i);
-		port_item->setPos(QPointF(m_bounding_rect.width() - 60, current_port_y));
+		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port_model, i);
+		port_item->setPos(QPointF(m_bounding_rect.width() - 30, current_port_y)); // TODO why is this 30?
 		current_port_y += 25;
 		m_output_ports.push_back(port_item);
 	}

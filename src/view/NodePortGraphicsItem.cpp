@@ -8,14 +8,15 @@
 
 #include <assert.h>
 
-NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel& node_port_model, uint32_t port_index)
+NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel* port_model, uint32_t port_index)
 : QGraphicsItem(parent)
-, m_node_port_model(node_port_model)
+, m_port_model(port_model)
 , m_port_index(port_index)
 {
+//	m_parent = dynamic_cast<NodeGraphicsItem*>(parent);
 	setFlags(ItemIsSelectable | ItemSendsScenePositionChanges);
 
-	connect(&node_port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
+	connect(port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
 }
 
 QRectF NodePortGraphicsItem::boundingRect() const
@@ -26,7 +27,7 @@ QRectF NodePortGraphicsItem::boundingRect() const
 void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	painter->setPen(EditorColorScheme::gridMajorColor_);
-	if (m_node_port_model.num_connections() > 0)
+	if (m_port_model->num_connections() > 0)
 	{
 		painter->setBrush(EditorColorScheme::connection_color);
 		painter->drawEllipse(0, 0, 20, 20);
@@ -39,7 +40,7 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	painter->setPen(EditorColorScheme::labelColor_);
 //	painter->drawRect(m_bounding_rect);
 	QPointF text_pos = QPointF(0, 15);
-	switch (m_node_port_model.port_type())
+	switch (m_port_model->port_type())
 	{
 	case NodePortModel::INPUT:
 		text_pos += QPointF(20, 0);
@@ -53,7 +54,7 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 		assert(false);
 		break;
 	}
-	painter->drawText(text_pos, m_node_port_model.port_label());
+	painter->drawText(text_pos, m_port_model->port_label());
 }
 
 QVariant NodePortGraphicsItem::itemChange(GraphicsItemChange change, const QVariant& value)
@@ -73,9 +74,9 @@ void NodePortGraphicsItem::select()
 	update();
 }
 
-NodePortModel& NodePortGraphicsItem::node_port_model() const
+NodePortModel* NodePortGraphicsItem::port_model() const
 {
-	return m_node_port_model;
+	return m_port_model;
 }
 
 void NodePortGraphicsItem::add_port_position_listener(PortPositionListener* listener)

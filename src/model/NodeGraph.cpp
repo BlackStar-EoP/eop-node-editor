@@ -23,6 +23,24 @@ void NodeGraph::give_node(NodeModel* node)
 void NodeGraph::remove_node(NodeModel* node)
 {
 	int index = m_nodes.indexOf(node);
+	for (uint32_t i = 0; i < node->num_input_ports(); ++i)
+	{
+		NodePortModel* port_model = node->input_port_model(i);
+		for (uint32_t connection = 0; connection < port_model->num_connections(); ++connection)
+		{
+			remove_connection(port_model->connection(connection));
+		}
+	}
+
+	for (uint32_t i = 0; i < node->num_output_ports(); ++i)
+	{
+		NodePortModel* port_model = node->output_port_model(i);
+		for (uint32_t connection = 0; connection < port_model->num_connections(); ++connection)
+		{
+			remove_connection(port_model->connection(connection));
+		}
+	}
+
 	if (index != -1)
 	{
 		m_nodes.remove(index);
