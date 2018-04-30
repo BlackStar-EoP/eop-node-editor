@@ -42,7 +42,8 @@ public:
 
 	uint32_t num_ports() const;
 
-	virtual void on_connection(NodeConnection::EDirection direction, NodeModel* target_model, NodePortModel* target_port_model) = 0;
+	virtual void connection_added(NodePortModel* port_model, NodeConnection* connection) = 0;
+	virtual void connection_removed(NodePortModel* port_model, NodeConnection* connection) = 0;
 
 	void node_model_changed();
 	void output_nodes_changed();

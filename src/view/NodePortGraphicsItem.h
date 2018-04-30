@@ -21,6 +21,7 @@ class NodePortGraphicsItem :public QObject, public QGraphicsItem
 	Q_OBJECT
 public:
 	NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel* port_model, uint32_t port_index);
+	~NodePortGraphicsItem();
 
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;

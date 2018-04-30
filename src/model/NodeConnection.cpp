@@ -2,6 +2,8 @@
 
 #include "model/NodePortModel.h"
 
+#include <assert.h>
+
 NodeConnection::NodeConnection(NodePortModel* input, NodePortModel* output)
 : m_input(input)
 , m_output(output)
@@ -12,8 +14,12 @@ NodeConnection::NodeConnection(NodePortModel* input, NodePortModel* output)
 
 NodeConnection::~NodeConnection()
 {
-	m_input->remove_connection(this);
-	m_output->remove_connection(this);
+	if (m_output != nullptr)
+		m_output->remove_connection(this);
+
+	if (m_input != nullptr)
+		m_input->remove_connection(this);
+
 	emit connection_destroyed();
 }
 
@@ -32,4 +38,24 @@ NodePortModel* NodeConnection::input() const
 NodePortModel* NodeConnection::output() const
 {
 	return m_output;
+}
+
+NodePortModel* NodeConnection::other(NodePortModel* port) const
+{
+	if (port == m_input)
+		return m_output;
+	else if (port == m_output)
+		return m_input;
+
+	assert(false);
+	return nullptr;
+}
+
+void NodeConnection::remove_port(NodePortModel* port_model)
+{
+	if (m_input == port_model)
+		m_input = nullptr;
+	else if (m_output == port_model)
+		m_output = nullptr;
+	// TODO not too happy about this, but hopefully prevents crash
 }

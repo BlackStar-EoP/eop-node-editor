@@ -52,7 +52,10 @@ void NodeModel::add_input_port_model(NodePortModel* port_model)
 
 void NodeModel::destroy_input_port_models()
 {
-	qDeleteAll(m_input_port_models);
+	for (NodePortModel* model : m_input_port_models)
+	{
+		delete model;
+	}
 	m_input_port_models.clear();
 }
 
@@ -76,7 +79,11 @@ void NodeModel::add_output_port_model(NodePortModel* port_model)
 
 void NodeModel::destroy_output_port_models()
 {
-	qDeleteAll(m_output_port_models);
+	for (NodePortModel* model : m_output_port_models)
+	{
+		delete model;
+	}
+
 	m_output_port_models.clear();
 }
 

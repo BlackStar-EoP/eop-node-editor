@@ -1,11 +1,17 @@
 #include "NodePortModel.h"
 
+#include "NodeModel.h"
 #include "NodeConnection.h"
 
 #include <assert.h>
 
 NodePortModel::~NodePortModel()
 {
+	for (NodeConnection* connection : m_connections)
+	{
+		connection->remove_port(this);
+		delete connection;
+	}
 	emit node_port_model_destroyed();
 }
 
@@ -29,6 +35,8 @@ void NodePortModel::add_connection(NodeConnection* connection)
 {
 	assert(m_connections.indexOf(connection) == -1);
 	m_connections.push_back(connection);
+
+	m_node_model->connection_added(this, connection);
 }
 
 void NodePortModel::remove_connection(NodeConnection* connection)
@@ -36,6 +44,7 @@ void NodePortModel::remove_connection(NodeConnection* connection)
 	int32_t index = m_connections.indexOf(connection);
 	assert(index != -1);
 	m_connections.remove(index);
+	m_node_model->connection_removed(this, connection);
 }
 
 uint32_t NodePortModel::num_connections() const

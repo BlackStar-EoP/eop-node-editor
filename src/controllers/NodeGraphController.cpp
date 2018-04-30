@@ -49,7 +49,7 @@ void NodeGraphController::delete_node(NodeModel* node_model)
 
 void NodeGraphController::delete_connection(NodeConnection* connection)
 {
-	m_node_graph.remove_connection(connection);
+	delete connection;
 }
 
 void NodeGraphController::set_first_connection_port(NodePortModel* port)
@@ -138,11 +138,7 @@ NodeConnection* NodeGraphController::create_connection()
 	m_first_connection_port = nullptr;
 	m_second_connection_port = nullptr;
 
-	input_port->node_model()->on_connection(NodeConnection::INCOMING, output_port->node_model(), nullptr);
-	output_port->node_model()->on_connection(NodeConnection::OUTGOING, input_port->node_model(), nullptr);
-
 	NodeConnection* connection = new NodeConnection(input_port, output_port);
-	m_node_graph.give_connection(connection);
 	emit message("Connection created!");
 	notify_node_graph_changed();
 	return connection;

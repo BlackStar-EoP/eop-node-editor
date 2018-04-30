@@ -19,6 +19,11 @@ NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel*
 	connect(port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
 }
 
+NodePortGraphicsItem::~NodePortGraphicsItem()
+{
+	printf("");
+}
+
 QRectF NodePortGraphicsItem::boundingRect() const
 {
 	return m_bounding_rect;
