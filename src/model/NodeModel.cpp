@@ -4,6 +4,16 @@
 
 NodeModel::~NodeModel()
 {
+	for (NodePortModel* input_port : m_input_port_models)
+	{
+		delete input_port;
+	}
+
+	for (NodePortModel* output_port : m_output_port_models)
+	{
+		delete output_port;
+	}
+
 	emit node_model_destroyed();
 }
 
