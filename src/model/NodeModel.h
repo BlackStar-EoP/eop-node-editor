@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QJSonObject>
 
 #include "NodeConnection.h"
 #include "NodeType.h"
@@ -25,6 +26,9 @@ public:
 	virtual void create_input_port_models() = 0;
 	virtual void create_output_port_models() = 0;
 	virtual QString title() const = 0;
+	virtual QJsonObject user_data() const = 0;
+	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
+
 	const NodeType& node_type() const;
 	
 	void create_port_models();
