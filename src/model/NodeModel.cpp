@@ -17,6 +17,16 @@ NodeModel::~NodeModel()
 	emit node_model_destroyed();
 }
 
+QJsonObject NodeModel::to_json() const
+{
+	QJsonObject node_json;
+	node_json["pos_x"] = m_position.x();
+	node_json["pos_y"] = m_position.y();
+	node_json["node_type"] = m_node_type.node_type();
+	node_json["user_data"] = user_data();
+	return node_json;
+}
+
 const NodeType& NodeModel::node_type() const
 {
 	return m_node_type;
@@ -69,6 +79,11 @@ void NodeModel::destroy_input_port_models()
 	m_input_port_models.clear();
 }
 
+int32_t NodeModel::input_port_nr(NodePortModel* port_model) const
+{
+	return m_input_port_models.indexOf(port_model);
+}
+
 uint32_t NodeModel::num_output_ports() const
 {
 	return m_output_port_models.size();
@@ -95,6 +110,11 @@ void NodeModel::destroy_output_port_models()
 	}
 
 	m_output_port_models.clear();
+}
+
+int32_t NodeModel::output_port_nr(NodePortModel* port_model) const
+{
+	return m_output_port_models.indexOf(port_model);
 }
 
 uint32_t NodeModel::num_ports() const

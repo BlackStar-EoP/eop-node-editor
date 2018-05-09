@@ -29,6 +29,8 @@ public:
 	virtual QJsonObject user_data() const = 0;
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
 
+	QJsonObject to_json() const;
+
 	const NodeType& node_type() const;
 	
 	void create_port_models();
@@ -38,11 +40,13 @@ public:
 	NodePortModel* input_port_model(uint32_t port_nr);
 	void add_input_port_model(NodePortModel* port_model);
 	void destroy_input_port_models();
+	int32_t input_port_nr(NodePortModel* port_model) const;
 
 	uint32_t num_output_ports() const;
 	NodePortModel* output_port_model(uint32_t port_nr);
 	void add_output_port_model(NodePortModel* port_model);
 	void destroy_output_port_models();
+	int32_t output_port_nr(NodePortModel* port_model) const;
 
 	uint32_t num_ports() const;
 

@@ -38,18 +38,26 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 	model->set_position(position);
 	model->create_port_models();
 	m_node_graph.give_node(model);
-	notify_node_graph_changed();
+	emit node_added(model);
 	return model;
 }
 
 void NodeGraphController::delete_node(NodeModel* node_model)
 {
 	m_node_graph.remove_node(node_model);
+	notify_node_graph_changed();
 }
 
 void NodeGraphController::delete_connection(NodeConnection* connection)
 {
 	delete connection;
+	notify_node_graph_changed();
+}
+
+void NodeGraphController::clear_graph()
+{
+	m_first_connection_port = nullptr;
+	m_second_connection_port = nullptr;
 }
 
 void NodeGraphController::set_first_connection_port(NodePortModel* port)
@@ -140,11 +148,23 @@ NodeConnection* NodeGraphController::create_connection()
 
 	NodeConnection* connection = new NodeConnection(input_port, output_port);
 	emit message("Connection created!");
+	emit connection_created(connection);
 	notify_node_graph_changed();
 	return connection;
 }
 
+void NodeGraphController::set_persisted()
+{
+	m_persisted = true;
+}
+
+bool NodeGraphController::is_persisted() const
+{
+	return m_persisted;
+}
+
 void NodeGraphController::notify_node_graph_changed()
 {
+	m_persisted = false;
 	emit node_graph_changed();
 }

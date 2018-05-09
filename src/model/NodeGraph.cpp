@@ -30,6 +30,16 @@ void NodeGraph::remove_node(NodeModel* node)
 	}
 }
 
+void NodeGraph::clear()
+{
+	for (NodeModel* model : m_nodes)
+	{
+		delete model;
+	}
+
+	m_nodes.clear();
+}
+
 bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 {
 	if (start == target)

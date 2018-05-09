@@ -13,10 +13,14 @@
 #include <QPainter>
 #include <QKeyEvent>
 
+#include <assert.h>
+
 NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
 , m_controller(controller)
 {
+	connect(&controller, SIGNAL(node_added(NodeModel*)), this, SLOT(node_added(NodeModel*)));
+	connect(&controller, SIGNAL(connection_created(NodeConnection*)), this, SLOT(connection_created(NodeConnection*)));
 }
 
 void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -42,14 +46,7 @@ void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	}
 	else
 	{
-		NodeModel* model = m_controller.add_node(event->scenePos());
-		if (model != nullptr)
-		{
-			NodeGraphicsItem* nodeitem = new NodeGraphicsItem(model);
-			model->register_node_model_listener(nodeitem);
-			addItem(nodeitem);
-			return;
-		}
+		m_controller.add_node(event->scenePos());
 	}
 
 	QGraphicsScene::mousePressEvent(event);
@@ -78,8 +75,7 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 			NodeConnection* connection = m_controller.create_connection();
 			if (connection != nullptr)
 			{
-				m_line_edit_item->set_second_port(port_gfx_item);
-				m_line_edit_item->set_connection(connection);
+				delete m_line_edit_item;
 				found = true;
 			}
 			else
@@ -91,7 +87,7 @@ void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 	if (!found)
 	{
-		removeItem(m_line_edit_item);
+		delete m_line_edit_item;
 		update();
 	}
 
@@ -156,6 +152,7 @@ void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
 			}
 
 			m_controller.delete_node(nodeGraphicsItem->node_model());
+			m_node_gfx_items.remove(m_node_gfx_items.indexOf(nodeGraphicsItem));
 		}
 
 		for (NodeConnectionGraphicsItem* nodeConnectionGraphicsItem : connectionItemsToBeDeleted)
@@ -189,4 +186,37 @@ void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)
 //    qDebug() << lines.size();
 
     painter->drawLines(lines.data(), lines.size());
+}
+
+NodeGraphicsItem* NodeGraphScene::find_node_graphics_item(NodeModel* node_model)
+{
+	for (NodeGraphicsItem* node_gfx_item : m_node_gfx_items)
+	{
+		if (node_gfx_item->node_model() == node_model)
+			return node_gfx_item;
+	}
+
+	assert(false);
+	return nullptr;
+}
+
+void NodeGraphScene::node_added(NodeModel* node_model)
+{
+	assert(node_model != nullptr);
+	NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
+	node_model->register_node_model_listener(node_gfx_item);
+	m_node_gfx_items.push_back(node_gfx_item);
+	addItem(node_gfx_item);
+}
+
+void NodeGraphScene::connection_created(NodeConnection* connection)
+{
+	NodeGraphicsItem* input_node = find_node_graphics_item(connection->input()->node_model());
+	NodeGraphicsItem* output_node = find_node_graphics_item(connection->output()->node_model());
+	NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
+
+	connection_gfx_item->set_first_port(input_node->find_input_port(connection->input()));
+	connection_gfx_item->set_second_port(output_node->find_output_port(connection->output()));
+	connection_gfx_item->set_connection(connection);
+	addItem(connection_gfx_item);
 }

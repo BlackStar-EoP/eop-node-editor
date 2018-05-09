@@ -14,6 +14,7 @@ public:
 
 	void give_node(NodeModel* node);
 	void remove_node(NodeModel* node);
+	void clear();
 
 	// Circular dependency checks
 	bool scan_left(NodeModel* start, NodeModel* target) const;

@@ -20,10 +20,10 @@ NodeConnectionGraphicsItem::NodeConnectionGraphicsItem()
 
 NodeConnectionGraphicsItem::~NodeConnectionGraphicsItem()
 {
-	assert(m_first_port != nullptr);
-	assert(m_second_port != nullptr);
-	m_first_port->remove_port_position_listener(this);
-	m_second_port->remove_port_position_listener(this);
+	if (m_first_port != nullptr)
+		m_first_port->remove_port_position_listener(this);
+	if (m_second_port != nullptr)
+		m_second_port->remove_port_position_listener(this);
 }
 
 void NodeConnectionGraphicsItem::set_first_port(NodePortGraphicsItem* port)

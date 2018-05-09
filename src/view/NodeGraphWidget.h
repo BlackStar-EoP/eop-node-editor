@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include <QVector>
+#include <QJsonObject>
 
 class QGraphicsView;
 class NodeGraphScene;
@@ -22,6 +23,11 @@ public:
 
 public:
 	const QVector<NodeModel*>& nodes() const;
+	void set_persisted();
+	bool is_persisted() const;
+
+	QJsonObject save_graph() const;
+	void load_graph(const QJsonObject& json_data);
 
 signals:
 	void node_graph_changed();

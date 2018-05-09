@@ -13,6 +13,9 @@ class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModel
 public:
 	NodeGraphicsItem(NodeModel* node_model);
 
+	NodePortGraphicsItem* find_input_port(NodePortModel* input_port);
+	NodePortGraphicsItem* find_output_port(NodePortModel* output_port);
+
 	QRectF boundingRect() const override;
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 

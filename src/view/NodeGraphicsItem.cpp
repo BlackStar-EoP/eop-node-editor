@@ -25,6 +25,30 @@ NodeGraphicsItem::NodeGraphicsItem(NodeModel* node_model)
 	connect(node_model, SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
 }
 
+NodePortGraphicsItem* NodeGraphicsItem::find_input_port(NodePortModel* input_port)
+{
+	for (NodePortGraphicsItem* port_gfx_item : m_input_ports)
+	{
+		if (port_gfx_item->port_model() == input_port)
+			return port_gfx_item;
+	}
+
+	assert(false);
+	return nullptr;
+}
+
+NodePortGraphicsItem* NodeGraphicsItem::find_output_port(NodePortModel* output_port)
+{
+	for (NodePortGraphicsItem* port_gfx_item : m_output_ports)
+	{
+		if (port_gfx_item->port_model() == output_port)
+			return port_gfx_item;
+	}
+
+	assert(false);
+	return nullptr;
+}
+
 QRectF NodeGraphicsItem::boundingRect() const
 {
 	return m_bounding_rect;

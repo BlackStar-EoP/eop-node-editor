@@ -22,10 +22,14 @@ public:
 	NodeModel* add_node(const QPointF& position);
 	void delete_node(NodeModel* node_model);
 	void delete_connection(NodeConnection* connection);
+	void clear_graph();
 
 	void set_first_connection_port(NodePortModel* port);
 	void set_second_connection_port(NodePortModel* port);
 	NodeConnection* create_connection();
+
+	void set_persisted();
+	bool is_persisted() const;
 
 	void notify_node_graph_changed();
 
@@ -33,9 +37,13 @@ signals:
 	void message(const QString& message);
 	void node_graph_changed();
 
+	void node_added(NodeModel* node_model);
+	void connection_created(NodeConnection* connection);
+
 private:
 	NodeGraph& m_node_graph;
 	NodeFactory* m_node_factory = nullptr;
 	NodePortModel* m_first_connection_port = nullptr;
 	NodePortModel* m_second_connection_port = nullptr;
+	bool m_persisted = false;
 };
