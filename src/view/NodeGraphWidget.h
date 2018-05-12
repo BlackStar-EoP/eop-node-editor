@@ -26,6 +26,7 @@ public:
 	void set_persisted();
 	bool is_persisted() const;
 
+	void new_graph();
 	QJsonObject save_graph() const;
 	void load_graph(const QJsonObject& json_data);
 

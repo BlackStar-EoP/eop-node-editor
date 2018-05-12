@@ -25,41 +25,53 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 
 void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-	QList<QGraphicsItem*> item_list = items(event->scenePos());
-
-	if (item_list.size() > 0)
+	if (event->buttons() == Qt::LeftButton)
 	{
-		for (QGraphicsItem* item : item_list)
-		{
-			if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
-			{
-				NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
-				m_controller.set_first_connection_port(port->port_model());
-				port->select();
+		QList<QGraphicsItem*> item_list = items(event->scenePos());
 
-				m_line_edit_item = new NodeConnectionGraphicsItem();
-				m_line_edit_item->set_first_port(port);
-				addItem(m_line_edit_item);
-				return;
+		if (item_list.size() > 0)
+		{
+			for (QGraphicsItem* item : item_list)
+			{
+				if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
+				{
+					NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
+					m_controller.set_first_connection_port(port->port_model());
+					port->select();
+
+					m_line_edit_item = new NodeConnectionGraphicsItem();
+					m_line_edit_item->set_first_port(port);
+					addItem(m_line_edit_item);
+					return;
+				}
 			}
 		}
+		else
+		{
+			m_controller.add_node(event->scenePos());
+		}
 	}
-	else
+	else if (event->buttons() == Qt::RightButton)
 	{
-		m_controller.add_node(event->scenePos());
 	}
-
 	QGraphicsScene::mousePressEvent(event);
 }
 
 void NodeGraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-	if (m_line_edit_item != nullptr)
+	if (event->buttons() == Qt::LeftButton && m_line_edit_item != nullptr)
 	{
 		const QPointF& mouse_pos = event->scenePos();
 		m_line_edit_item->update_line(mouse_pos);
 	}
-	QGraphicsScene::mouseMoveEvent(event);
+	else if (event->buttons() == Qt::RightButton)
+	{
+
+	}
+	else
+	{
+		QGraphicsScene::mouseMoveEvent(event);
+	}
 }
 
 void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)

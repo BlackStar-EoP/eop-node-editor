@@ -55,6 +55,13 @@ bool NodeGraphWidget::is_persisted() const
 	return m_controller.is_persisted();
 }
 
+void NodeGraphWidget::new_graph()
+{
+	m_controller.clear_graph();
+	//m_scene.clear_line_edit()
+	m_node_graph.clear();
+}
+
 QJsonObject NodeGraphWidget::save_graph() const
 {
 	const QVector<NodeModel*>& node_vector = nodes();
@@ -124,9 +131,7 @@ QJsonObject NodeGraphWidget::save_graph() const
 
 void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 {
-	m_controller.clear_graph();
-	//m_scene.clear_line_edit()
-	m_node_graph.clear();
+	new_graph();
 
 	QJsonArray nodes_json = json_data["nodes"].toArray();
 	QJsonArray connections_json = json_data["connections"].toArray();
@@ -148,46 +153,42 @@ void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 		assert(node_model != nullptr);
 		node_model->load_from_user_data(user_data);
 		node_models[id] = node_model;
-		
-		for (;;)
+	}
+
+	for (;;)
+	{
+		bool connections_changed = false;
+		for (int32_t i = connections_json.size() - 1; i >= 0; --i)
 		{
-			bool connections_changed = false;
-			for (int32_t i = connections_json.size() - 1; i >= 0; --i)
+			QJsonObject json_connection = connections_json[i].toObject();
+			uint32_t input_model_id = json_connection["input_model_id"].toInt();
+			uint32_t output_model_id = json_connection["output_model_id"].toInt();
+			uint32_t input_port_index = json_connection["input_port_index"].toInt();
+			uint32_t output_port_index = json_connection["output_port_index"].toInt();
+
+			NodeModel* input_model = node_models[input_model_id];
+			NodeModel* output_model = node_models[output_model_id];
+			if (input_port_index < input_model->num_input_ports() && output_port_index < output_model->num_output_ports())
 			{
-				QJsonObject json_connection = connections_json[i].toObject();
-				uint32_t input_model_id = json_connection["input_model_id"].toInt();
-				uint32_t output_model_id = json_connection["output_model_id"].toInt();
-				uint32_t input_port_index = json_connection["input_port_index"].toInt();
-				uint32_t output_port_index = json_connection["output_port_index"].toInt();
-
-				NodeModel* input_model = node_models[input_model_id];
-				NodeModel* output_model = node_models[output_model_id];
-				if (input_port_index < input_model->num_input_ports() && output_port_index < output_model->num_output_ports())
-				{
-					NodePortModel* input_port_model = input_model->input_port_model(input_port_index);
-					NodePortModel* output_port_model = output_model->output_port_model(output_port_index);
-					m_controller.set_first_connection_port(input_port_model);
-					m_controller.set_second_connection_port(output_port_model);
-					NodeConnection* connection = m_controller.create_connection();
-					assert(connection != nullptr);
-					connections_json.removeAt(i);
-					connections_changed = true;
-				}
-			}
-
-			if (connections_json.size() == 0)
-				break;
-
-			if (!connections_changed)
-			{
-				assert(false);
+				NodePortModel* input_port_model = input_model->input_port_model(input_port_index);
+				NodePortModel* output_port_model = output_model->output_port_model(output_port_index);
+				m_controller.set_first_connection_port(input_port_model);
+				m_controller.set_second_connection_port(output_port_model);
+				NodeConnection* connection = m_controller.create_connection();
+				assert(connection != nullptr);
+				connections_json.removeAt(i);
+				connections_changed = true;
 			}
 		}
-		/*
-		node_json["pos_x"] = m_position.x();
-		node_json["pos_y"] = m_position.y();
-		node_json["node_type"] = m_node_type.node_type();
-		node_json["user_data"] = user_data();
-		*/
+
+		if (connections_json.size() == 0)
+			break;
+
+		if (!connections_changed)
+		{
+			assert(false);
+		}
 	}
+
+	set_persisted();
 }

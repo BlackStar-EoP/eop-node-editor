@@ -38,6 +38,7 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 	model->set_position(position);
 	model->create_port_models();
 	m_node_graph.give_node(model);
+	m_persisted = false;
 	emit node_added(model);
 	return model;
 }

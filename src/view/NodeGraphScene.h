@@ -33,4 +33,5 @@ private:
 	QVector<NodeGraphicsItem*> m_node_gfx_items;
 	NodeConnectionGraphicsItem* m_line_edit_item = nullptr;
 	QPointF m_line_start_pos;
+
 };
