@@ -31,6 +31,7 @@ NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 
 NodeGraphWidget::~NodeGraphWidget()
 {
+	m_node_graph.clear();
 	delete m_node_factory;
 }
 
@@ -187,6 +188,7 @@ void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 		if (!connections_changed)
 		{
 			assert(false);
+			break;
 		}
 	}
 

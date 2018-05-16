@@ -34,7 +34,7 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 		delete model;
 		return nullptr;
 	}
-
+	model->set_controller(this);
 	model->set_position(position);
 	model->create_port_models();
 	m_node_graph.give_node(model);

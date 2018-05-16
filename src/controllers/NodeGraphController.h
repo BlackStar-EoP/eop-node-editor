@@ -45,5 +45,5 @@ private:
 	NodeFactory* m_node_factory = nullptr;
 	NodePortModel* m_first_connection_port = nullptr;
 	NodePortModel* m_second_connection_port = nullptr;
-	bool m_persisted = false;
+	bool m_persisted = true;
 };

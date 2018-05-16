@@ -9,6 +9,7 @@
 
 class NodePortModel;
 class QPointF;
+class NodeGraphController;
 
 class INodeModelListener
 {
@@ -54,11 +55,13 @@ public:
 	virtual void connection_removed(NodePortModel* port_model, NodeConnection* connection) = 0;
 
 	void node_model_changed();
+	void node_property_changed();
 	void output_nodes_changed();
 	void register_node_model_listener(INodeModelListener* listener);
 
 	void set_position(const QPointF& position);
 	const QPointF& position() const;
+	void set_controller(NodeGraphController* controller); // TODO I am not so sure about this, but still I want to be able to notify when a property changes
 	bool is_orphan() const;
 	void set_widget(QWidget* widget);
 	QWidget* widget() const;
@@ -76,4 +79,5 @@ private:
 	QVector<NodePortModel*> m_output_port_models;
 	QWidget* m_widget = nullptr;
 	NodeType m_node_type;
+	NodeGraphController* m_controller = nullptr;
 };

@@ -1,6 +1,7 @@
 #include "NodeModel.h"
 
 #include "NodePortModel.h"
+#include <controllers/NodeGraphController.h>
 
 NodeModel::~NodeModel()
 {
@@ -122,6 +123,12 @@ uint32_t NodeModel::num_ports() const
 	return m_input_port_models.size() + m_output_port_models.size();
 }
 
+void NodeModel::node_property_changed()
+{
+	// TODO maybe do this with the model listeners, I'm not sure yet
+	m_controller->notify_node_graph_changed();
+}
+
 void NodeModel::node_model_changed()
 {
 	for (INodeModelListener* l : m_node_model_listeners)
@@ -146,6 +153,11 @@ void NodeModel::register_node_model_listener(INodeModelListener* listener)
 void NodeModel::set_position(const QPointF& position)
 {
 	m_position = position;
+}
+
+void NodeModel::set_controller(NodeGraphController* controller)
+{
+	m_controller = controller;
 }
 
 const QPointF& NodeModel::position() const
