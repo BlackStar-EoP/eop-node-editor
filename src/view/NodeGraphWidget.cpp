@@ -132,28 +132,42 @@ QJsonObject NodeGraphWidget::save_graph() const
 
 void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 {
+	m_controller.start_load();
 	new_graph();
 
 	QJsonArray nodes_json = json_data["nodes"].toArray();
 	QJsonArray connections_json = json_data["connections"].toArray();
 	QMap<uint32_t, NodeModel*> node_models;
 
+	QVector<QJsonObject> failed_nodes_json;
 	for (int32_t i = 0; i < nodes_json.size(); ++i)
 	{
 		QJsonObject node = nodes_json[i].toObject();
-		uint32_t id = node["id"].toInt();
-		QJsonObject node_data = node["node_data"].toObject();
+		if (!parse_node(node, node_models))
+			failed_nodes_json.push_back(node);
+	}
 
-		float x_pos = node_data["pos_x"].toDouble();
-		float y_pos = node_data["pos_y"].toDouble();
-		QString node_type = node_data["node_type"].toString();
-		QJsonObject user_data = node_data["user_data"].toObject();
+	for (;;)
+	{
+		bool nodes_changed = false;
+		for (int32_t i = failed_nodes_json.size() - 1; i >= 0; --i)
+		{
 
-		m_node_factory->set_current_node_type(node_type);
-		NodeModel* node_model = m_controller.add_node(QPoint(x_pos, y_pos));
-		assert(node_model != nullptr);
-		node_model->load_from_user_data(user_data);
-		node_models[id] = node_model;
+			if (parse_node(failed_nodes_json[i], node_models))
+			{
+				nodes_changed = true;
+				failed_nodes_json.removeAt(i);
+			}
+		}
+
+		if (failed_nodes_json.size() == 0)
+			break;
+
+		if (!nodes_changed)
+		{
+			assert(false);
+			break;
+		}
 	}
 
 	for (;;)
@@ -193,4 +207,23 @@ void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 	}
 
 	set_persisted();
+	m_controller.end_load();
+}
+
+bool NodeGraphWidget::parse_node(const QJsonObject& node, QMap<uint32_t, NodeModel*>& node_models)
+{
+	uint32_t id = node["id"].toInt();
+	QJsonObject node_data = node["node_data"].toObject();
+
+	float x_pos = node_data["pos_x"].toDouble();
+	float y_pos = node_data["pos_y"].toDouble();
+	QString node_type = node_data["node_type"].toString();
+	QJsonObject user_data = node_data["user_data"].toObject();
+
+	m_node_factory->set_current_node_type(node_type);
+	NodeModel* node_model = m_controller.add_node(QPoint(x_pos, y_pos));
+	assert(node_model != nullptr);
+	bool user_data_success = node_model->load_from_user_data(user_data);
+	node_models[id] = node_model;
+	return user_data_success;
 }

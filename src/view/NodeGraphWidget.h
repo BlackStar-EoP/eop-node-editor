@@ -35,6 +35,9 @@ signals:
 	void message(const QString& message);
 
 private:
+	bool parse_node(const QJsonObject& node, QMap<uint32_t, NodeModel*>& node_models);
+
+private:
 	QGraphicsView* m_view = nullptr;
 	NodeGraphScene* m_scene = nullptr;
 	NodeGraphController m_controller;

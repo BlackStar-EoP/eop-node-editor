@@ -31,6 +31,9 @@ public:
 	void set_persisted();
 	bool is_persisted() const;
 
+	void start_load();
+	void end_load();
+
 	void notify_node_graph_changed();
 
 signals:
@@ -46,4 +49,5 @@ private:
 	NodePortModel* m_first_connection_port = nullptr;
 	NodePortModel* m_second_connection_port = nullptr;
 	bool m_persisted = true;
+	bool m_loading = false;
 };

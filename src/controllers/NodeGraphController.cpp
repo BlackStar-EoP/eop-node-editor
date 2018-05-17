@@ -164,8 +164,22 @@ bool NodeGraphController::is_persisted() const
 	return m_persisted;
 }
 
+void NodeGraphController::start_load()
+{
+	m_loading = true;
+}
+
+void NodeGraphController::end_load()
+{
+	m_loading = false;
+	notify_node_graph_changed();
+}
+
 void NodeGraphController::notify_node_graph_changed()
 {
-	m_persisted = false;
-	emit node_graph_changed();
+	if (!m_loading)
+	{
+		m_persisted = false;
+		emit node_graph_changed();
+	}
 }
