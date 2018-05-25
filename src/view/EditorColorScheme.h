@@ -21,5 +21,6 @@ public:
 
 	static const QColor connection_color;
 	static const QColor selectedColor;
+	static const QColor invalidColor_;
 };
 

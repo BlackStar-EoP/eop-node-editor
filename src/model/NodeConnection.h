@@ -23,10 +23,14 @@ public:
 	NodePortModel* other(NodePortModel* port) const;
 	void remove_port(NodePortModel* port_model); // TODO not too happy about this, but hopefully prevents crash
 
+	void set_valid(bool valid);
+	bool is_valid() const;
+
 signals:
 	void connection_destroyed();
 
 private:
 	NodePortModel* m_input;
 	NodePortModel* m_output;
+	bool m_valid = true;
 };

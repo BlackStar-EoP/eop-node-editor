@@ -59,3 +59,13 @@ void NodeConnection::remove_port(NodePortModel* port_model)
 		m_output = nullptr;
 	// TODO not too happy about this, but hopefully prevents crash
 }
+
+void NodeConnection::set_valid(bool valid)
+{
+	m_valid = valid;
+}
+
+bool NodeConnection::is_valid() const
+{
+	return m_valid;
+}
