@@ -81,7 +81,7 @@ void NodeConnectionGraphicsItem::paint(QPainter* painter, const QStyleOptionGrap
 	else
 		pen.setColor(EditorColorScheme::labelSublineColor_);
 
-	if (!m_connection->is_valid())
+	if (m_connection != nullptr &&!m_connection->is_valid())
 		pen.setColor(EditorColorScheme::invalidColor_);
 
 	painter->setPen(pen);
