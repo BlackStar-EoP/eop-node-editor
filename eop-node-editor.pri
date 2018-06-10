@@ -12,6 +12,7 @@ SOURCES += $$PWD/src/controllers/NodeGraphController.cpp \
 		       $$PWD/src/view/NodeGraphicsItem.cpp \
 		       $$PWD/src/view/NodeGraphWidget.cpp \
 		       $$PWD/src/view/NodeGraphScene.cpp \
+           $$PWD/src/view/NodeGraphView.cpp \
            $$PWD/src/view/NodePortGraphicsItem.cpp
 
 HEADERS += $$PWD/src/controllers/NodeGraphController.h \
@@ -26,4 +27,5 @@ HEADERS += $$PWD/src/controllers/NodeGraphController.h \
            $$PWD/src/view/NodeGraphicsItem.h \
            $$PWD/src/view/NodeGraphWidget.h \
            $$PWD/src/view/NodeGraphScene.h \
+           $$PWD/src/view/NodeGraphView.h \
            $$PWD/src/view/NodePortGraphicsItem.h

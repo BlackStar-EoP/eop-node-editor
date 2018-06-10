@@ -6,6 +6,8 @@
 #include <model/NodeModel.h>
 #include <model/NodePortModel.h>
 
+#include "NodeGraphView.h"
+
 #include <QMap>
 #include <QSet>
 #include <QBoxLayout>
@@ -20,7 +22,7 @@ NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 {
 	m_scene = new NodeGraphScene(this, m_controller);
 	QBoxLayout* layout = new QBoxLayout(QBoxLayout::Down);
-	m_view = new QGraphicsView(m_scene);
+	m_view = new NodeGraphView(m_scene);
 	layout->addWidget(m_view);
 
 	setLayout(layout);
