@@ -201,7 +201,7 @@ void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 
 		if (!connections_changed)
 		{
-			assert(false);
+			emit message(QString("Warning, %1 connection(s) could not be created!").arg(connections_json.size()));
 			break;
 		}
 	}
