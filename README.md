@@ -16,7 +16,7 @@ Problems currently: a lot of boilerplate needs to be written for a simple node e
 rendering part itself needs a lot of love (text rendering outside of nodes)
 
 However, this editor has support for
-- dynamic input output ports, there are API calls that allow you to tell the framework that the ports of a specific node have changes. The downside is
+- dynamic input output ports, there are API calls that allow you to tell the framework that the ports of a specific node have changed. The downside is
 that all current connections will be destroyed since it's a pain to manage all that.
 - custom widgets embedded into the node
 
