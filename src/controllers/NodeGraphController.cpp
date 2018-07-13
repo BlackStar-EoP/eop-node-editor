@@ -171,8 +171,8 @@ void NodeGraphController::start_load()
 
 void NodeGraphController::end_load()
 {
-	m_loading = false;
 	notify_node_graph_changed();
+	m_loading = false;
 }
 
 void NodeGraphController::notify_node_graph_changed()
