@@ -5,6 +5,7 @@
 #include "EditorColorScheme.h"
 #include "NodeGraphicsItem.h"
 #include <QPainter>
+#include <QFontMetrics>
 
 #include <assert.h>
 
@@ -48,12 +49,16 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	switch (m_port_model->port_type())
 	{
 	case NodePortModel::INPUT:
-		text_pos += QPointF(20, 0);
+		text_pos += QPointF(30, 0);
 		break;
 
 	case NodePortModel::OUTPUT:
-		text_pos += QPointF(-50, 0);
-		break;
+	{
+		QFontMetrics fm = QFontMetrics(painter->font());
+		QRect textRect = fm.boundingRect(m_port_model->port_label());
+		text_pos += QPointF(-textRect.width() - 10, 0);
+	}
+	break;
 
 	default:
 		assert(false);
