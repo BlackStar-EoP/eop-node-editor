@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <QString>
 #include <QSet>
+#include <QVector>
 #include "NodeType.h"
 
 class NodeModel;
@@ -17,6 +18,7 @@ public:
 	NodeModel* create_node_model_and_set_type();
 
 	const QSet<NodeType>& node_types() const;
+	const QVector<NodeType> sorted_node_types() const;
 	const NodeType& current_node_type() const;
 	void set_current_node_type(const QString& node_type);
 

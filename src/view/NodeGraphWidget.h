@@ -32,7 +32,7 @@ public:
 
 signals:
 	void node_graph_changed();
-	void message(const QString& message);
+	void message(const QString& message, bool status);
 
 private:
 	bool parse_node(const QJsonObject& node, QMap<uint32_t, NodeModel*>& node_models);

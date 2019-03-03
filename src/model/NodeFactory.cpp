@@ -16,6 +16,17 @@ const QSet<NodeType>& NodeFactory::node_types() const
 	return m_node_types;
 }
 
+const QVector<NodeType> NodeFactory::sorted_node_types() const
+{
+	QVector<NodeType> node_types;
+	for (auto& node_type : m_node_types)
+		node_types.push_back(node_type);
+
+	std::sort(node_types.begin(), node_types.end(), [](const NodeType& first, const NodeType& second) {return first.node_type() < second.node_type(); });
+	return node_types;
+}
+
+
 const NodeType& NodeFactory::current_node_type() const
 {
 	return m_current_node_type;

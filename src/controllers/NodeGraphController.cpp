@@ -25,7 +25,7 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 	NodeModel* model = m_node_factory->create_node_model_and_set_type();
 	if (model == nullptr)
 	{
-		emit message("No node type selected!");
+		emit message("No node type selected!", false);
 		return nullptr;
 	}
 
@@ -75,45 +75,45 @@ NodeConnection* NodeGraphController::create_connection()
 {
 	if (m_first_connection_port == nullptr || m_second_connection_port == nullptr)
 	{
-		emit message("Connection port is nullptr, this is VERY bad!");
+		emit message("Connection port is nullptr, this is VERY bad!", false);
 		return nullptr;
 	}
 
 	if ((m_first_connection_port->num_connections() > 0) && (!m_first_connection_port->supports_multiple_connections()))
 	{
 		assert(m_first_connection_port->num_connections() == 1);
-		emit message("First connection port already has a connection and does not support multiple!");
+		emit message("First connection port already has a connection and does not support multiple!", false);
 		return nullptr;
 	}
 
 	if ((m_second_connection_port->num_connections() > 0) && (!m_second_connection_port->supports_multiple_connections()))
 	{
 		assert(m_second_connection_port->num_connections() == 1);
-		emit message("Second connection port already has a connection and does not support multiple!");
+		emit message("Second connection port already has a connection and does not support multiple!", false);
 		return nullptr;
 	}
 
 	if (m_first_connection_port == m_second_connection_port)
 	{
-		emit message("Connection ports are the same!");
+		emit message("Connection ports are the same!", false);
 		return nullptr;
 	}
 
 	if (m_first_connection_port->port_type() == m_second_connection_port->port_type())
 	{
-		emit message("Port types are the same!");
+		emit message("Port types are the same!", false);
 		return nullptr;
 	}
 
 	if (m_first_connection_port->node_model() == m_second_connection_port->node_model())
 	{
-		emit message("Connection to the same node is not allowed!");
+		emit message("Connection to the same node is not allowed!", false);
 		return nullptr;
 	}
 
 	if (m_first_connection_port->has_connection(m_second_connection_port))
 	{
-		emit message("Connection already exists!");
+		emit message("Connection already exists!", false);
 		return nullptr;
 	}
 
@@ -133,14 +133,14 @@ NodeConnection* NodeGraphController::create_connection()
 
 	if (!input_port->may_connect_to(*output_port) || !output_port->may_connect_to(*input_port))
 	{
-		emit message("Connection between these port types is not allowed!");
+		emit message("Connection between these port types is not allowed!", false);
 		return nullptr;
 	}
 
 	// If output goes to an input of node earlier in graph, we have a circular dependency
 	if (m_node_graph.scan_left(output_port->node_model(), input_port->node_model()))
 	{
-		emit message("Circular dependency found, this is not allowed!");
+		emit message("Circular dependency found, this is not allowed!", false);
 		return nullptr;
 	}
 
@@ -148,7 +148,7 @@ NodeConnection* NodeGraphController::create_connection()
 	m_second_connection_port = nullptr;
 
 	NodeConnection* connection = new NodeConnection(input_port, output_port);
-	emit message("Connection created!");
+	emit message("Connection created!", true);
 	emit connection_created(connection);
 	notify_node_graph_changed();
 	return connection;

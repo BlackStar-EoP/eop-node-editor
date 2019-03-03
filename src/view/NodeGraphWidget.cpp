@@ -28,7 +28,7 @@ NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 	setLayout(layout);
 
 	connect(&m_controller, SIGNAL(node_graph_changed()), this, SIGNAL(node_graph_changed()));
-	connect(&m_controller, SIGNAL(message(const QString&)), this, SIGNAL(message(const QString&)));
+	connect(&m_controller, SIGNAL(message(const QString&, bool)), this, SIGNAL(message(const QString&, bool)));
 }
 
 NodeGraphWidget::~NodeGraphWidget()
@@ -203,7 +203,7 @@ void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 
 		if (!connections_changed)
 		{
-			emit message(QString("Warning, %1 connection(s) could not be created!").arg(connections_json.size()));
+			emit message(QString("Warning, %1 connection(s) could not be created!").arg(connections_json.size()), false);
 			break;
 		}
 	}

@@ -37,7 +37,7 @@ public:
 	void notify_node_graph_changed();
 
 signals:
-	void message(const QString& message);
+	void message(const QString& message, bool status);
 	void node_graph_changed();
 
 	void node_added(NodeModel* node_model);
