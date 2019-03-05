@@ -15,6 +15,16 @@ NodePortModel::~NodePortModel()
 	emit node_port_model_destroyed();
 }
 
+void NodePortModel::set_widget(QWidget* widget)
+{
+	m_widget = widget;
+}
+
+QWidget* NodePortModel::widget() const
+{
+	return m_widget;
+}
+
 void NodePortModel::set_node_model(NodeModel* node_model)
 {
 	m_node_model = node_model;

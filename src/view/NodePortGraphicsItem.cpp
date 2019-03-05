@@ -6,6 +6,8 @@
 #include "NodeGraphicsItem.h"
 #include <QPainter>
 #include <QFontMetrics>
+#include <QGraphicsProxyWidget>
+#include <QWidget>
 
 #include <assert.h>
 
@@ -17,12 +19,19 @@ NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel*
 //	m_parent = dynamic_cast<NodeGraphicsItem*>(parent);
 	setFlags(ItemIsSelectable | ItemSendsScenePositionChanges);
 
+	if (m_port_model->widget() != nullptr)
+	{
+		QGraphicsProxyWidget* proxy_widget = new QGraphicsProxyWidget(this);
+		proxy_widget->setWidget(m_port_model->widget());
+		//proxy_widget->setPos(QPointF(10, m_port_start_y));
+		//m_port_start_y += m_node_model->widget()->height();
+	}
+
 	connect(port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
 }
 
 NodePortGraphicsItem::~NodePortGraphicsItem()
 {
-	printf("");
 }
 
 QRectF NodePortGraphicsItem::boundingRect() const
@@ -55,8 +64,21 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	case NodePortModel::OUTPUT:
 	{
 		QFontMetrics fm = QFontMetrics(painter->font());
-		QRect textRect = fm.boundingRect(m_port_model->port_label());
-		text_pos += QPointF(-textRect.width() - 10, 0);
+		QRect text_rect = fm.boundingRect(m_port_model->port_label());
+		uint32_t widget_offset = 0;
+		text_pos += QPointF(-text_rect.width() - 10, 0);
+
+		if (m_port_model->widget() != nullptr)
+		{
+			text_pos -= QPointF(m_port_model->widget()->width(), 0);
+
+			int x = text_pos.x() + text_rect.width() + 5;
+			int y = 0;
+			int w = m_port_model->widget()->width();
+			int h = m_port_model->widget()->height();
+			m_port_model->widget()->setGeometry(x, y, w, h);
+		}
+
 	}
 	break;
 

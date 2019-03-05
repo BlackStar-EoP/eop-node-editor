@@ -30,6 +30,8 @@ signals:
 	void node_port_model_destroyed();
 
 public:
+	void set_widget(QWidget* widget);
+	QWidget* widget() const;
 	void set_node_model(NodeModel* node_model);
 
 	NodeModel* node_model() const;
@@ -43,4 +45,5 @@ public:
 private:
 	NodeModel* m_node_model = nullptr;
 	QVector<NodeConnection*> m_connections;
+	QWidget* m_widget = nullptr;
 };

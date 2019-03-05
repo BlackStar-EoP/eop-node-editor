@@ -71,12 +71,14 @@ public:
 signals:
 	void node_model_destroyed();
 
+protected: // TODO make this private again, and make the json methods non-const.
+	QVector<NodePortModel*> m_input_port_models;
+	QVector<NodePortModel*> m_output_port_models;
+
 private:
 	QVector<INodeModelListener*> m_node_model_listeners;
 	QPointF m_position;
 
-	QVector<NodePortModel*> m_input_port_models;
-	QVector<NodePortModel*> m_output_port_models;
 	QWidget* m_widget = nullptr;
 	NodeType m_node_type;
 	NodeGraphController* m_controller = nullptr;
