@@ -3,12 +3,13 @@
 #include <QObject>
 #include <QVector>
 #include <QJSonObject>
+#include <QPointF>
 
 #include "NodeConnection.h"
 #include "NodeType.h"
 
 class NodePortModel;
-class QPointF;
+
 class NodeGraphController;
 
 class INodeModelListener
