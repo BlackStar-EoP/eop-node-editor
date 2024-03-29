@@ -31,7 +31,7 @@ private:
 	ENodePolicy m_node_policy = POLICY_MIN_ZERO_MAX_INF;
 };
 
-inline uint qHash(const NodeType& node_type, uint seed)
+inline size_t qHash(const NodeType& node_type, uint seed)
 {
 	return qHash(node_type.node_type(), seed);
 }

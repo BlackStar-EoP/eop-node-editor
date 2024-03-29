@@ -65,6 +65,8 @@ bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 
 bool NodeGraph::scan_right(NodeModel* start, NodeModel* target) const
 {
+	Q_UNUSED(start);
+	Q_UNUSED(target);
 	return false;
 }
 
