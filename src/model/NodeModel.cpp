@@ -100,6 +100,12 @@ NodePortModel* NodeModel::output_port_model(uint32_t port_nr)
 
 void NodeModel::add_output_port_model(NodePortModel* port_model)
 {
+	if (node_type().purpose() == NodeType::NODE_PURPOSE_SINK)
+	{
+		// TODO emit message
+		return;
+	}
+
 	m_output_port_models.push_back(port_model);
 }
 
