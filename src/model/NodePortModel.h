@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include "visitor/INodeGraphVisitor.h"
 
 class NodeConnection;
 class NodeModel;
@@ -25,6 +26,7 @@ public:
 	virtual bool may_connect_to(const NodePortModel& port_model) const = 0;
 	virtual bool supports_multiple_connections() const = 0;
 	virtual QString type() const = 0;
+	virtual void accept(INodeGraphVisitor& visitor) = 0;
 
 signals:
 	void node_port_model_destroyed();

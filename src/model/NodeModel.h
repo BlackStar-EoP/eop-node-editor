@@ -7,9 +7,9 @@
 
 #include "NodeConnection.h"
 #include "NodeType.h"
+#include "visitor/INodeGraphVisitor.h"
 
 class NodePortModel;
-
 class NodeGraphController;
 
 class INodeModelListener
@@ -30,6 +30,7 @@ public:
 	virtual QString title() const = 0;
 	virtual QJsonObject user_data() const = 0;
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
+	virtual void accept(INodeGraphVisitor& visitor) = 0;
 
 	QJsonObject to_json() const;
 
