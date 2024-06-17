@@ -41,8 +41,9 @@ QRectF NodePortGraphicsItem::boundingRect() const
 
 void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-  Q_UNUSED(option);
-  Q_UNUSED(widget);
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+
 	painter->setPen(EditorColorScheme::gridMajorColor_);
 	if (m_port_model->num_connections() > 0)
 	{

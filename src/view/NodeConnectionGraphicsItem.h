@@ -9,7 +9,7 @@ class NodeConnection;
 class NodeConnectionGraphicsItem : public QObject, public QGraphicsItem, public PortPositionListener
 {
 Q_OBJECT
-
+Q_INTERFACES(QGraphicsItem)
 	const QPointF OFFSET = QPointF(10, 10);
 
 public:
