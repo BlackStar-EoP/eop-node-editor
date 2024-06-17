@@ -10,6 +10,7 @@ class NodePortGraphicsItem;
 class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModelListener
 {
 	Q_OBJECT
+	Q_INTERFACES(QGraphicsItem)
 public:
 	NodeGraphicsItem(NodeModel* node_model);
 

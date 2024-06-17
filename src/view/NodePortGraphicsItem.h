@@ -19,6 +19,7 @@ public:
 class NodePortGraphicsItem :public QObject, public QGraphicsItem
 {
 	Q_OBJECT
+	Q_INTERFACES(QGraphicsItem)
 public:
 	NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel* port_model, uint32_t port_index);
 	~NodePortGraphicsItem();
