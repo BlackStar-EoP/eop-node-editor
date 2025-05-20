@@ -41,6 +41,8 @@ QRectF NodePortGraphicsItem::boundingRect() const
 
 void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+  Q_UNUSED(option);
+  Q_UNUSED(widget);
 	painter->setPen(EditorColorScheme::gridMajorColor_);
 	if (m_port_model->num_connections() > 0)
 	{
@@ -65,7 +67,6 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	{
 		QFontMetrics fm = QFontMetrics(painter->font());
 		QRect text_rect = fm.boundingRect(m_port_model->port_label());
-		uint32_t widget_offset = 0;
 		text_pos += QPointF(-text_rect.width() - 10, 0);
 
 		if (m_port_model->widget() != nullptr)

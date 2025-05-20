@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QVector>
-#include <QJSonObject>
+#include <QJsonObject>
 #include <QPointF>
 
 #include "NodeConnection.h"
