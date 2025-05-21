@@ -1,3 +1,5 @@
 debug/
 .vs/
 release/
+build/
+.cache/
