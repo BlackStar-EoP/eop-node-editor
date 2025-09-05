@@ -137,6 +137,14 @@ void NodeModel::node_model_changed()
 	}
 }
 
+void NodeModel::input_nodes_changed()
+{
+    for (INodeModelListener* l : m_node_model_listeners)
+    {
+        l->input_nodes_changed();
+    }
+}
+
 void NodeModel::output_nodes_changed()
 {
 	for (INodeModelListener* l : m_node_model_listeners)

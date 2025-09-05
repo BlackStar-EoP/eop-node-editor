@@ -16,6 +16,7 @@ class INodeModelListener
 {
 public:
 	virtual void node_model_changed() = 0;
+    virtual void input_nodes_changed() = 0;
 	virtual void output_nodes_changed() = 0;
 };
 
@@ -57,6 +58,7 @@ public:
 
 	void node_model_changed();
 	void node_property_changed();
+    void input_nodes_changed();
 	void output_nodes_changed();
 	void register_node_model_listener(INodeModelListener* listener);
 

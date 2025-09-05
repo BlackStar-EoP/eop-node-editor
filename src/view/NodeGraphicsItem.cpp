@@ -186,6 +186,14 @@ void NodeGraphicsItem::node_model_changed()
 	update();
 }
 
+void NodeGraphicsItem::input_nodes_changed()
+{
+    m_input_ports.clear();
+    init_input_ports();
+    recalculate_size();
+    update();
+}
+
 void NodeGraphicsItem::output_nodes_changed()
 {
 	// This works because the output port items are last. if input changes or node model needs to change for whatever reason, 
