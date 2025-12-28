@@ -23,8 +23,10 @@ qt_add_library(${PROJECT_NAME}-lib STATIC
   src/model/NodePortModel.h
   src/model/NodeType.cpp
   src/model/NodeType.h
+  src/view/DefaultColorSchemeProvider.h
   src/view/EditorColorScheme.cpp
   src/view/EditorColorScheme.h
+  src/view/IColorSchemeProvider.h
   src/view/NodeConnectionGraphicsItem.cpp
   src/view/NodeConnectionGraphicsItem.h
   src/view/NodeGraphicsItem.cpp

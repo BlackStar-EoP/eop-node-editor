@@ -28,6 +28,9 @@ NodePortGraphicsItem::NodePortGraphicsItem(QGraphicsItem* parent, NodePortModel*
 	}
 
 	connect(port_model, SIGNAL(node_port_model_destroyed()), this, SLOT(selfdestruct()));
+	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
+		update();
+	});
 }
 
 NodePortGraphicsItem::~NodePortGraphicsItem()
@@ -44,10 +47,10 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
-	painter->setPen(EditorColorScheme::gridMajorColor_);
+	painter->setPen(EditorColorScheme::gridMajorColor());
 	if (m_port_model->num_connections() > 0)
 	{
-		painter->setBrush(EditorColorScheme::connection_color);
+		painter->setBrush(EditorColorScheme::connection_color());
 		painter->drawEllipse(0, 0, 20, 20);
 	}
 	else
@@ -55,7 +58,7 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 		painter->drawEllipse(0, 0, 20, 20);
 	}
 	painter->setBrush(Qt::NoBrush);
-	painter->setPen(EditorColorScheme::labelColor_);
+	painter->setPen(EditorColorScheme::labelColor());
 //	painter->drawRect(m_bounding_rect);
 	QPointF text_pos = QPointF(0, 15);
 	switch (m_port_model->port_type())

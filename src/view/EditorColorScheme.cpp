@@ -1,15 +1,100 @@
 #include "EditorColorScheme.h"
+#include "IColorSchemeProvider.h"
+#include "DefaultColorSchemeProvider.h"
 
-const QColor EditorColorScheme::contentBackgroundColor_(0x28, 0x28, 0x28);
-const QColor EditorColorScheme::rulerBackgroundColor_(40, 40, 40);
-const QColor EditorColorScheme::gridMajorColor_(140, 140, 140);
-const QColor EditorColorScheme::gridHalfMajorColor_(80, 80, 80);
-const QColor EditorColorScheme::gridMinorColor_(50, 50, 50);
-const QColor EditorColorScheme::gridRowQSeperatorColor_(0x55, 0x55, 0x55);
-const QColor EditorColorScheme::labelColor_(0xAA, 0xAA, 0xAA);
-const QColor EditorColorScheme::labelSublineColor_(0x77, 0x77, 0x77);
-const QColor EditorColorScheme::labelTitleColor_(0xDD, 0xDD, 0xDD);
-const QColor EditorColorScheme::labelErrorColor_(0xDD, 0x00, 0x00);
-const QColor EditorColorScheme::connection_color(0x4C, 0x90, 0xFF);
-const QColor EditorColorScheme::selectedColor(0xFF, 0x00, 0x00);
-const QColor EditorColorScheme::invalidColor_(0xFF, 0xFF, 0x00);
+// Static member initialization
+IColorSchemeProvider* EditorColorScheme::provider_ = nullptr;
+DefaultColorSchemeProvider* EditorColorScheme::defaultProvider_ = nullptr;
+
+void EditorColorScheme::setProvider(IColorSchemeProvider* provider)
+{
+	provider_ = provider;
+}
+
+void EditorColorScheme::notifyColorsChanged()
+{
+	emit instance().colorsChanged();
+}
+
+EditorColorScheme& EditorColorScheme::instance()
+{
+	static EditorColorScheme instance;
+	return instance;
+}
+
+IColorSchemeProvider* EditorColorScheme::getProvider()
+{
+	if (provider_ != nullptr)
+		return provider_;
+
+	// Lazy-create default provider
+	if (defaultProvider_ == nullptr)
+		defaultProvider_ = new DefaultColorSchemeProvider();
+
+	return defaultProvider_;
+}
+
+QColor EditorColorScheme::contentBackgroundColor()
+{
+	return getProvider()->contentBackgroundColor();
+}
+
+QColor EditorColorScheme::rulerBackgroundColor()
+{
+	return getProvider()->rulerBackgroundColor();
+}
+
+QColor EditorColorScheme::gridMajorColor()
+{
+	return getProvider()->gridMajorColor();
+}
+
+QColor EditorColorScheme::gridHalfMajorColor()
+{
+	return getProvider()->gridHalfMajorColor();
+}
+
+QColor EditorColorScheme::gridMinorColor()
+{
+	return getProvider()->gridMinorColor();
+}
+
+QColor EditorColorScheme::gridRowQSeperatorColor()
+{
+	return getProvider()->gridRowSeparatorColor();
+}
+
+QColor EditorColorScheme::labelColor()
+{
+	return getProvider()->labelColor();
+}
+
+QColor EditorColorScheme::labelSublineColor()
+{
+	return getProvider()->labelSublineColor();
+}
+
+QColor EditorColorScheme::labelTitleColor()
+{
+	return getProvider()->labelTitleColor();
+}
+
+QColor EditorColorScheme::labelErrorColor()
+{
+	return getProvider()->labelErrorColor();
+}
+
+QColor EditorColorScheme::connection_color()
+{
+	return getProvider()->connectionColor();
+}
+
+QColor EditorColorScheme::selectedColor()
+{
+	return getProvider()->selectedColor();
+}
+
+QColor EditorColorScheme::invalidColor()
+{
+	return getProvider()->invalidColor();
+}

@@ -16,6 +16,9 @@ NodeConnectionGraphicsItem::NodeConnectionGraphicsItem()
 {
 	setAcceptHoverEvents(true);
 	setFlags(ItemIsSelectable);
+	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
+		update();
+	});
 }
 
 NodeConnectionGraphicsItem::~NodeConnectionGraphicsItem()
@@ -80,12 +83,12 @@ void NodeConnectionGraphicsItem::paint(QPainter* painter, const QStyleOptionGrap
 		pen.setWidth(1);
 
 	if (isSelected())
-		pen.setColor(EditorColorScheme::selectedColor);
+		pen.setColor(EditorColorScheme::selectedColor());
 	else
-		pen.setColor(EditorColorScheme::labelSublineColor_);
+		pen.setColor(EditorColorScheme::labelSublineColor());
 
 	if (m_connection != nullptr &&!m_connection->is_valid())
-		pen.setColor(EditorColorScheme::invalidColor_);
+		pen.setColor(EditorColorScheme::invalidColor());
 
 	painter->setPen(pen);
 	QPainterPath path;
