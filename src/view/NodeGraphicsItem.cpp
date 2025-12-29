@@ -23,6 +23,9 @@ NodeGraphicsItem::NodeGraphicsItem(NodeModel* node_model)
 	initUI();
 	setAcceptHoverEvents(true);
 	connect(node_model, SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
+	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
+		update();
+	});
 }
 
 NodePortGraphicsItem* NodeGraphicsItem::find_input_port(NodePortModel* input_port)
@@ -64,11 +67,11 @@ void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 	else
 		pen.setWidth(1);
 
-	painter->setBrush(QBrush(EditorColorScheme::rulerBackgroundColor_));
+	painter->setBrush(QBrush(EditorColorScheme::rulerBackgroundColor()));
 	if (isSelected())
-		pen.setColor(EditorColorScheme::selectedColor);
+		pen.setColor(EditorColorScheme::selectedColor());
 	else
-		pen.setColor(EditorColorScheme::labelColor_);
+		pen.setColor(EditorColorScheme::labelColor());
 
 	painter->setPen(pen);
 	painter->drawRoundedRect(m_bounding_rect, 10.0f, 10.0f);
@@ -84,7 +87,7 @@ void NodeGraphicsItem::initUI()
 		name += " (Orphan)";
 
 	QGraphicsTextItem* title = new QGraphicsTextItem(name, this);
-	title->setDefaultTextColor(EditorColorScheme::labelTitleColor_);
+	title->setDefaultTextColor(EditorColorScheme::labelTitleColor());
 	title->setPos(QPointF(10, m_port_start_y));
 	m_port_start_y += 25;
 
@@ -186,9 +189,17 @@ void NodeGraphicsItem::node_model_changed()
 	update();
 }
 
+void NodeGraphicsItem::input_nodes_changed()
+{
+    m_input_ports.clear();
+    init_input_ports();
+    recalculate_size();
+    update();
+}
+
 void NodeGraphicsItem::output_nodes_changed()
 {
-	// This works because the output port items are last. if input changes or node model needs to change for whatever reason, 
+	// This works because the output port items are last. if input changes or node model needs to change for whatever reason,
 	// this solution is not adequate, so, basically a TODO if ever.
 	//qDeleteAll(m_output_ports);
 	m_output_ports.clear();

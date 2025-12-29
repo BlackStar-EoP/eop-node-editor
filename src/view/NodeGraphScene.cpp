@@ -21,6 +21,9 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 {
 	connect(&controller, SIGNAL(node_added(NodeModel*)), this, SLOT(node_added(NodeModel*)));
 	connect(&controller, SIGNAL(connection_created(NodeConnection*)), this, SLOT(connection_created(NodeConnection*)));
+	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
+		invalidate();
+	});
 }
 
 void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -180,10 +183,10 @@ void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
 
 void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
-	painter->fillRect(rect, EditorColorScheme::gridMinorColor_);
+	painter->fillRect(rect, EditorColorScheme::gridMinorColor());
     const int gridSize = 25;
-	painter->setPen(EditorColorScheme::contentBackgroundColor_);
-	
+	painter->setPen(EditorColorScheme::contentBackgroundColor());
+
     qreal left = int(rect.left()) - (int(rect.left()) % gridSize);
     qreal top = int(rect.top()) - (int(rect.top()) % gridSize);
 

@@ -31,6 +31,7 @@ private:
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
 	void node_model_changed() override;
+    void input_nodes_changed() override;
 	void output_nodes_changed() override;
 
 private slots:
