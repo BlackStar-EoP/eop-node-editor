@@ -8,7 +8,7 @@
 
 class NodePortModel;
 
-// I don't like this, but 5.9.2 doesn't have signalsfor qgraphics item, the model doesn't know anything about positions of the ports, 
+// I don't like this, but 5.9.2 doesn't have signalsfor qgraphics item, the model doesn't know anything about positions of the ports,
 // so the only sensible way to make the line respond is to make it listen to the PortGraphicsItem.. briliant design..
 class PortPositionListener
 {
@@ -33,6 +33,8 @@ public:
 
 	void add_port_position_listener(PortPositionListener* listener);
 	void remove_port_position_listener(PortPositionListener* listener);
+
+    static constexpr float PORT_RADIUS = 20.0f;
 
 private:
 	void notify_position_listeners();

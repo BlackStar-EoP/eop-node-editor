@@ -51,11 +51,11 @@ void NodePortGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsIt
 	if (m_port_model->num_connections() > 0)
 	{
 		painter->setBrush(EditorColorScheme::connection_color());
-		painter->drawEllipse(0, 0, 20, 20);
+		painter->drawEllipse(0, 0, PORT_RADIUS, PORT_RADIUS);
 	}
 	else
 	{
-		painter->drawEllipse(0, 0, 20, 20);
+		painter->drawEllipse(0, 0, PORT_RADIUS, PORT_RADIUS);
 	}
 	painter->setBrush(Qt::NoBrush);
 	painter->setPen(EditorColorScheme::labelColor());
