@@ -25,7 +25,7 @@ private:
 	void init_input_ports();
 	void init_output_ports();
 
-	void recalculate_size();
+	bool recalculate_size();
 	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 	void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
@@ -33,6 +33,7 @@ private:
 	void node_model_changed() override;
     void input_nodes_changed() override;
 	void output_nodes_changed() override;
+    void update_node_positions();
 
 private slots:
 	void self_destruct();
@@ -43,6 +44,7 @@ public:
 private:
 	QRectF m_bounding_rect = QRect(0, 0, 100, 50);
 	NodeModel* m_node_model = nullptr;
+    QWidget* m_contents = nullptr;
 	QVector<NodePortGraphicsItem*> m_input_ports;
 	QVector<NodePortGraphicsItem*> m_output_ports;
 
