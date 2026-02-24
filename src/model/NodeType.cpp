@@ -25,7 +25,7 @@ NodeType::ENodePolicy NodeType::node_policy() const
 
 NodeModel* NodeType::create() const
 {
-	return m_creator ? m_creator : nullptr;
+	return m_node_creator ? m_node_creator() : nullptr;
 }
 
 bool NodeType::operator==(const NodeType& node_type) const
