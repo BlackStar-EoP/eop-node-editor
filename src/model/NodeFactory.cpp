@@ -3,6 +3,11 @@
 #include "NodeModel.h"
 #include <assert.h>
 
+NodeModel* NodeFactory::create_node_model()
+{
+	return current_node_type().create();
+}
+
 NodeModel* NodeFactory::create_node_model_and_set_type()
 {
 	NodeModel* model = create_node_model();

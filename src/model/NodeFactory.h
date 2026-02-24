@@ -14,7 +14,7 @@ public:
 	NodeFactory() = default;
 	virtual ~NodeFactory() = default;
 
-	virtual NodeModel* create_node_model() = 0;
+	NodeModel* create_node_model();
 	NodeModel* create_node_model_and_set_type();
 
 	const QSet<NodeType>& node_types() const;

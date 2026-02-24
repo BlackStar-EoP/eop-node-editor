@@ -6,6 +6,9 @@
 class NodeType
 {
 public:
+
+	typedef std::function<class NodeModel*()> NodeCreator;
+
 	enum ENodePolicy
 	{
 		POLICY_MIN_ZERO_MAX_ONE,
@@ -21,6 +24,7 @@ public:
 	const QString& display_name() const;
 	const QString& node_type() const;
 	ENodePolicy node_policy() const;
+	NodeModel* create() const;
 
 public:
 	bool operator == (const NodeType& node_type) const;
@@ -29,6 +33,7 @@ private:
 	QString m_display_name;
 	QString m_node_type;
 	ENodePolicy m_node_policy = POLICY_MIN_ZERO_MAX_INF;
+	NodeCreator m_creator;
 };
 
 inline size_t qHash(const NodeType& node_type, uint seed)
