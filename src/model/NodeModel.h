@@ -19,6 +19,18 @@ public:
 	virtual void output_nodes_changed() = 0;
 };
 
+class KeyNode
+{
+public:
+    KeyNode(NodeModel* node)
+        : node_(node)
+    {
+    }
+
+    NodeModel* node_ = nullptr;
+    QVector<NodeModel*> upstream_nodes_;
+};
+
 class NodeModel : public QObject
 {
 	Q_OBJECT
@@ -158,6 +170,26 @@ public:
 	QWidget* widget() const;
 
 	void set_node_type(const NodeType& node_type);
+
+    /**
+     * Is this node model a "key node"?
+     *
+     * When traversing a graph, these key nodes get special treatment. E.g. they may result in new objects being
+     * created and updated with information from connected nodes that are not key nodes.
+     */
+    virtual bool is_key_node() const;
+
+    /**
+     * Get an ordered list of nodes marked as key nodes (`is_key_node()`).
+     *
+     * Uses Kahn's algorithm to traverse the tree from an endpoint back to the beginnings. Results in a list
+     * where every key node is after each key node it depends on. This ensures dependencies are always resolved
+     * before moving to the next key node.
+     *
+     * Important: this method only traverses in the direction of the input ports/nodes. Calling it on a node
+     * in the middle of the graph will result in a partial list.
+     */
+    QVector<KeyNode> find_ordered_key_nodes();
 
 signals:
 	void node_model_destroyed();
