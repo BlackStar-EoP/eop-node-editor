@@ -72,3 +72,8 @@ bool NodePortModel::has_connection(NodePortModel* other_port_model)
 
 	return false;
 }
+
+const QVector<NodeConnection*> NodePortModel::connections() const
+{
+    return m_connections;
+}

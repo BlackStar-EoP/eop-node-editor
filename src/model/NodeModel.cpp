@@ -85,6 +85,24 @@ int32_t NodeModel::input_port_nr(NodePortModel* port_model) const
 	return m_input_port_models.indexOf(port_model);
 }
 
+const QVector<NodePortModel*> NodeModel::input_ports() const
+{
+    return m_input_port_models;
+}
+
+QVector<NodeModel*> NodeModel::get_input_nodes() const
+{
+    QVector<NodeModel*> input_nodes;
+    for (NodePortModel* input_port : m_input_port_models)
+    {
+        for (NodeConnection* connection : input_port->connections())
+        {
+            input_nodes.append(connection->output()->node_model());
+        }
+    }
+    return input_nodes;
+}
+
 uint32_t NodeModel::num_output_ports() const
 {
 	return m_output_port_models.size();

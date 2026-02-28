@@ -7,8 +7,7 @@
 
 #include "NodeConnection.h"
 #include "NodeType.h"
-
-class NodePortModel;
+#include "NodePortModel.h"
 
 class NodeGraphController;
 
@@ -35,7 +34,7 @@ public:
 	QJsonObject to_json() const;
 
 	const NodeType& node_type() const;
-	
+
 	void create_port_models();
 	void apply_node_model_to_ports_hack();
 
@@ -45,11 +44,100 @@ public:
 	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
 
+    /**
+     * All input ports for this node.
+     */
+    const QVector<NodePortModel*> input_ports() const;
+
+    /**
+     * Retrieve all nodes connected to an input port of the current node.
+     */
+    QVector<NodeModel*> get_input_nodes() const;
+
+    /**
+     * Retrieve the node of type `InputNodeType` connected to any input port of the current node.
+     *
+     * @pre Requires only one input port is connected to the node type and the input port to only accept a single connection.
+     *
+     * @returns nullptr if none found
+     */
+    template <class InputNodeType>
+    InputNodeType* get_input_node_by_type() const
+    {
+        for (NodePortModel* port : m_input_port_models)
+        {
+            for (NodeConnection* connection : port->connections())
+            {
+                if (InputNodeType* node = qobject_cast<InputNodeType*>(connection->output()->node_model());
+                        node != nullptr)
+                {
+                    assert(!port->supports_multiple_connections());
+                    return node;
+                }
+            }
+        }
+        return nullptr;
+    }
+
+    /**
+     * Retrieve the output port of type `OutputPortType` connected to any input of this node.
+     *
+     * @pre Requires only one input port is connected to the node type and the input port to only accept a single connection.
+     *
+     * @returns nullptr if none found
+     */
+    template <class OutputPortType>
+    OutputPortType* get_input_node_output_port_by_type() const
+    {
+        for (NodePortModel* port : m_input_port_models)
+        {
+            for (NodeConnection* connection : port->connections())
+            {
+                if (OutputPortType* required_port = qobject_cast<OutputPortType*>(connection->output());
+                        required_port != nullptr)
+                {
+                    // TODO: assert(!port->supports_multiple_connections());
+                    return required_port;
+                }
+            }
+        }
+        return nullptr;
+    }
+
 	uint32_t num_output_ports() const;
 	NodePortModel* output_port_model(uint32_t port_nr);
 	void add_output_port_model(NodePortModel* port_model);
 	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
+
+    /**
+     * All output ports for this node.
+     */
+    const QVector<NodePortModel*> output_ports() const;
+
+    /**
+     * Retrieve the connection on any output port towards a node of type `OutputNodeType`.
+     *
+     * @pre Requires only one output port is connected to the node type and the output port to only accept a single connection.
+     *
+     * @returns nullptr if none found
+     */
+    template <class OutputNodeType>
+    NodeConnection* get_output_connection_by_node_type() const
+    {
+        for (NodePortModel* port : m_output_port_models)
+        {
+            for (NodeConnection* connection : port->connections())
+            {
+                if (qobject_cast<OutputNodeType*>(connection->input()->node_model()) != nullptr)
+                {
+                    // TODO: assert(!port->supports_multiple_connections());
+                    return connection;
+                }
+            }
+        }
+        return nullptr;
+    }
 
 	uint32_t num_ports() const;
 
