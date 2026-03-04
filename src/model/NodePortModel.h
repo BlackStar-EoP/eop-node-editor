@@ -5,7 +5,8 @@
 #include <QString>
 #include <QVector>
 
-class NodeConnection;
+#include "NodeConnection.h"
+
 class NodeModel;
 
 class NodePortModel : public QObject
@@ -41,6 +42,18 @@ public:
 	void add_connection(NodeConnection* connection);
 	void remove_connection(NodeConnection* connection);
 	bool has_connection(NodePortModel* other_port_model);
+    const QVector<NodeConnection*> connections() const;
+
+    template <class NodeType>
+    NodeType* get_connected_node_by_type()
+    {
+        assert(!supports_multiple_connections());
+        if (m_connections.isEmpty())
+        {
+            return nullptr;
+        }
+        return qobject_cast<NodeType*>(m_connections.front()->other(this)->node_model());
+    }
 
 private:
 	NodeModel* m_node_model = nullptr;
