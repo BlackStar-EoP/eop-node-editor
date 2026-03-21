@@ -43,6 +43,18 @@ public:
 	virtual QJsonObject user_data() const = 0;
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
 
+    /**
+     * Create the corresponding widget to show on the UI.
+     * No-op if the node has no corresponding widget.
+     */
+    virtual void create_widget() {}
+
+    /**
+     * Update the UI widget with changes made on the model.
+     * No-op if the node has no corresponding widget.
+     */
+    virtual void sync_widget_from_model() {}
+
 	QJsonObject to_json() const;
 
 	const NodeType& node_type() const;

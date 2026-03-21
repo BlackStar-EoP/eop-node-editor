@@ -15,6 +15,11 @@ class NodeGraphScene : public QGraphicsScene
 public:
 	NodeGraphScene(QObject* parent, NodeGraphController& controller);
 
+    /**
+     * Remove all nodes and reset the state.
+     */
+    void clear_all();
+
 private:
 	void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;

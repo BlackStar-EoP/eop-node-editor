@@ -40,6 +40,13 @@ void NodeGraph::clear()
 	m_nodes.clear();
 }
 
+QVector<NodeModel*> NodeGraph::release_nodes()
+{
+    QVector<NodeModel*> released = m_nodes;
+    m_nodes.clear();
+    return released;
+}
+
 bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 {
 	if (start == target)
@@ -51,7 +58,7 @@ bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
 		uint32_t num_connections = port_model->num_connections();
 		if (num_connections == 0)
 			continue;
-		
+
 		for (uint32_t connection = 0; connection < num_connections; ++connection)
 		{
 			NodeModel* left_node = port_model->connection(connection)->output()->node_model();

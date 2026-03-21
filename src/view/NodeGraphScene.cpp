@@ -26,6 +26,13 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 	});
 }
 
+void NodeGraphScene::clear_all()
+{
+    m_node_gfx_items.clear();
+    m_line_edit_item = nullptr;
+    QGraphicsScene::clear();
+}
+
 void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	if (event->buttons() == Qt::LeftButton)

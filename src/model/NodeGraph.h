@@ -16,6 +16,11 @@ public:
 	void remove_node(NodeModel* node);
 	void clear();
 
+    /**
+     * Release ownership of the nodes currently in the graph and return them.
+     */
+    QVector<NodeModel*> release_nodes();
+
 	// Circular dependency checks
 	bool scan_left(NodeModel* start, NodeModel* target) const;
 	bool scan_right(NodeModel* start, NodeModel* target) const;
