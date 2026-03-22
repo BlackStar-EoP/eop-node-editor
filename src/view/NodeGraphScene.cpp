@@ -224,6 +224,8 @@ NodeGraphicsItem* NodeGraphScene::find_node_graphics_item(NodeModel* node_model)
 void NodeGraphScene::node_added(NodeModel* node_model)
 {
 	assert(node_model != nullptr);
+    node_model->create_widget();
+    node_model->sync_widget_from_model();
 	NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
 	node_model->register_node_model_listener(node_gfx_item);
 	m_node_gfx_items.push_back(node_gfx_item);
