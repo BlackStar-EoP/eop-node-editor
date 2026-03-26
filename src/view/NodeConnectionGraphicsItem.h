@@ -30,6 +30,8 @@ public:
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
+    void release_ports();
+
 private slots:
 	void self_destruct();
 

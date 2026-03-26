@@ -62,6 +62,11 @@ NodeGraphicsItem::NodeGraphicsItem(NodeModel* node_model)
 	});
 }
 
+NodeGraphicsItem::~NodeGraphicsItem()
+{
+    m_node_model->unregister_node_model_listener(this);
+}
+
 NodePortGraphicsItem* NodeGraphicsItem::find_input_port(NodePortModel* input_port)
 {
 	for (NodePortGraphicsItem* port_gfx_item : m_input_ports)

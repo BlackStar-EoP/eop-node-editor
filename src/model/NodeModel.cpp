@@ -178,6 +178,11 @@ void NodeModel::register_node_model_listener(INodeModelListener* listener)
 	m_node_model_listeners.push_back(listener);
 }
 
+void NodeModel::unregister_node_model_listener(INodeModelListener* listener)
+{
+	m_node_model_listeners.removeAll(listener);
+}
+
 void NodeModel::set_position(const QPointF& position)
 {
 	m_position = position;

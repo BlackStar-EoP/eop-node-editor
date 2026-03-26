@@ -26,8 +26,43 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 	});
 }
 
+void NodeGraphScene::build_scene_from_graph(const QVector<NodeModel*>& nodes)
+{
+    for (NodeModel* node_model : nodes)
+    {
+        NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
+        node_model->register_node_model_listener(node_gfx_item);
+        m_node_gfx_items.push_back(node_gfx_item);
+        addItem(node_gfx_item);
+    }
+
+    for (NodeModel* node_model : nodes)
+    {
+        for (NodePortModel* port : node_model->input_ports())
+        {
+            for (NodeConnection* connection : port->connections())
+            {
+                NodeGraphicsItem* input_node = find_node_graphics_item(connection->input()->node_model());
+                NodeGraphicsItem* output_node = find_node_graphics_item(connection->output()->node_model());
+                NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
+                connection_gfx_item->set_first_port(input_node->find_input_port(connection->input()));
+                connection_gfx_item->set_second_port(output_node->find_output_port(connection->output()));
+                connection_gfx_item->set_connection(connection);
+                m_node_connection_gfx_items.push_back(connection_gfx_item);
+                addItem(connection_gfx_item);
+            }
+        }
+    }
+}
+
 void NodeGraphScene::clear_all()
 {
+    for (NodeConnectionGraphicsItem* conn_gfx_item : m_node_connection_gfx_items)
+    {
+        conn_gfx_item->release_ports();
+    }
+    m_node_connection_gfx_items.clear();
+
     m_node_gfx_items.clear();
     m_line_edit_item = nullptr;
     QGraphicsScene::clear();
@@ -180,6 +215,7 @@ void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
 		for (NodeConnectionGraphicsItem* nodeConnectionGraphicsItem : connectionItemsToBeDeleted)
 		{
 			m_controller.delete_connection(nodeConnectionGraphicsItem->connection());
+            m_node_connection_gfx_items.remove(m_node_connection_gfx_items.indexOf(nodeConnectionGraphicsItem));
 		}
 
 		update();
@@ -241,5 +277,6 @@ void NodeGraphScene::connection_created(NodeConnection* connection)
 	connection_gfx_item->set_first_port(input_node->find_input_port(connection->input()));
 	connection_gfx_item->set_second_port(output_node->find_output_port(connection->output()));
 	connection_gfx_item->set_connection(connection);
+    m_node_connection_gfx_items.push_back(connection_gfx_item);
 	addItem(connection_gfx_item);
 }

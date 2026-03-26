@@ -173,6 +173,7 @@ public:
     void input_nodes_changed();
 	void output_nodes_changed();
 	void register_node_model_listener(INodeModelListener* listener);
+    void unregister_node_model_listener(INodeModelListener* listener);
 
 	void set_position(const QPointF& position);
 	const QPointF& position() const;

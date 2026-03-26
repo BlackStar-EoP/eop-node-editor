@@ -30,12 +30,15 @@ public:
 	QJsonObject save_graph() const;
 	void load_graph(const QJsonObject& json_data);
 
+    /**
+     * Replace the currently visible graph with the provided graph.
+     * Drops the currently visible graph and takes ownership of the nodes in the graph.
+     */
+    void adopt_graph(NodeGraph& source_graph);
+
 signals:
 	void node_graph_changed();
 	void message(const QString& message, bool status);
-
-private:
-	bool parse_node(const QJsonObject& node, QMap<uint32_t, NodeModel*>& node_models);
 
 private:
 	QGraphicsView* m_view = nullptr;
