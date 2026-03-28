@@ -146,7 +146,8 @@ uint32_t NodeModel::num_ports() const
 void NodeModel::node_property_changed()
 {
 	// TODO maybe do this with the model listeners, I'm not sure yet
-	m_controller->notify_node_graph_changed();
+    if (m_controller != nullptr)
+        m_controller->notify_node_graph_changed();
 }
 
 void NodeModel::node_model_changed()

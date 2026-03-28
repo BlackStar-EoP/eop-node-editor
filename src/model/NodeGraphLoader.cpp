@@ -170,6 +170,86 @@ bool NodeGraphLoader::load(const QJsonObject& json_data)
     return true;  // or false if loading failed
 }
 
+// TODO: fix duplication
+bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const QJsonObject& json_data)
+{
+    graph.clear();
+
+    QJsonArray nodes_json = json_data["nodes"].toArray();
+    QJsonArray connections_json = json_data["connections"].toArray();
+    QMap<uint32_t, NodeModel*> node_models;
+
+    // Create all node models in one pass, track those whose load_from_user_data
+    // fails (e.g. forward references to objects not yet loaded).
+    struct PendingNode { uint32_t id; QJsonObject user_data; };
+    QVector<PendingNode> pending;
+
+    for (int32_t i = 0; i < nodes_json.size(); ++i)
+    {
+        QJsonObject node_json   = nodes_json[i].toObject();
+        uint32_t id             = node_json["id"].toInt();
+        QJsonObject node_data   = node_json["node_data"].toObject();
+        QJsonObject user_data   = node_data["user_data"].toObject();
+
+        factory.set_current_node_type(node_data["node_type"].toString());
+        NodeModel* model = factory.create_node_model_and_set_type();
+        assert(model != nullptr);
+        model->set_position(QPointF(node_data["pos_x"].toDouble(),
+                                   node_data["pos_y"].toDouble()));
+        model->create_port_models();
+        graph.give_node(model);
+        node_models[id] = model;
+
+        if (!model->load_from_user_data(user_data))
+            pending.push_back({id, user_data});
+    }
+
+    // Retry load_from_user_data for nodes that failed (forward references).
+    // Only the data call is retried — the model is already in the graph.
+    for (;;)
+    {
+        bool progress = false;
+        for (int32_t i = pending.size() - 1; i >= 0; --i)
+        {
+            if (node_models[pending[i].id]->load_from_user_data(pending[i].user_data))
+            {
+                pending.removeAt(i);
+                progress = true;
+            }
+        }
+        if (pending.isEmpty())
+            break;
+        if (!progress)
+            return false;
+    }
+
+    // Create connections directly from serialised data — no controller
+    // validation needed since the data was valid when saved.
+    // NodeConnection's constructor self-registers with both ports.
+    for (int32_t i = 0; i < connections_json.size(); ++i)
+    {
+        QJsonObject json_conn   = connections_json[i].toObject();
+        uint32_t input_id       = json_conn["input_model_id"].toInt();
+        uint32_t output_id      = json_conn["output_model_id"].toInt();
+        uint32_t input_port_idx  = json_conn["input_port_index"].toInt();
+        uint32_t output_port_idx = json_conn["output_port_index"].toInt();
+
+        NodeModel* input_model  = node_models[input_id];
+        NodeModel* output_model = node_models[output_id];
+
+        if (input_port_idx  < input_model->num_input_ports() &&
+            output_port_idx < output_model->num_output_ports())
+        {
+            new NodeConnection(
+                input_model->input_port_model(input_port_idx),
+                output_model->output_port_model(output_port_idx)
+            );
+        }
+    }
+
+    return true;
+}
+
 bool NodeGraphLoader::parse_node(const QJsonObject& node, QMap<uint32_t, NodeModel*>& node_models)
 {
 	uint32_t id = node["id"].toInt();
