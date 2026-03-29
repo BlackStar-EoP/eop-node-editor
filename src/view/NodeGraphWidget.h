@@ -41,6 +41,9 @@ signals:
 	void message(const QString& message, bool status);
 
 private:
+    void clear();
+
+private:
 	QGraphicsView* m_view = nullptr;
 	NodeGraphScene* m_scene = nullptr;
 	NodeGraphController m_controller;

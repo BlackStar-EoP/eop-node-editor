@@ -61,9 +61,8 @@ bool NodeGraphWidget::is_persisted() const
 
 void NodeGraphWidget::new_graph()
 {
-	m_controller.clear_graph();
-	//m_scene.clear_line_edit()
-	m_node_graph.clear();
+    clear();
+    update();
 }
 
 QJsonObject NodeGraphWidget::save_graph() const
@@ -83,13 +82,7 @@ void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 
 void NodeGraphWidget::adopt_graph(NodeGraph& source_graph)
 {
-    // Clear current graph
-    for (NodeModel* node : m_node_graph.nodes())
-    {
-        node->set_widget(nullptr);
-    }
-    m_scene->clear_all();
-    m_node_graph.clear();
+    clear();
 
     // Transfer new graph and display
     QVector<NodeModel*> transferred = source_graph.release_nodes();
@@ -111,4 +104,15 @@ void NodeGraphWidget::adopt_graph(NodeGraph& source_graph)
     set_persisted();
 
     m_view->update();
+}
+
+void NodeGraphWidget::clear()
+{
+	m_controller.clear_graph();
+    for (NodeModel* node : m_node_graph.nodes())
+    {
+        node->set_widget(nullptr);
+    }
+    m_scene->clear_all();
+    m_node_graph.clear();
 }
