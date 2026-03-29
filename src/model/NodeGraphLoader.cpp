@@ -95,85 +95,67 @@ bool NodeGraphLoader::load(const QJsonObject& json_data)
     m_controller.clear_graph();
     m_graph.clear();
 
-	QJsonArray nodes_json = json_data["nodes"].toArray();
-	QJsonArray connections_json = json_data["connections"].toArray();
-	QMap<uint32_t, NodeModel*> node_models;
+    const bool result = load_impl(
+            json_data,
+            [this](uint32_t id, const QJsonObject& node_data) -> NodeModel*
+            {
+                Q_UNUSED(id);
+                const float x_pos = node_data["pos_x"].toDouble();
+                const float y_pos = node_data["pos_y"].toDouble();
+                const QString node_type = node_data["node_type"].toString();
+                const QJsonObject user_data = node_data["user_data"].toObject();
 
-	QVector<QJsonObject> failed_nodes_json;
-	for (int32_t i = 0; i < nodes_json.size(); ++i)
-	{
-		QJsonObject node = nodes_json[i].toObject();
-		if (!parse_node(node, node_models))
-			failed_nodes_json.push_back(node);
-	}
-
-	for (;;)
-	{
-		bool nodes_changed = false;
-		for (int32_t i = failed_nodes_json.size() - 1; i >= 0; --i)
-		{
-
-			if (parse_node(failed_nodes_json[i], node_models))
-			{
-				nodes_changed = true;
-				failed_nodes_json.removeAt(i);
-			}
-		}
-
-		if (failed_nodes_json.size() == 0)
-			break;
-
-		if (!nodes_changed)
-		{
-            m_last_error = QString("Warning, %1 node(s) could not be created!").arg(failed_nodes_json.size());
-            return false;
-		}
-	}
-
-	for (;;)
-	{
-		bool connections_changed = false;
-		for (int32_t i = connections_json.size() - 1; i >= 0; --i)
-		{
-			QJsonObject json_connection = connections_json[i].toObject();
-			uint32_t input_model_id = json_connection["input_model_id"].toInt();
-			uint32_t output_model_id = json_connection["output_model_id"].toInt();
-			uint32_t input_port_index = json_connection["input_port_index"].toInt();
-			uint32_t output_port_index = json_connection["output_port_index"].toInt();
-
-			NodeModel* input_model = node_models[input_model_id];
-			NodeModel* output_model = node_models[output_model_id];
-			if (input_port_index < input_model->num_input_ports() && output_port_index < output_model->num_output_ports())
-			{
-				NodePortModel* input_port_model = input_model->input_port_model(input_port_index);
-				NodePortModel* output_port_model = output_model->output_port_model(output_port_index);
-				m_controller.set_first_connection_port(input_port_model);
-				m_controller.set_second_connection_port(output_port_model);
+                m_factory.set_current_node_type(node_type);
+                NodeModel* node_model = m_controller.add_node(QPoint(x_pos, y_pos));
+                assert(node_model != nullptr);
+                return node_model;
+            },
+            [this](NodePortModel* input, NodePortModel* output)
+            {
+				m_controller.set_first_connection_port(input);
+				m_controller.set_second_connection_port(output);
 				NodeConnection* connection = m_controller.create_connection();
 				assert(connection != nullptr);
-				connections_json.removeAt(i);
-				connections_changed = true;
-			}
-		}
-
-		if (connections_json.size() == 0)
-			break;
-
-		if (!connections_changed)
-		{
-            m_last_error = QString("Warning, %1 connection(s) could not be created!").arg(connections_json.size());
-            return false;
-		}
-	}
+            }
+            );
 
     m_controller.end_load();
-    return true;  // or false if loading failed
+    return result;
 }
 
-// TODO: fix duplication
 bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const QJsonObject& json_data)
 {
     graph.clear();
+
+    return load_impl(
+            json_data,
+            [&graph, &factory](uint32_t id, const QJsonObject& node_data) -> NodeModel*
+            {
+                Q_UNUSED(id);
+                factory.set_current_node_type(node_data["node_type"].toString());
+                NodeModel* model = factory.create_node_model_and_set_type();
+                assert(model != nullptr);
+                graph.give_node(model);
+                model->set_position(QPointF(node_data["pos_x"].toDouble(),
+                                            node_data["pos_y"].toDouble()));
+                model->create_port_models();
+                return model;
+            },
+            [](NodePortModel* input, NodePortModel* output)
+            {
+                new NodeConnection(input, output);
+            }
+            );
+}
+
+bool NodeGraphLoader::load_impl(
+            const QJsonObject& json_data,
+            const std::function<NodeModel*(uint32_t id, const QJsonObject& node_data)>& create_node,
+            const std::function<void(NodePortModel* input, NodePortModel* output)>& create_connection,
+            QString* out_error
+            )
+{
+    Q_UNUSED(out_error);
 
     QJsonArray nodes_json = json_data["nodes"].toArray();
     QJsonArray connections_json = json_data["connections"].toArray();
@@ -191,13 +173,7 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
         QJsonObject node_data   = node_json["node_data"].toObject();
         QJsonObject user_data   = node_data["user_data"].toObject();
 
-        factory.set_current_node_type(node_data["node_type"].toString());
-        NodeModel* model = factory.create_node_model_and_set_type();
-        assert(model != nullptr);
-        model->set_position(QPointF(node_data["pos_x"].toDouble(),
-                                   node_data["pos_y"].toDouble()));
-        model->create_port_models();
-        graph.give_node(model);
+        NodeModel* model = create_node(id, node_data);
         node_models[id] = model;
 
         if (!model->load_from_user_data(user_data))
@@ -223,9 +199,6 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
             return false;
     }
 
-    // Create connections directly from serialised data — no controller
-    // validation needed since the data was valid when saved.
-    // NodeConnection's constructor self-registers with both ports.
     for (int32_t i = 0; i < connections_json.size(); ++i)
     {
         QJsonObject json_conn   = connections_json[i].toObject();
@@ -240,7 +213,7 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
         if (input_port_idx  < input_model->num_input_ports() &&
             output_port_idx < output_model->num_output_ports())
         {
-            new NodeConnection(
+            create_connection(
                 input_model->input_port_model(input_port_idx),
                 output_model->output_port_model(output_port_idx)
             );
@@ -248,22 +221,4 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
     }
 
     return true;
-}
-
-bool NodeGraphLoader::parse_node(const QJsonObject& node, QMap<uint32_t, NodeModel*>& node_models)
-{
-	uint32_t id = node["id"].toInt();
-	QJsonObject node_data = node["node_data"].toObject();
-
-	float x_pos = node_data["pos_x"].toDouble();
-	float y_pos = node_data["pos_y"].toDouble();
-	QString node_type = node_data["node_type"].toString();
-	QJsonObject user_data = node_data["user_data"].toObject();
-
-	m_factory.set_current_node_type(node_type);
-	NodeModel* node_model = m_controller.add_node(QPoint(x_pos, y_pos));
-	assert(node_model != nullptr);
-	bool user_data_success = node_model->load_from_user_data(user_data);
-	node_models[id] = node_model;
-	return user_data_success;
 }

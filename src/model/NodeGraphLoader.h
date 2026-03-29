@@ -3,11 +3,13 @@
 #include <QJsonObject>
 #include <QMap>
 #include <QString>
+#include <functional>
 
 class NodeGraph;
 class NodeGraphController;
 class NodeFactory;
 class NodeModel;
+class NodePortModel;
 
 class NodeGraphLoader
 {
@@ -27,7 +29,12 @@ public:
     QString last_error() const;
 
 private:
-    bool parse_node(const QJsonObject& node, QMap<uint32_t, NodeModel*>& node_models);
+    static bool load_impl(
+            const QJsonObject& json_data,
+            const std::function<NodeModel*(uint32_t id, const QJsonObject& node_data)>& create_node,
+            const std::function<void(NodePortModel* input, NodePortModel* output)>& create_connection,
+            QString* out_error = nullptr
+            );
 
     NodeGraph& m_graph;
     NodeGraphController& m_controller;
