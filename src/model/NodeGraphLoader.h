@@ -32,7 +32,7 @@ private:
     static bool load_impl(
             const QJsonObject& json_data,
             const std::function<NodeModel*(uint32_t id, const QJsonObject& node_data)>& create_node,
-            const std::function<void(NodePortModel* input, NodePortModel* output)>& create_connection,
+            const std::function<bool(NodePortModel* input, NodePortModel* output)>& create_connection,
             QString* out_error = nullptr
             );
 

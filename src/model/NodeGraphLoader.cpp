@@ -110,12 +110,12 @@ bool NodeGraphLoader::load(const QJsonObject& json_data)
                 assert(node_model != nullptr);
                 return node_model;
             },
-            [this](NodePortModel* input, NodePortModel* output)
+            [this](NodePortModel* input, NodePortModel* output) -> bool
             {
 				m_controller.set_first_connection_port(input);
 				m_controller.set_second_connection_port(output);
 				NodeConnection* connection = m_controller.create_connection();
-				assert(connection != nullptr);
+				return connection != nullptr;
             }
             );
 
@@ -141,9 +141,10 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
                 model->create_port_models();
                 return model;
             },
-            [](NodePortModel* input, NodePortModel* output)
+            [](NodePortModel* input, NodePortModel* output) -> bool
             {
                 new NodeConnection(input, output);
+                return true;
             }
             );
 }
@@ -151,7 +152,7 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
 bool NodeGraphLoader::load_impl(
             const QJsonObject& json_data,
             const std::function<NodeModel*(uint32_t id, const QJsonObject& node_data)>& create_node,
-            const std::function<void(NodePortModel* input, NodePortModel* output)>& create_connection,
+            const std::function<bool(NodePortModel* input, NodePortModel* output)>& create_connection,
             QString* out_error
             )
 {
@@ -199,25 +200,38 @@ bool NodeGraphLoader::load_impl(
             return false;
     }
 
-    for (int32_t i = 0; i < connections_json.size(); ++i)
+    QJsonArray pending_connections = connections_json;
+    for (;;)
     {
-        QJsonObject json_conn   = connections_json[i].toObject();
-        uint32_t input_id       = json_conn["input_model_id"].toInt();
-        uint32_t output_id      = json_conn["output_model_id"].toInt();
-        uint32_t input_port_idx  = json_conn["input_port_index"].toInt();
-        uint32_t output_port_idx = json_conn["output_port_index"].toInt();
+        bool progress = false;
 
-        NodeModel* input_model  = node_models[input_id];
-        NodeModel* output_model = node_models[output_id];
-
-        if (input_port_idx  < input_model->num_input_ports() &&
-            output_port_idx < output_model->num_output_ports())
+        for (int32_t i = pending_connections.size() - 1; i >= 0; --i)
         {
-            create_connection(
-                input_model->input_port_model(input_port_idx),
-                output_model->output_port_model(output_port_idx)
-            );
+            QJsonObject json_conn   = pending_connections[i].toObject();
+            uint32_t input_id       = json_conn["input_model_id"].toInt();
+            uint32_t output_id      = json_conn["output_model_id"].toInt();
+            uint32_t input_port_idx  = json_conn["input_port_index"].toInt();
+            uint32_t output_port_idx = json_conn["output_port_index"].toInt();
+
+            NodeModel* input_model  = node_models[input_id];
+            NodeModel* output_model = node_models[output_id];
+
+            if (input_port_idx  < input_model->num_input_ports() &&
+                output_port_idx < output_model->num_output_ports())
+            {
+                if (create_connection(input_model->input_port_model(input_port_idx),
+                                      output_model->output_port_model(output_port_idx)))
+                {
+                    pending_connections.removeAt(i);
+                    progress = true;
+                }
+            }
         }
+
+        if (pending_connections.isEmpty())
+            break;
+        if (!progress)
+            return false;
     }
 
     return true;
