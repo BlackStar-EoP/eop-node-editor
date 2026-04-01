@@ -46,6 +46,7 @@ void NodePortModel::add_connection(NodeConnection* connection)
 	assert(m_connections.indexOf(connection) == -1);
 	m_connections.push_back(connection);
 
+    assert(m_node_model != nullptr);
 	m_node_model->connection_added(this, connection);
 }
 
@@ -54,6 +55,7 @@ void NodePortModel::remove_connection(NodeConnection* connection)
 	int32_t index = m_connections.indexOf(connection);
 	assert(index != -1);
 	m_connections.remove(index);
+    assert(m_node_model != nullptr);
 	m_node_model->connection_removed(this, connection);
 }
 

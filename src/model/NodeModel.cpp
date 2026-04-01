@@ -39,20 +39,6 @@ void NodeModel::create_port_models()
 {
 	create_input_port_models();
 	create_output_port_models();
-	apply_node_model_to_ports_hack();
-}
-
-void NodeModel::apply_node_model_to_ports_hack()
-{
-	for (NodePortModel* port_model : m_input_port_models)
-	{
-		port_model->set_node_model(this);
-	}
-
-	for (NodePortModel* port_model : m_output_port_models)
-	{
-		port_model->set_node_model(this);
-	}
 }
 
 uint32_t NodeModel::num_input_ports() const
@@ -70,6 +56,7 @@ NodePortModel* NodeModel::input_port_model(uint32_t port_nr)
 
 void NodeModel::add_input_port_model(NodePortModel* port_model)
 {
+    port_model->set_node_model(this);
 	m_input_port_models.push_back(port_model);
 }
 
@@ -120,6 +107,7 @@ NodePortModel* NodeModel::output_port_model(uint32_t port_nr)
 
 void NodeModel::add_output_port_model(NodePortModel* port_model)
 {
+    port_model->set_node_model(this);
 	m_output_port_models.push_back(port_model);
 }
 
