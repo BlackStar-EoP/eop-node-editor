@@ -43,6 +43,7 @@ public:
 	void remove_connection(NodeConnection* connection);
 	bool has_connection(NodePortModel* other_port_model);
     const QVector<NodeConnection*> connections() const;
+    bool accepts_new_connections() const;
 
     template <class NodeType>
     NodeType* get_connected_node_by_type()

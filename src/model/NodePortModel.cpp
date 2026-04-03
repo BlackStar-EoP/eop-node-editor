@@ -79,3 +79,8 @@ const QVector<NodeConnection*> NodePortModel::connections() const
 {
     return m_connections;
 }
+
+bool NodePortModel::accepts_new_connections() const
+{
+    return supports_multiple_connections() || m_connections.isEmpty();
+}
