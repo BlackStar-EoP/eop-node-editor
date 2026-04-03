@@ -126,6 +126,11 @@ int32_t NodeModel::output_port_nr(NodePortModel* port_model) const
 	return m_output_port_models.indexOf(port_model);
 }
 
+const QVector<NodePortModel*> NodeModel::output_ports() const
+{
+    return m_output_port_models;
+}
+
 uint32_t NodeModel::num_ports() const
 {
 	return m_input_port_models.size() + m_output_port_models.size();
