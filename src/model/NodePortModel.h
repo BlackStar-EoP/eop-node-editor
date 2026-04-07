@@ -26,6 +26,8 @@ public:
 	virtual bool may_connect_to(const NodePortModel& port_model) const = 0;
 	virtual bool supports_multiple_connections() const = 0;
 	virtual QString type() const = 0;
+    virtual void create_widget() {}
+    virtual void sync_widget_from_model() {}
 
 signals:
 	void node_port_model_destroyed();
