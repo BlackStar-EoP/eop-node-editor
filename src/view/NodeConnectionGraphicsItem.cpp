@@ -23,10 +23,17 @@ NodeConnectionGraphicsItem::NodeConnectionGraphicsItem()
 
 NodeConnectionGraphicsItem::~NodeConnectionGraphicsItem()
 {
+    release_ports();
+}
+
+void NodeConnectionGraphicsItem::release_ports()
+{
 	if (m_first_port != nullptr)
 		m_first_port->remove_port_position_listener(this);
+    m_first_port = nullptr;
 	if (m_second_port != nullptr)
 		m_second_port->remove_port_position_listener(this);
+    m_second_port = nullptr;
 }
 
 void NodeConnectionGraphicsItem::set_first_port(NodePortGraphicsItem* port)

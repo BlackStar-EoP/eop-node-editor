@@ -17,6 +17,8 @@ qt_add_library(${PROJECT_NAME}-lib STATIC
   src/model/NodeFactory.h
   src/model/NodeGraph.cpp
   src/model/NodeGraph.h
+  src/model/NodeGraphLoader.cpp
+  src/model/NodeGraphLoader.h
   src/model/NodeModel.cpp
   src/model/NodeModel.h
   src/model/NodePortModel.cpp

@@ -13,6 +13,7 @@ class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModel
 	Q_INTERFACES(QGraphicsItem)
 public:
 	NodeGraphicsItem(NodeModel* node_model);
+    virtual ~NodeGraphicsItem();
 
 	NodePortGraphicsItem* find_input_port(NodePortModel* input_port);
 	NodePortGraphicsItem* find_output_port(NodePortModel* output_port);

@@ -43,12 +43,23 @@ public:
 	virtual QJsonObject user_data() const = 0;
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
 
+    /**
+     * Create the corresponding widget to show on the UI.
+     * No-op if the node has no corresponding widget.
+     */
+    virtual void create_widget() {}
+
+    /**
+     * Update the UI widget with changes made on the model.
+     * No-op if the node has no corresponding widget.
+     */
+    virtual void sync_widget_from_model() {}
+
 	QJsonObject to_json() const;
 
 	const NodeType& node_type() const;
 
 	void create_port_models();
-	void apply_node_model_to_ports_hack();
 
 	uint32_t num_input_ports() const;
 	NodePortModel* input_port_model(uint32_t port_nr);
@@ -161,6 +172,7 @@ public:
     void input_nodes_changed();
 	void output_nodes_changed();
 	void register_node_model_listener(INodeModelListener* listener);
+    void unregister_node_model_listener(INodeModelListener* listener);
 
 	void set_position(const QPointF& position);
 	const QPointF& position() const;

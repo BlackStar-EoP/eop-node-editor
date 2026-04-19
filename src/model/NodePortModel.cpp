@@ -46,6 +46,7 @@ void NodePortModel::add_connection(NodeConnection* connection)
 	assert(m_connections.indexOf(connection) == -1);
 	m_connections.push_back(connection);
 
+    assert(m_node_model != nullptr);
 	m_node_model->connection_added(this, connection);
 }
 
@@ -54,6 +55,7 @@ void NodePortModel::remove_connection(NodeConnection* connection)
 	int32_t index = m_connections.indexOf(connection);
 	assert(index != -1);
 	m_connections.remove(index);
+    assert(m_node_model != nullptr);
 	m_node_model->connection_removed(this, connection);
 }
 
@@ -76,4 +78,9 @@ bool NodePortModel::has_connection(NodePortModel* other_port_model)
 const QVector<NodeConnection*> NodePortModel::connections() const
 {
     return m_connections;
+}
+
+bool NodePortModel::accepts_new_connections() const
+{
+    return supports_multiple_connections() || m_connections.isEmpty();
 }

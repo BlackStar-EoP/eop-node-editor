@@ -22,10 +22,12 @@ public:
 	virtual ~NodePortModel();
 	virtual EPortType port_type() const = 0;
 	virtual QString port_label() const = 0;
-	virtual QString name() = 0;
+	virtual QString name() const = 0;
 	virtual bool may_connect_to(const NodePortModel& port_model) const = 0;
 	virtual bool supports_multiple_connections() const = 0;
 	virtual QString type() const = 0;
+    virtual void create_widget() {}
+    virtual void sync_widget_from_model() {}
 
 signals:
 	void node_port_model_destroyed();
@@ -43,6 +45,7 @@ public:
 	void remove_connection(NodeConnection* connection);
 	bool has_connection(NodePortModel* other_port_model);
     const QVector<NodeConnection*> connections() const;
+    bool accepts_new_connections() const;
 
     template <class NodeType>
     NodeType* get_connected_node_by_type()

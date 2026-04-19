@@ -15,6 +15,13 @@ class NodeGraphScene : public QGraphicsScene
 public:
 	NodeGraphScene(QObject* parent, NodeGraphController& controller);
 
+    void build_scene_from_graph(const QVector<NodeModel*>& nodes);
+
+    /**
+     * Remove all nodes and reset the state.
+     */
+    void clear_all();
+
 private:
 	void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
@@ -31,6 +38,7 @@ private:
 	NodeGraphController& m_controller;
 
 	QVector<NodeGraphicsItem*> m_node_gfx_items;
+    QVector<NodeConnectionGraphicsItem*> m_node_connection_gfx_items;
 	NodeConnectionGraphicsItem* m_line_edit_item = nullptr;
 	QPointF m_line_start_pos;
 
