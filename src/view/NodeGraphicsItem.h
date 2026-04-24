@@ -5,7 +5,7 @@
 #include <QGraphicsItem>
 #include <QVector>
 
-class NodePortGraphicsItem;
+class QBoxLayout;
 
 class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModelListener
 {
@@ -14,9 +14,6 @@ class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModel
 public:
 	NodeGraphicsItem(NodeModel* node_model);
     virtual ~NodeGraphicsItem();
-
-	NodePortGraphicsItem* find_input_port(NodePortModel* input_port);
-	NodePortGraphicsItem* find_output_port(NodePortModel* output_port);
 
 	QRectF boundingRect() const override;
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
@@ -34,6 +31,8 @@ private:
 	void node_model_changed() override;
     void input_nodes_changed() override;
 	void output_nodes_changed() override;
+    void remove_input_nodes();
+    void remove_output_nodes();
     void update_node_positions();
 
 private slots:
@@ -46,8 +45,9 @@ private:
 	QRectF m_bounding_rect = QRect(0, 0, 100, 50);
 	NodeModel* m_node_model = nullptr;
     QWidget* m_contents = nullptr;
-	QVector<NodePortGraphicsItem*> m_input_ports;
-	QVector<NodePortGraphicsItem*> m_output_ports;
+    QBoxLayout* m_layout = nullptr;
+    QBoxLayout* m_input_port_layout = nullptr;
+    QBoxLayout* m_output_port_layout = nullptr;
 
 	uint32_t m_port_start_y = 0;
 	bool m_hover = false;

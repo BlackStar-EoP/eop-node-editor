@@ -4,10 +4,12 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include <QPointer>
 
 #include "NodeConnection.h"
 
 class NodeModel;
+class NodePortConnectorWidget;
 
 class NodePortModel : public QObject
 {
@@ -35,8 +37,10 @@ signals:
 public:
 	void set_widget(QWidget* widget);
 	QWidget* widget() const;
-	void set_node_model(NodeModel* node_model);
+    NodePortConnectorWidget* connector_widget();
+    void update_connector_widget();
 
+	void set_node_model(NodeModel* node_model);
 	NodeModel* node_model() const;
 
 	NodeConnection* connection(uint32_t index) const;
@@ -62,4 +66,5 @@ private:
 	NodeModel* m_node_model = nullptr;
 	QVector<NodeConnection*> m_connections;
 	QWidget* m_widget = nullptr;
+    QPointer<NodePortConnectorWidget> m_connector_widget = nullptr;
 };

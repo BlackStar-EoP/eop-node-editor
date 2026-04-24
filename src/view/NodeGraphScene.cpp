@@ -2,18 +2,22 @@
 
 #include "NodeConnectionGraphicsItem.h"
 #include "NodeGraphicsItem.h"
-#include "NodePortGraphicsItem.h"
 #include "EditorColorScheme.h"
 #include "controllers/NodeGraphController.h"
 
 //#include "model/NodeModel.h" TODO al geinclude in nodegraphicsitem vanwege interface
 #include "model/NodePortModel.h"
+#include "view/NodePortConnectorWidget.h"
 
+#include <QGraphicsProxyWidget>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QKeyEvent>
+#include <QWidget>
 
 #include <assert.h>
+#include <qobject.h>
+#include <qsharedpointer.h>
 
 NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
@@ -32,7 +36,6 @@ void NodeGraphScene::build_scene_from_graph(const QVector<NodeModel*>& nodes)
     {
         NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
         node_model->register_node_model_listener(node_gfx_item);
-        m_node_gfx_items.push_back(node_gfx_item);
         addItem(node_gfx_item);
     }
 
@@ -42,13 +45,10 @@ void NodeGraphScene::build_scene_from_graph(const QVector<NodeModel*>& nodes)
         {
             for (NodeConnection* connection : port->connections())
             {
-                NodeGraphicsItem* input_node = find_node_graphics_item(connection->input()->node_model());
-                NodeGraphicsItem* output_node = find_node_graphics_item(connection->output()->node_model());
                 NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
-                connection_gfx_item->set_first_port(input_node->find_input_port(connection->input()));
-                connection_gfx_item->set_second_port(output_node->find_output_port(connection->output()));
+                connection_gfx_item->add_port(connection->input()->connector_widget());
+                connection_gfx_item->add_port(connection->output()->connector_widget());
                 connection_gfx_item->set_connection(connection);
-                m_node_connection_gfx_items.push_back(connection_gfx_item);
                 addItem(connection_gfx_item);
             }
         }
@@ -57,40 +57,53 @@ void NodeGraphScene::build_scene_from_graph(const QVector<NodeModel*>& nodes)
 
 void NodeGraphScene::clear_all()
 {
-    for (NodeConnectionGraphicsItem* conn_gfx_item : m_node_connection_gfx_items)
-    {
-        conn_gfx_item->release_ports();
-    }
-    m_node_connection_gfx_items.clear();
-
-    m_node_gfx_items.clear();
     m_line_edit_item = nullptr;
     QGraphicsScene::clear();
+}
+
+NodePortConnectorWidget* NodeGraphScene::port_connector_at(const QPointF& scene_pos) const
+{
+    QList<QGraphicsItem*> item_list = items(scene_pos);
+
+    if (item_list.size() > 0)
+    {
+        for (QGraphicsItem* item : item_list)
+        {
+            if (item->isWidget())
+            {
+                QGraphicsProxyWidget* proxy = qgraphicsitem_cast<QGraphicsProxyWidget*>(item);
+                if (proxy != nullptr) {
+                    QWidget* widget = proxy->widget();
+                    QPointF proxyLocalPos = proxy->mapFromScene(scene_pos);
+                    QPoint widgetLocalPos = widget->mapFrom(proxy->widget()->parentWidget(), proxyLocalPos.toPoint());
+                    QWidget* childWidget = widget->childAt(widgetLocalPos);
+
+                    return qobject_cast<NodePortConnectorWidget*>(childWidget);
+                }
+            }
+        }
+    }
+    return nullptr;
 }
 
 void NodeGraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	if (event->buttons() == Qt::LeftButton)
 	{
-		QList<QGraphicsItem*> item_list = items(event->scenePos());
+        if (!items(event->scenePos()).empty())
+        {
+            if (NodePortConnectorWidget* port = port_connector_at(event->scenePos());
+                    port != nullptr)
+            {
+                m_controller.set_first_connection_port(port->port_model());
+                port->select();
 
-		if (item_list.size() > 0)
-		{
-			for (QGraphicsItem* item : item_list)
-			{
-				if (dynamic_cast<NodePortGraphicsItem*>(item) != nullptr)
-				{
-					NodePortGraphicsItem* port = dynamic_cast<NodePortGraphicsItem*>(item);
-					m_controller.set_first_connection_port(port->port_model());
-					port->select();
-
-					m_line_edit_item = new NodeConnectionGraphicsItem();
-					m_line_edit_item->set_first_port(port);
-					addItem(m_line_edit_item);
-					return;
-				}
-			}
-		}
+                m_line_edit_item = new NodeConnectionGraphicsItem();
+                m_line_edit_item->add_port(port);
+                addItem(m_line_edit_item);
+                return;
+            }
+        }
 		else
 		{
 			m_controller.add_node(event->scenePos());
@@ -121,40 +134,26 @@ void NodeGraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void NodeGraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-	QList<QGraphicsItem*> itemlist = items(event->scenePos());
-	bool found = false;
-	for (QGraphicsItem* item : itemlist)
-	{
-		NodePortGraphicsItem* port_gfx_item = dynamic_cast<NodePortGraphicsItem*>(item);
-		if (port_gfx_item != nullptr)
-		{
-			m_controller.set_second_connection_port(port_gfx_item->port_model());
-			NodeConnection* connection = m_controller.create_connection();
-			if (connection != nullptr)
-			{
-				delete m_line_edit_item;
-				found = true;
-			}
-			else
-			{
-				update();
-			}
-		}
-	}
+    if (m_line_edit_item != nullptr)
+    {
+        if (NodePortConnectorWidget* port = port_connector_at(event->scenePos());
+                port != nullptr)
+        {
+            m_controller.set_second_connection_port(port->port_model());
+            m_controller.create_connection();
+        }
 
-	if (!found)
-	{
-		delete m_line_edit_item;
-		update();
-	}
+        delete m_line_edit_item;
+        m_line_edit_item = nullptr;
+        update();
+    }
 
-	m_line_edit_item = nullptr;
 	QGraphicsScene::mouseReleaseEvent(event);
 }
 
 void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
 {
-	if (keyEvent->key() == Qt::Key_Delete)
+	if (keyEvent->key() == Qt::Key_Delete || keyEvent->key() == Qt::Key_Backspace)
 	{
 		QList<QGraphicsItem*> items = selectedItems();
 		QList<NodeGraphicsItem*> nodeItemsToBeDeleted;
@@ -209,13 +208,11 @@ void NodeGraphScene::keyPressEvent(QKeyEvent* keyEvent)
 			}
 
 			m_controller.delete_node(nodeGraphicsItem->node_model());
-			m_node_gfx_items.remove(m_node_gfx_items.indexOf(nodeGraphicsItem));
 		}
 
 		for (NodeConnectionGraphicsItem* nodeConnectionGraphicsItem : connectionItemsToBeDeleted)
 		{
 			m_controller.delete_connection(nodeConnectionGraphicsItem->connection());
-            m_node_connection_gfx_items.remove(m_node_connection_gfx_items.indexOf(nodeConnectionGraphicsItem));
 		}
 
 		update();
@@ -245,18 +242,6 @@ void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)
     painter->drawLines(lines.data(), lines.size());
 }
 
-NodeGraphicsItem* NodeGraphScene::find_node_graphics_item(NodeModel* node_model)
-{
-	for (NodeGraphicsItem* node_gfx_item : m_node_gfx_items)
-	{
-		if (node_gfx_item->node_model() == node_model)
-			return node_gfx_item;
-	}
-
-	assert(false);
-	return nullptr;
-}
-
 void NodeGraphScene::node_added(NodeModel* node_model)
 {
 	assert(node_model != nullptr);
@@ -264,19 +249,15 @@ void NodeGraphScene::node_added(NodeModel* node_model)
     node_model->sync_widget_from_model();
 	NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
 	node_model->register_node_model_listener(node_gfx_item);
-	m_node_gfx_items.push_back(node_gfx_item);
 	addItem(node_gfx_item);
 }
 
 void NodeGraphScene::connection_created(NodeConnection* connection)
 {
-	NodeGraphicsItem* input_node = find_node_graphics_item(connection->input()->node_model());
-	NodeGraphicsItem* output_node = find_node_graphics_item(connection->output()->node_model());
 	NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
 
-	connection_gfx_item->set_first_port(input_node->find_input_port(connection->input()));
-	connection_gfx_item->set_second_port(output_node->find_output_port(connection->output()));
+	connection_gfx_item->add_port(connection->input()->connector_widget());
+	connection_gfx_item->add_port(connection->output()->connector_widget());
 	connection_gfx_item->set_connection(connection);
-    m_node_connection_gfx_items.push_back(connection_gfx_item);
 	addItem(connection_gfx_item);
 }
