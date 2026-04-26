@@ -1,7 +1,7 @@
 #include "NodeGraphicsItem.h"
 
-#include "NodePortGraphicsItem.h"
 #include "EditorColorScheme.h"
+#include "NodePortWidget.h"
 
 #include "model/NodePortModel.h"
 #include "model/NodeModel.h"
@@ -20,7 +20,6 @@ class NodeModel;
 namespace
 {
 constexpr float DEFAULT_WIDTH = 200;
-constexpr float PORT_HEIGHT = 25.0f;
 constexpr float MARGIN_HEIGHT = 20.0f;
 constexpr float MARGIN_WIDTH = 10.0f;
 
@@ -67,30 +66,6 @@ NodeGraphicsItem::~NodeGraphicsItem()
     m_node_model->unregister_node_model_listener(this);
 }
 
-NodePortGraphicsItem* NodeGraphicsItem::find_input_port(NodePortModel* input_port)
-{
-	for (NodePortGraphicsItem* port_gfx_item : m_input_ports)
-	{
-		if (port_gfx_item->port_model() == input_port)
-			return port_gfx_item;
-	}
-
-	assert(false);
-	return nullptr;
-}
-
-NodePortGraphicsItem* NodeGraphicsItem::find_output_port(NodePortModel* output_port)
-{
-	for (NodePortGraphicsItem* port_gfx_item : m_output_ports)
-	{
-		if (port_gfx_item->port_model() == output_port)
-			return port_gfx_item;
-	}
-
-	assert(false);
-	return nullptr;
-}
-
 QRectF NodeGraphicsItem::boundingRect() const
 {
 	return m_bounding_rect;
@@ -123,12 +98,14 @@ void NodeGraphicsItem::initUI()
 		name += " (Orphan)";
 
     m_contents = new QWidget();
-    QBoxLayout* layout = new QVBoxLayout(m_contents);
-    layout->addWidget(new QLabel(name));
+    m_layout = new QVBoxLayout(m_contents);
+    m_layout->setSpacing(2);
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->addWidget(new QLabel(name));
 
 	if (m_node_model->widget() != nullptr)
 	{
-        layout->addWidget(m_node_model->widget());
+        m_layout->addWidget(m_node_model->widget());
 	}
     m_contents->installEventFilter(
             new ProxyWidgetSizeFilter(m_contents, [this]
@@ -136,6 +113,7 @@ void NodeGraphicsItem::initUI()
                     if (recalculate_size())
                     {
                         update_node_positions();
+                        update();
                     }
                 })
             );
@@ -144,10 +122,16 @@ void NodeGraphicsItem::initUI()
     proxy_widget->setWidget(m_contents);
     proxy_widget->setPos(QPointF(MARGIN_WIDTH, MARGIN_HEIGHT));
 
-	recalculate_size();
+    m_input_port_layout = new QVBoxLayout();
+    m_layout->addLayout(m_input_port_layout);
+    m_output_port_layout = new QVBoxLayout();
+    m_layout->addLayout(m_output_port_layout);
 
 	init_input_ports();
 	init_output_ports();
+
+	recalculate_size();
+
     update_node_positions();
 }
 
@@ -157,8 +141,7 @@ void NodeGraphicsItem::init_input_ports()
 	for (uint32_t i = 0; i < num_input_ports; ++i)
 	{
 		NodePortModel* port_model = m_node_model->input_port_model(i);
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port_model, i);
-		m_input_ports.push_back(port_item);
+        m_input_port_layout->addWidget(new NodePortWidget(port_model, i));
 	}
 }
 
@@ -168,8 +151,7 @@ void NodeGraphicsItem::init_output_ports()
 	for (uint32_t i = 0; i < num_output_ports; ++i)
 	{
 		NodePortModel* port_model = m_node_model->output_port_model(i);
-		NodePortGraphicsItem* port_item = new NodePortGraphicsItem(this, port_model, i);
-		m_output_ports.push_back(port_item);
+        m_output_port_layout->addWidget(new NodePortWidget(port_model, i));
 	}
 }
 
@@ -188,10 +170,8 @@ bool NodeGraphicsItem::recalculate_size()
 		width += 20;
 	}
 
-	const float port_height = PORT_HEIGHT * m_node_model->num_ports();
-
     QRectF old_bounding_rect = m_bounding_rect;
-	m_bounding_rect = QRectF(0, 0, width, port_height + 2 * MARGIN_HEIGHT + widgetHeight);
+	m_bounding_rect = QRectF(0, 0, width, 2 * MARGIN_HEIGHT + widgetHeight);
     return old_bounding_rect != m_bounding_rect;
 }
 
@@ -200,6 +180,7 @@ QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant&
 	if (change == ItemPositionHasChanged)
 	{
 		m_node_model->set_position(pos());
+        m_node_model->update_port_models();
 	}
 
 	return QGraphicsItem::itemChange(change, value);
@@ -221,16 +202,11 @@ void NodeGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 void NodeGraphicsItem::node_model_changed()
 {
-	//qDeleteAll(m_input_ports);
-	m_input_ports.clear();
-
-	//qDeleteAll(m_output_ports);
-	m_output_ports.clear();
-
-	recalculate_size();
-
+    remove_input_nodes();
+    remove_output_nodes();
 	init_input_ports();
 	init_output_ports();
+	recalculate_size();
     update_node_positions();
 
 	update();
@@ -238,42 +214,51 @@ void NodeGraphicsItem::node_model_changed()
 
 void NodeGraphicsItem::input_nodes_changed()
 {
-    //qDeleteAll(m_input_ports);
-    m_input_ports.clear();
-    recalculate_size();
+    remove_input_nodes();
     init_input_ports();
+    recalculate_size();
     update_node_positions();
     update();
 }
 
 void NodeGraphicsItem::output_nodes_changed()
 {
-	//qDeleteAll(m_output_ports);
-	m_output_ports.clear();
-	recalculate_size();
+    remove_output_nodes();
 	init_output_ports();
+	recalculate_size();
     update_node_positions();
 	update();
 }
 
+void NodeGraphicsItem::remove_input_nodes()
+{
+    while (QLayoutItem* item = m_input_port_layout->takeAt(0))
+    {
+        if (QWidget* widget = item->widget())
+        {
+            widget->setParent(nullptr);
+            widget->deleteLater();
+        }
+        delete item;
+    }
+}
+
+void NodeGraphicsItem::remove_output_nodes()
+{
+    while (QLayoutItem* item = m_output_port_layout->takeAt(0))
+    {
+        if (QWidget* widget = item->widget())
+        {
+            widget->setParent(nullptr);
+            widget->deleteLater();
+        }
+        delete item;
+    }
+}
+
 void NodeGraphicsItem::update_node_positions()
 {
-    const float input_port_start_y = MARGIN_HEIGHT + m_contents->size().height();
-	const size_t num_input_ports = m_input_ports.size();
-    for (size_t i = 0; i < num_input_ports; i++)
-    {
-        const float y = input_port_start_y + i * PORT_HEIGHT;
-		m_input_ports[i]->setPos(QPointF(MARGIN_WIDTH, y));
-    }
-
-    const float output_port_start_y = MARGIN_HEIGHT + m_contents->size().height()
-        + num_input_ports * PORT_HEIGHT;
-	const size_t num_output_ports = m_output_ports.size();
-	for (size_t i = 0; i < num_output_ports; ++i)
-	{
-        const float y = output_port_start_y + i * PORT_HEIGHT;
-		m_output_ports[i]->setPos(QPointF(m_bounding_rect.width() - NodePortGraphicsItem::PORT_RADIUS - MARGIN_WIDTH, y));
-	}
+    m_node_model->update_port_models();
 }
 
 void NodeGraphicsItem::self_destruct()

@@ -4,6 +4,7 @@
 #include "model/NodePortModel.h"
 
 #include "EditorColorScheme.h"
+#include "NodePortConnectorWidget.h"
 
 #include <QPen>
 #include <QPainter>
@@ -15,67 +16,94 @@
 NodeConnectionGraphicsItem::NodeConnectionGraphicsItem()
 {
 	setAcceptHoverEvents(true);
-	setFlags(ItemIsSelectable);
+	setFlags(ItemIsSelectable | ItemSendsGeometryChanges);
 	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
 		update();
 	});
 }
 
-NodeConnectionGraphicsItem::~NodeConnectionGraphicsItem()
+bool NodeConnectionGraphicsItem::add_port(NodePortConnectorWidget* port)
 {
-    release_ports();
-}
-
-void NodeConnectionGraphicsItem::release_ports()
-{
-	if (m_first_port != nullptr)
-		m_first_port->remove_port_position_listener(this);
-    m_first_port = nullptr;
-	if (m_second_port != nullptr)
-		m_second_port->remove_port_position_listener(this);
-    m_second_port = nullptr;
-}
-
-void NodeConnectionGraphicsItem::set_first_port(NodePortGraphicsItem* port)
-{
-	m_first_port = port;
-
-	m_start_pos = port->scenePos() + OFFSET;
-	m_end_pos = m_start_pos;
-	if (scene())
-		scene()->update();
-
+    assert(port != nullptr);
+    if (port->port_model()->port_type() == NodePortModel::INPUT)
+    {
+        if (m_input_port != nullptr)
+            return false;
+        m_input_port = port;
+        connect(m_input_port, SIGNAL(position_changed()), this, SLOT(update_port_positions()));
+    }
+    else
+    {
+        if (m_output_port != nullptr)
+            return false;
+        m_output_port = port;
+        connect(m_output_port, SIGNAL(position_changed()), this, SLOT(update_port_positions()));
+    }
+    update_port_positions();
+    return true;
 }
 
 void NodeConnectionGraphicsItem::update_line(const QPointF& end_pos)
 {
-	assert(m_first_port != nullptr);
-	m_start_pos = m_first_port->scenePos() + OFFSET;
-	m_end_pos = end_pos;
-	if (scene())
-		scene()->update();
-
+    m_line_pos = end_pos;
+    update_port_positions();
 }
 
-void NodeConnectionGraphicsItem::set_second_port(NodePortGraphicsItem* port)
+void NodeConnectionGraphicsItem::update_port_positions()
 {
-	m_second_port = port;
-	portPositionChanged();
+    prepareGeometryChange();
 
-	m_first_port->add_port_position_listener(this);
-	m_second_port->add_port_position_listener(this);
-}
+    if (m_input_port != nullptr)
+    {
+        m_input_pos = m_input_port->attachment_scene_pos();
+    }
 
-void NodeConnectionGraphicsItem::portPositionChanged()
-{
-	assert(m_first_port != nullptr);
-	assert(m_second_port != nullptr);
+    if (m_output_port != nullptr)
+    {
+        m_output_pos = m_output_port->attachment_scene_pos();
+    }
 
-	m_start_pos = m_first_port->scenePos() + OFFSET;
-	m_end_pos = m_second_port->scenePos() + OFFSET;
-	if (scene())
+    if (m_input_port == nullptr)
+    {
+        m_input_pos = m_line_pos.value_or(m_output_pos);
+    }
+    if (m_output_port == nullptr)
+    {
+        m_output_pos = m_line_pos.value_or(m_input_pos);
+    }
+
+    setPos(m_output_pos);
+    update_bounding_rect();
+
+	if (scene() != nullptr)
+    {
 		scene()->update();
+    }
+
 	update();
+}
+
+void NodeConnectionGraphicsItem::update_bounding_rect()
+{
+    QPointF output_local_pos = QPointF(0, 0);
+    QPointF input_local_pos = m_input_pos - m_output_pos;
+
+    qreal x1 = std::min(input_local_pos.x(), output_local_pos.x());
+    qreal y1 = std::min(input_local_pos.y(), output_local_pos.y());
+    qreal x2 = std::max(input_local_pos.x(), output_local_pos.x());
+    qreal y2 = std::max(input_local_pos.y(), output_local_pos.y());
+
+    x1 -= 20;
+    x2 += 20;
+    y1 -= 20;
+    y2 += 20;
+    if (m_input_pos.x() < m_output_pos.x())
+    {
+        x1 -= 20;
+        x2 += 20;
+    }
+
+    m_bounding_rect = QRectF(x1, y1, x2 - x1, y2 - y1);
 }
 
 void NodeConnectionGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -98,48 +126,29 @@ void NodeConnectionGraphicsItem::paint(QPainter* painter, const QStyleOptionGrap
 		pen.setColor(EditorColorScheme::invalidColor());
 
 	painter->setPen(pen);
-	QPainterPath path;
-
-	QPointF start_pos;
-	QPointF end_pos;
-	QPointF ctrl1;
-	QPointF ctrl2;
-	if (m_first_port->port_model()->port_type() == NodePortModel::INPUT)
-	{
-		start_pos = m_start_pos;
-		end_pos = m_end_pos;
-		ctrl1 = start_pos - QPointF(80, 0);
-		ctrl2 = end_pos + QPointF(80, 0);
-	}
-	else
-	{
-		start_pos = m_end_pos;
-		end_pos = m_start_pos;
-		ctrl1 = start_pos - QPointF(80, 0);
-		ctrl2 = end_pos + QPointF(80, 0);
-	}
-
-	path.moveTo(start_pos);
-	path.cubicTo(ctrl1, ctrl2, end_pos);
-
+	QPainterPath path = create_path();
 	painter->drawPath(path);
 
-	// TODO debug troep goed krijgen
-	//painter->drawPath(shape());
-	//painter->drawRect(boundingRect());
+#ifdef DEBUG_NODE_CONNECTION
+    pen.setColor(QColorConstants::Red);
+	painter->setPen(pen);
+    painter->drawRect(boundingRect());
+    pen.setColor(QColorConstants::Yellow);
+	painter->setPen(pen);
+    painter->drawPath(shape());
+#endif
 }
 
 QRectF NodeConnectionGraphicsItem::boundingRect() const
 {
-	return QRectF(m_start_pos + QPointF(20, 0), m_end_pos - QPointF(20, 0));
+	return m_bounding_rect;
 }
 
 QPainterPath NodeConnectionGraphicsItem::shape() const
 {
-	QPainterPath path;
-	path.addRect(boundingRect());
-	path.closeSubpath();
-	return path;
+    QPainterPathStroker stroker;
+    stroker.setWidth(20);
+    return stroker.createStroke(create_path());
 }
 
 void NodeConnectionGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
@@ -184,4 +193,18 @@ void NodeConnectionGraphicsItem::set_connection(NodeConnection* connection)
 NodeConnection* NodeConnectionGraphicsItem::connection()
 {
 	return m_connection;
+}
+
+QPainterPath NodeConnectionGraphicsItem::create_path() const
+{
+	QPainterPath path;
+
+    QPointF local_input_pos = m_input_pos - pos();
+
+    QPointF ctrl1 = QPointF(80, 0);
+    QPointF ctrl2 = local_input_pos - QPointF(80, 0);
+
+	path.cubicTo(ctrl1, ctrl2, local_input_pos);
+
+    return path;
 }

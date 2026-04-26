@@ -39,8 +39,10 @@ qt_add_library(${PROJECT_NAME}-lib STATIC
   src/view/NodeGraphView.h
   src/view/NodeGraphWidget.cpp
   src/view/NodeGraphWidget.h
-  src/view/NodePortGraphicsItem.cpp
-  src/view/NodePortGraphicsItem.h
+  src/view/NodePortConnectorWidget.cpp
+  src/view/NodePortConnectorWidget.h
+  src/view/NodePortWidget.cpp
+  src/view/NodePortWidget.h
 )
 
 target_include_directories(${PROJECT_NAME}-lib

@@ -8,6 +8,7 @@ class NodeConnectionGraphicsItem;
 class NodeModel;
 class NodeConnection;
 class NodeGraphicsItem;
+class NodePortConnectorWidget;
 
 class NodeGraphScene : public QGraphicsScene
 {
@@ -28,7 +29,8 @@ private:
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 	void keyPressEvent(QKeyEvent* keyEvent) override;
 	void drawBackground(QPainter* painter, const QRectF& rect) override;
-	NodeGraphicsItem* find_node_graphics_item(NodeModel* node_model);
+
+    NodePortConnectorWidget* port_connector_at(const QPointF& scene_pos) const;
 
 private slots:
 	void node_added(NodeModel* node_model);
@@ -37,8 +39,6 @@ private slots:
 private:
 	NodeGraphController& m_controller;
 
-	QVector<NodeGraphicsItem*> m_node_gfx_items;
-    QVector<NodeConnectionGraphicsItem*> m_node_connection_gfx_items;
 	NodeConnectionGraphicsItem* m_line_edit_item = nullptr;
 	QPointF m_line_start_pos;
 

@@ -60,6 +60,7 @@ public:
 	const NodeType& node_type() const;
 
 	void create_port_models();
+    void update_port_models();
 
 	uint32_t num_input_ports() const;
 	NodePortModel* input_port_model(uint32_t port_nr);

@@ -3,6 +3,8 @@
 #include "NodeModel.h"
 #include "NodeConnection.h"
 
+#include "view/NodePortConnectorWidget.h"
+
 #include <assert.h>
 
 NodePortModel::~NodePortModel()
@@ -23,6 +25,21 @@ void NodePortModel::set_widget(QWidget* widget)
 QWidget* NodePortModel::widget() const
 {
 	return m_widget;
+}
+
+NodePortConnectorWidget* NodePortModel::connector_widget()
+{
+    if (m_connector_widget.isNull())
+    {
+        m_connector_widget = new NodePortConnectorWidget(this, 0u);
+    }
+    return m_connector_widget;
+}
+
+void NodePortModel::update_connector_widget()
+{
+    if (m_connector_widget != nullptr)
+        m_connector_widget->update_pos();
 }
 
 void NodePortModel::set_node_model(NodeModel* node_model)

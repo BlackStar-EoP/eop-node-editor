@@ -2,26 +2,19 @@
 
 #include <QGraphicsItem>
 
-#include "NodePortGraphicsItem.h"
-
 class NodeConnection;
+class NodePortConnectorWidget;
 
-class NodeConnectionGraphicsItem : public QObject, public QGraphicsItem, public PortPositionListener
+class NodeConnectionGraphicsItem : public QObject, public QGraphicsItem
 {
 Q_OBJECT
 Q_INTERFACES(QGraphicsItem)
-	const QPointF OFFSET = QPointF(10, 10);
-
 public:
 
 	NodeConnectionGraphicsItem();
-	~NodeConnectionGraphicsItem();
 
-	void set_first_port(NodePortGraphicsItem* port);
+    bool add_port(NodePortConnectorWidget* port);
 	void update_line(const QPointF& end_pos);
-	void set_second_port(NodePortGraphicsItem* port);
-
-	void portPositionChanged() override;
 
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 	QRectF boundingRect() const override;
@@ -30,21 +23,28 @@ public:
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
-    void release_ports();
-
 private slots:
 	void self_destruct();
+	void update_port_positions();
 
 public:
 	void set_connection(NodeConnection* connection);
 	NodeConnection* connection();
 
 private:
+    void update_bounding_rect();
+    QPainterPath create_path() const;
+    void set_start_pos(QPointF start_pos);
+    void set_end_pos(QPointF end_pos);
+
+private:
 	NodeConnection* m_connection = nullptr;
-	NodePortGraphicsItem* m_first_port = nullptr;
-	NodePortGraphicsItem* m_second_port = nullptr;
+	NodePortConnectorWidget* m_input_port = nullptr;
+	NodePortConnectorWidget* m_output_port = nullptr;
 	bool m_hover = false;
 
-	QPointF m_start_pos;
-	QPointF m_end_pos;
+	QPointF m_input_pos;
+	QPointF m_output_pos;
+    std::optional<QPointF> m_line_pos;
+    QRectF m_bounding_rect;
 };

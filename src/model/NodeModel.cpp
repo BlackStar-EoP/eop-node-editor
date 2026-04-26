@@ -41,6 +41,18 @@ void NodeModel::create_port_models()
 	create_output_port_models();
 }
 
+void NodeModel::update_port_models()
+{
+    for (NodePortModel* input_port : m_input_port_models)
+    {
+        input_port->update_connector_widget();
+    }
+    for (NodePortModel* output_port : m_output_port_models)
+    {
+        output_port->update_connector_widget();
+    }
+}
+
 uint32_t NodeModel::num_input_ports() const
 {
 	return m_input_port_models.size();
