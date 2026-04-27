@@ -34,7 +34,7 @@ void NodePortWidget::init_ui()
         layout->addStretch();
     }
 
-    layout->addWidget(new QLabel(m_port_model->name()));
+    layout->addWidget(new QLabel(m_port_model->port_label()));
 
     if (m_port_model->port_type() == NodePortModel::OUTPUT)
     {
