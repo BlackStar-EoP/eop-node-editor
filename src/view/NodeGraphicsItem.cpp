@@ -11,7 +11,7 @@
 #include <QGraphicsProxyWidget>
 #include <QWidget>
 #include <QBoxLayout>
-#include <QLabel>
+#include <QLineEdit>
 
 #include <assert.h>
 
@@ -20,7 +20,7 @@ class NodeModel;
 namespace
 {
 constexpr float DEFAULT_WIDTH = 200;
-constexpr float MARGIN_HEIGHT = 20.0f;
+constexpr float MARGIN_HEIGHT = 10.0f;
 constexpr float MARGIN_WIDTH = 10.0f;
 
 class ProxyWidgetSizeFilter : public QObject {
@@ -93,18 +93,21 @@ void NodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 
 void NodeGraphicsItem::initUI()
 {
-	QString name = m_node_model->title();
-	if (m_node_model->is_orphan())
-		name += " (Orphan)";
-
     m_contents = new QWidget();
     m_layout = new QVBoxLayout(m_contents);
     m_layout->setSpacing(2);
     m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->addWidget(new QLabel(name));
+
+    QLineEdit* title_edit = new QLineEdit(m_node_model->title());
+    m_layout->addWidget(title_edit);
+    connect(title_edit, &QLineEdit::textEdited, [this](const QString& text)
+            {
+                m_node_model->set_title(text);
+            });
 
 	if (m_node_model->widget() != nullptr)
 	{
+        m_layout->addSpacing(8);
         m_layout->addWidget(m_node_model->widget());
 	}
     m_contents->installEventFilter(
@@ -122,6 +125,7 @@ void NodeGraphicsItem::initUI()
     proxy_widget->setWidget(m_contents);
     proxy_widget->setPos(QPointF(MARGIN_WIDTH, MARGIN_HEIGHT));
 
+    m_layout->addSpacing(8);
     m_input_port_layout = new QVBoxLayout();
     m_layout->addLayout(m_input_port_layout);
     m_output_port_layout = new QVBoxLayout();
