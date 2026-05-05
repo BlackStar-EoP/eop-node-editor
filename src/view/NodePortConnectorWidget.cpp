@@ -79,14 +79,12 @@ void NodePortConnectorWidget::moveEvent(QMoveEvent* event)
 {
     QWidget::moveEvent(event);
     emit position_changed();
-    qDebug() << "Moved: " << event;
 }
 
 void NodePortConnectorWidget::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
     emit position_changed();
-    qDebug() << "Resized: " << event;
 }
 
 QPoint NodePortConnectorWidget::center_point() const
