@@ -43,6 +43,7 @@ public:
     virtual void set_title(const QString& title) = 0;
 	virtual QJsonObject user_data() const = 0;
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
+    virtual bool data_loaded() const = 0;
 
     /**
      * Create the corresponding widget to show on the UI.
@@ -156,13 +157,49 @@ public:
             {
                 if (qobject_cast<OutputNodeType*>(connection->input()->node_model()) != nullptr)
                 {
-                    // TODO: assert(!port->supports_multiple_connections());
+                    assert(!port->supports_multiple_connections());
                     return connection;
                 }
             }
         }
         return nullptr;
     }
+
+    /**
+     * Retrieve a list of all nodes of provided `NodeType` connected to this node.
+     *
+     * @returns list of nodes
+     */
+    template <class NodeType>
+    QVector<NodeType*> get_connected_nodes_by_node_type() const
+    {
+        QVector<NodeType*> connected_nodes;
+
+        for (NodePortModel* port : m_input_port_models)
+        {
+            for (NodeConnection* connection : port->connections())
+            {
+                if (NodeType* node = qobject_cast<NodeType*>(connection->output()->node_model()); node != nullptr)
+                {
+                    connected_nodes.push_back(node);
+                }
+            }
+        }
+
+        for (NodePortModel* port : m_output_port_models)
+        {
+            for (NodeConnection* connection : port->connections())
+            {
+                if (NodeType* node = qobject_cast<NodeType*>(connection->input()->node_model()); node != nullptr)
+                {
+                    connected_nodes.push_back(node);
+                }
+            }
+        }
+
+        return connected_nodes;
+    }
+
 
 	uint32_t num_ports() const;
 
