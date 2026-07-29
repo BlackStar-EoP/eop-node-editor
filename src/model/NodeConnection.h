@@ -30,7 +30,7 @@ signals:
 	void connection_destroyed();
 
 private:
-	NodePortModel* m_input;
-	NodePortModel* m_output;
+	NodePortModel* m_input = nullptr;
+	NodePortModel* m_output = nullptr;
 	bool m_valid = true;
 };
