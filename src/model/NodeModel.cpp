@@ -72,6 +72,12 @@ void NodeModel::add_input_port_model(NodePortModel* port_model)
 	m_input_port_models.push_back(port_model);
 }
 
+void NodeModel::add_input_port_model(NodePortModel* port_model, const QString& port_label)
+{
+    add_input_port_model(port_model);
+    m_input_port_labels.insert(port_model, port_label);
+}
+
 void NodeModel::destroy_input_port_models()
 {
 	for (NodePortModel* model : m_input_port_models)
@@ -79,11 +85,26 @@ void NodeModel::destroy_input_port_models()
 		delete model;
 	}
 	m_input_port_models.clear();
+    m_input_port_labels.clear();
 }
 
 int32_t NodeModel::input_port_nr(NodePortModel* port_model) const
 {
 	return m_input_port_models.indexOf(port_model);
+}
+
+QString NodeModel::input_port_label(NodePortModel* port_model) const
+{
+    auto alt_name = m_input_port_labels.find(port_model);
+    if (alt_name == m_input_port_labels.end())
+    {
+        return port_model->port_label();
+    }
+    else
+    {
+        return *alt_name;
+    }
+
 }
 
 const QVector<NodePortModel*> NodeModel::input_ports() const
@@ -123,6 +144,12 @@ void NodeModel::add_output_port_model(NodePortModel* port_model)
 	m_output_port_models.push_back(port_model);
 }
 
+void NodeModel::add_output_port_model(NodePortModel* port_model, const QString& port_label)
+{
+    add_output_port_model(port_model);
+    m_output_port_labels.insert(port_model, port_label);
+}
+
 void NodeModel::destroy_output_port_models()
 {
 	for (NodePortModel* model : m_output_port_models)
@@ -131,11 +158,26 @@ void NodeModel::destroy_output_port_models()
 	}
 
 	m_output_port_models.clear();
+    m_output_port_labels.clear();
 }
 
 int32_t NodeModel::output_port_nr(NodePortModel* port_model) const
 {
 	return m_output_port_models.indexOf(port_model);
+}
+
+QString NodeModel::output_port_label(NodePortModel* port_model) const
+{
+    auto alt_name = m_output_port_labels.find(port_model);
+    if (alt_name == m_output_port_labels.end())
+    {
+        return port_model->port_label();
+    }
+    else
+    {
+        return *alt_name;
+    }
+
 }
 
 const QVector<NodePortModel*> NodeModel::output_ports() const

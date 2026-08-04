@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QJsonObject>
 #include <QPointF>
+#include <QMap>
 
 #include "NodeConnection.h"
 #include "NodeType.h"
@@ -67,8 +68,10 @@ public:
 	uint32_t num_input_ports() const;
 	NodePortModel* input_port_model(uint32_t port_nr);
 	void add_input_port_model(NodePortModel* port_model);
+	void add_input_port_model(NodePortModel* port_model, const QString& port_label);
 	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
+    QString input_port_label(NodePortModel* port_model) const;
 
     /**
      * All input ports for this node.
@@ -133,8 +136,10 @@ public:
 	uint32_t num_output_ports() const;
 	NodePortModel* output_port_model(uint32_t port_nr);
 	void add_output_port_model(NodePortModel* port_model);
+	void add_output_port_model(NodePortModel* port_model, const QString& port_label);
 	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
+    QString output_port_label(NodePortModel* port_model) const;
 
     /**
      * All output ports for this node.
@@ -248,6 +253,8 @@ signals:
 protected: // TODO make this private again, and make the json methods non-const.
 	QVector<NodePortModel*> m_input_port_models;
 	QVector<NodePortModel*> m_output_port_models;
+    QMap<NodePortModel*, QString> m_input_port_labels;
+    QMap<NodePortModel*, QString> m_output_port_labels;
 
 private:
 	QVector<INodeModelListener*> m_node_model_listeners;

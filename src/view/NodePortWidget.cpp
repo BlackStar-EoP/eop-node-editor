@@ -8,9 +8,9 @@
 
 #include "NodePortConnectorWidget.h"
 
-NodePortWidget::NodePortWidget(NodePortModel* port_model, uint32_t port_index)
+NodePortWidget::NodePortWidget(NodePortModel* port_model, const QString& name)
 : m_port_model(port_model)
-, m_port_index(port_index)
+, m_label(name)
 {
     init_ui();
 }
@@ -34,7 +34,7 @@ void NodePortWidget::init_ui()
         layout->addStretch();
     }
 
-    layout->addWidget(new QLabel(m_port_model->port_label()));
+    layout->addWidget(new QLabel(m_label));
 
     if (m_port_model->port_type() == NodePortModel::OUTPUT)
     {
