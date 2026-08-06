@@ -9,11 +9,6 @@
 
 NodePortModel::~NodePortModel()
 {
-	for (NodeConnection* connection : m_connections)
-	{
-		connection->remove_port(this);
-		delete connection;
-	}
 	emit node_port_model_destroyed();
 }
 

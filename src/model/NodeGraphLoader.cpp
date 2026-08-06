@@ -112,9 +112,7 @@ bool NodeGraphLoader::load(const QJsonObject& json_data)
             },
             [this](NodePortModel* input, NodePortModel* output) -> bool
             {
-				m_controller.set_first_connection_port(input);
-				m_controller.set_second_connection_port(output);
-				NodeConnection* connection = m_controller.create_connection();
+                NodeConnection* connection = m_graph.connect(input, output);
 				return connection != nullptr;
             }
             );
@@ -141,9 +139,9 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
                 model->create_port_models();
                 return model;
             },
-            [](NodePortModel* input, NodePortModel* output) -> bool
+            [&graph](NodePortModel* input, NodePortModel* output) -> bool
             {
-                new NodeConnection(input, output);
+                graph.connect(input, output);
                 return true;
             }
             );

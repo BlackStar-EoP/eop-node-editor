@@ -13,6 +13,7 @@ NodeGraph::NodeGraph()
 
 NodeGraph::~NodeGraph()
 {
+    clear();
 }
 
 void NodeGraph::give_node(NodeModel* node)
@@ -30,21 +31,36 @@ void NodeGraph::remove_node(NodeModel* node)
 	}
 }
 
+NodeConnection* NodeGraph::connect(NodePortModel* input_port, NodePortModel* output_port)
+{
+    NodeConnection* connection = new NodeConnection(input_port, output_port);
+    m_connections.append(connection);
+    input_port->add_connection(connection);
+    output_port->add_connection(connection);
+    return connection;
+}
+
+void NodeGraph::disconnect(NodeConnection* connection)
+{
+    connection->input()->remove_connection(connection);
+    connection->output()->remove_connection(connection);
+    m_connections.removeAll(connection);
+    delete connection;
+}
+
 void NodeGraph::clear()
 {
+	for (NodeConnection* connection : m_connections)
+	{
+		delete connection;
+	}
+    m_connections.clear();
+
 	for (NodeModel* model : m_nodes)
 	{
 		delete model;
 	}
-
 	m_nodes.clear();
-}
-
-QVector<NodeModel*> NodeGraph::release_nodes()
-{
-    QVector<NodeModel*> released = m_nodes;
-    m_nodes.clear();
-    return released;
 }
 
 bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
