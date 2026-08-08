@@ -9,6 +9,7 @@
 
 NodePortModel::~NodePortModel()
 {
+    assert(m_connections.isEmpty());
 	emit node_port_model_destroyed();
 }
 
@@ -64,11 +65,11 @@ void NodePortModel::add_connection(NodeConnection* connection)
 
 void NodePortModel::remove_connection(NodeConnection* connection)
 {
-	int32_t index = m_connections.indexOf(connection);
-	assert(index != -1);
-	m_connections.remove(index);
+    int32_t index = m_connections.indexOf(connection);
+    assert(index != -1);
+    m_connections.remove(index);
     assert(m_node_model != nullptr);
-	m_node_model->connection_removed(this, connection);
+    m_node_model->connection_removed(this, connection);
 }
 
 uint32_t NodePortModel::num_connections() const

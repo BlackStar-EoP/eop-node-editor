@@ -18,6 +18,7 @@ NodeGraph::~NodeGraph()
 
 void NodeGraph::give_node(NodeModel* node)
 {
+    node->set_graph(this);
 	m_nodes.push_back(node);
 }
 
@@ -26,6 +27,14 @@ void NodeGraph::remove_node(NodeModel* node)
 	int index = m_nodes.indexOf(node);
 	if (index != -1)
 	{
+        for (NodePortModel* port : node->input_ports())
+        {
+            disconnect_all(port);
+        }
+        for (NodePortModel* port : node->output_ports())
+        {
+            disconnect_all(port);
+        }
 		m_nodes.remove(index);
 		delete node;
 	}
@@ -33,6 +42,8 @@ void NodeGraph::remove_node(NodeModel* node)
 
 NodeConnection* NodeGraph::connect(NodePortModel* input_port, NodePortModel* output_port)
 {
+    assert(input_port != nullptr);
+    assert(output_port != nullptr);
     NodeConnection* connection = new NodeConnection(input_port, output_port);
     m_connections.append(connection);
     input_port->add_connection(connection);
@@ -48,13 +59,28 @@ void NodeGraph::disconnect(NodeConnection* connection)
     delete connection;
 }
 
+void NodeGraph::disconnect_all(NodePortModel* port)
+{
+    QList<NodeConnection*> connections;
+    for (NodeConnection* conn : m_connections)
+    {
+        if (conn->input() == port || conn->output() == port)
+        {
+            connections.append(conn);
+        }
+    }
+    for (NodeConnection* conn : connections)
+    {
+        disconnect(conn);
+    }
+}
+
 void NodeGraph::clear()
 {
-	for (NodeConnection* connection : m_connections)
+    while (!m_connections.isEmpty())
 	{
-		delete connection;
+        disconnect(m_connections.first());
 	}
-    m_connections.clear();
 
 	for (NodeModel* model : m_nodes)
 	{

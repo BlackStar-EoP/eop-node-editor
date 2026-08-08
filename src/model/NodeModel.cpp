@@ -1,5 +1,6 @@
 #include "NodeModel.h"
 
+#include "NodeGraph.h"
 #include "NodePortModel.h"
 #include <controllers/NodeGraphController.h>
 
@@ -7,16 +8,8 @@
 
 NodeModel::~NodeModel()
 {
-	for (NodePortModel* input_port : m_input_port_models)
-	{
-		delete input_port;
-	}
-
-	for (NodePortModel* output_port : m_output_port_models)
-	{
-		delete output_port;
-	}
-
+    qDeleteAll(m_input_port_models);
+    qDeleteAll(m_output_port_models);
 	emit node_model_destroyed();
 }
 
@@ -82,6 +75,8 @@ void NodeModel::destroy_input_port_models()
 {
 	for (NodePortModel* model : m_input_port_models)
 	{
+        // TODO: We can do better
+        m_graph->disconnect_all(model);
 		delete model;
 	}
 	m_input_port_models.clear();
@@ -154,6 +149,8 @@ void NodeModel::destroy_output_port_models()
 {
 	for (NodePortModel* model : m_output_port_models)
 	{
+        // TODO: We can do better
+        m_graph->disconnect_all(model);
 		delete model;
 	}
 
@@ -192,7 +189,7 @@ uint32_t NodeModel::num_ports() const
 
 void NodeModel::node_property_changed()
 {
-	// TODO maybe do this with the model listeners, I'm not sure yet
+    // TODO Call the node graph instead
     if (m_controller != nullptr)
         m_controller->notify_node_graph_changed();
 }
@@ -236,6 +233,10 @@ void NodeModel::set_position(const QPointF& position)
 	m_position = position;
 }
 
+void NodeModel::set_graph(NodeGraph* graph)
+{
+    m_graph = graph;
+}
 void NodeModel::set_controller(NodeGraphController* controller)
 {
 	m_controller = controller;

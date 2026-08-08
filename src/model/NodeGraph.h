@@ -18,6 +18,7 @@ public:
 
     NodeConnection* connect(NodePortModel* input_port, NodePortModel* output_port);
     void disconnect(NodeConnection* connection);
+    void disconnect_all(NodePortModel* port);
 
 	void clear();
 
