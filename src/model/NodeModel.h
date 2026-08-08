@@ -223,8 +223,6 @@ public:
 	const QPointF& position() const;
 
     void set_graph(NodeGraph* graph);
-    // TODO: Remove
-	void set_controller(NodeGraphController* controller); // TODO I am not so sure about this, but still I want to be able to notify when a property changes
 
 	bool is_orphan() const;
 	void set_widget(QWidget* widget);
@@ -268,5 +266,4 @@ private:
 	QWidget* m_widget = nullptr;
 	NodeType m_node_type;
     NodeGraph* m_graph = nullptr;
-	NodeGraphController* m_controller = nullptr;
 };

@@ -127,7 +127,7 @@ bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const Q
     graph.clear();
     NodeGraphController controller(&graph);
 
-    return load_impl(
+    bool result = load_impl(
             json_data,
             [&graph, &factory](uint32_t id, const QJsonObject& node_data) -> NodeModel*
             {
@@ -148,6 +148,8 @@ assert(model != nullptr);
                 return controller.create_connection() != nullptr;
             }
             );
+    graph.set_controller(nullptr);
+    return result;
 }
 
 bool NodeGraphLoader::load_impl(

@@ -1,5 +1,6 @@
 #include "NodeGraph.h"
 
+#include "controllers/NodeGraphController.h"
 #include "model/NodeModel.h"
 #include "model/NodeConnection.h"
 #include "model/NodePortModel.h"
@@ -14,6 +15,11 @@ NodeGraph::NodeGraph()
 NodeGraph::~NodeGraph()
 {
     clear();
+}
+
+void NodeGraph::set_controller(NodeGraphController* controller)
+{
+    m_controller = controller;
 }
 
 void NodeGraph::give_node(NodeModel* node)
@@ -135,6 +141,12 @@ bool NodeGraph::is_add_allowed(NodeModel* model) const
 
 	// TODO add the rest
 	return true;
+}
+
+void NodeGraph::notify_node_graph_changed()
+{
+    if (m_controller != nullptr)
+        m_controller->notify_node_graph_changed();
 }
 
 const QVector<NodeModel*>& NodeGraph::nodes() const

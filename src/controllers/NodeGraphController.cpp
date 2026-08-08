@@ -24,6 +24,7 @@ void NodeGraphController::set_node_graph(NodeGraph* node_graph)
     m_node_graph = node_graph;
 	m_first_connection_port = nullptr;
 	m_second_connection_port = nullptr;
+    m_node_graph->set_controller(this);
 }
 
 NodeModel* NodeGraphController::add_node(const QPointF& position)
@@ -41,7 +42,6 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 		delete model;
 		return nullptr;
 	}
-	model->set_controller(this);
 	model->set_position(position);
 	model->create_port_models();
 	m_node_graph->give_node(model);

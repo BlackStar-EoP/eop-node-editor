@@ -189,9 +189,7 @@ uint32_t NodeModel::num_ports() const
 
 void NodeModel::node_property_changed()
 {
-    // TODO Call the node graph instead
-    if (m_controller != nullptr)
-        m_controller->notify_node_graph_changed();
+    m_graph->notify_node_graph_changed();
 }
 
 void NodeModel::node_model_changed()
@@ -236,10 +234,6 @@ void NodeModel::set_position(const QPointF& position)
 void NodeModel::set_graph(NodeGraph* graph)
 {
     m_graph = graph;
-}
-void NodeModel::set_controller(NodeGraphController* controller)
-{
-	m_controller = controller;
 }
 
 const QPointF& NodeModel::position() const
