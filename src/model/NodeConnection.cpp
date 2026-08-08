@@ -8,18 +8,10 @@ NodeConnection::NodeConnection(NodePortModel* input, NodePortModel* output)
 : m_input(input)
 , m_output(output)
 {
-	m_input->add_connection(this);
-	m_output->add_connection(this);
 }
 
 NodeConnection::~NodeConnection()
 {
-	if (m_output != nullptr)
-		m_output->remove_connection(this);
-
-	if (m_input != nullptr)
-		m_input->remove_connection(this);
-
 	emit connection_destroyed();
 }
 
@@ -49,15 +41,6 @@ NodePortModel* NodeConnection::other(NodePortModel* port) const
 
 	assert(false);
 	return nullptr;
-}
-
-void NodeConnection::remove_port(NodePortModel* port_model)
-{
-	if (m_input == port_model)
-		m_input = nullptr;
-	else if (m_output == port_model)
-		m_output = nullptr;
-	// TODO not too happy about this, but hopefully prevents crash
 }
 
 void NodeConnection::set_valid(bool valid)

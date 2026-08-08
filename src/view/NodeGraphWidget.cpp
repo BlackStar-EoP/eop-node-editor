@@ -19,7 +19,8 @@
 
 NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 : QWidget(parent)
-, m_controller(m_node_graph)
+, m_node_graph(std::make_unique<NodeGraph>())
+, m_controller(m_node_graph.get())
 {
 	m_scene = new NodeGraphScene(this, m_controller);
 	QBoxLayout* layout = new QBoxLayout(QBoxLayout::Down);
@@ -34,7 +35,6 @@ NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 
 NodeGraphWidget::~NodeGraphWidget()
 {
-	m_node_graph.clear();
 	delete m_node_factory;
 }
 
@@ -46,7 +46,7 @@ void NodeGraphWidget::give_node_factory(NodeFactory* factory)
 
 const QVector<NodeModel*>& NodeGraphWidget::nodes() const
 {
-	return m_node_graph.nodes();
+	return m_node_graph->nodes();
 }
 
 void NodeGraphWidget::set_persisted()
@@ -67,12 +67,12 @@ void NodeGraphWidget::new_graph()
 
 QJsonObject NodeGraphWidget::save_graph() const
 {
-    return NodeGraphLoader::save(m_node_graph);
+    return NodeGraphLoader::save(*m_node_graph);
 }
 
 void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 {
-    NodeGraphLoader loader(m_node_graph, m_controller, *m_node_factory);
+    NodeGraphLoader loader(*m_node_graph, m_controller, *m_node_factory);
     if (!loader.load(json_data))
     {
         emit message(loader.last_error(), false);
@@ -80,19 +80,14 @@ void NodeGraphWidget::load_graph(const QJsonObject& json_data)
     set_persisted();
 }
 
-void NodeGraphWidget::adopt_graph(NodeGraph& source_graph)
+void NodeGraphWidget::adopt_graph(std::unique_ptr<NodeGraph> source_graph)
 {
     clear();
+    m_node_graph.swap(source_graph);
+    m_controller.set_node_graph(m_node_graph.get());
 
-    // Transfer new graph and display
-    QVector<NodeModel*> transferred = source_graph.release_nodes();
-    for (NodeModel* node : transferred)
-    {
-        node->set_controller(&m_controller);
-        m_node_graph.give_node(node);
-    }
-
-    const QVector<NodeModel*>& nodes = m_node_graph.nodes();
+    // TODO: Create widget on demand only. Expect deletion externally
+    const QVector<NodeModel*>& nodes = m_node_graph->nodes();
     for (NodeModel* node : nodes)
     {
         node->create_widget();
@@ -108,11 +103,12 @@ void NodeGraphWidget::adopt_graph(NodeGraph& source_graph)
 
 void NodeGraphWidget::clear()
 {
+    // TODO: Review completely. I think we should trust that a widget is always owned by the scene
 	m_controller.clear_graph();
-    for (NodeModel* node : m_node_graph.nodes())
+    for (NodeModel* node : m_node_graph->nodes())
     {
         node->set_widget(nullptr);
     }
     m_scene->clear_all();
-    m_node_graph.clear();
+    m_node_graph->clear();
 }

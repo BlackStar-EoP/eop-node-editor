@@ -8,7 +8,7 @@
 #include <QPoint>
 #include <assert.h>
 
-NodeGraphController::NodeGraphController(NodeGraph& node_graph)
+NodeGraphController::NodeGraphController(NodeGraph* node_graph)
 : m_node_graph(node_graph)
 {
 }
@@ -17,6 +17,14 @@ void NodeGraphController::set_node_factory(NodeFactory* factory)
 {
 	assert(m_node_factory == nullptr);
 	m_node_factory = factory;
+}
+
+void NodeGraphController::set_node_graph(NodeGraph* node_graph)
+{
+    m_node_graph = node_graph;
+	m_first_connection_port = nullptr;
+	m_second_connection_port = nullptr;
+    m_node_graph->set_controller(this);
 }
 
 NodeModel* NodeGraphController::add_node(const QPointF& position)
@@ -29,15 +37,14 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 		return nullptr;
 	}
 
-	if (!m_node_graph.is_add_allowed(model))
+	if (!m_node_graph->is_add_allowed(model))
 	{
 		delete model;
 		return nullptr;
 	}
-	model->set_controller(this);
 	model->set_position(position);
 	model->create_port_models();
-	m_node_graph.give_node(model);
+	m_node_graph->give_node(model);
 	m_persisted = false;
 	emit node_added(model);
 	return model;
@@ -45,13 +52,13 @@ NodeModel* NodeGraphController::add_node(const QPointF& position)
 
 void NodeGraphController::delete_node(NodeModel* node_model)
 {
-	m_node_graph.remove_node(node_model);
+	m_node_graph->remove_node(node_model);
 	notify_node_graph_changed();
 }
 
 void NodeGraphController::delete_connection(NodeConnection* connection)
 {
-	delete connection;
+    m_node_graph->disconnect(connection);
 	notify_node_graph_changed();
 }
 
@@ -138,7 +145,7 @@ NodeConnection* NodeGraphController::create_connection()
 	}
 
 	// If output goes to an input of node earlier in graph, we have a circular dependency
-	if (m_node_graph.scan_left(output_port->node_model(), input_port->node_model()))
+	if (m_node_graph->scan_left(output_port->node_model(), input_port->node_model()))
 	{
 		emit message("Circular dependency found, this is not allowed!", false);
 		return nullptr;
@@ -147,7 +154,7 @@ NodeConnection* NodeGraphController::create_connection()
 	m_first_connection_port = nullptr;
 	m_second_connection_port = nullptr;
 
-	NodeConnection* connection = new NodeConnection(input_port, output_port);
+	NodeConnection* connection = m_node_graph->connect(input_port, output_port);
 	emit message("Connection created!", true);
 	emit connection_created(connection);
 	notify_node_graph_changed();

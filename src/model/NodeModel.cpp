@@ -1,5 +1,6 @@
 #include "NodeModel.h"
 
+#include "NodeGraph.h"
 #include "NodePortModel.h"
 #include <controllers/NodeGraphController.h>
 
@@ -7,16 +8,8 @@
 
 NodeModel::~NodeModel()
 {
-	for (NodePortModel* input_port : m_input_port_models)
-	{
-		delete input_port;
-	}
-
-	for (NodePortModel* output_port : m_output_port_models)
-	{
-		delete output_port;
-	}
-
+    qDeleteAll(m_input_port_models);
+    qDeleteAll(m_output_port_models);
 	emit node_model_destroyed();
 }
 
@@ -72,18 +65,41 @@ void NodeModel::add_input_port_model(NodePortModel* port_model)
 	m_input_port_models.push_back(port_model);
 }
 
+void NodeModel::add_input_port_model(NodePortModel* port_model, const QString& port_label)
+{
+    add_input_port_model(port_model);
+    m_input_port_labels.insert(port_model, port_label);
+}
+
 void NodeModel::destroy_input_port_models()
 {
 	for (NodePortModel* model : m_input_port_models)
 	{
+        // TODO: We can do better
+        m_graph->disconnect_all(model);
 		delete model;
 	}
 	m_input_port_models.clear();
+    m_input_port_labels.clear();
 }
 
 int32_t NodeModel::input_port_nr(NodePortModel* port_model) const
 {
 	return m_input_port_models.indexOf(port_model);
+}
+
+QString NodeModel::input_port_label(NodePortModel* port_model) const
+{
+    auto alt_name = m_input_port_labels.find(port_model);
+    if (alt_name == m_input_port_labels.end())
+    {
+        return port_model->port_label();
+    }
+    else
+    {
+        return *alt_name;
+    }
+
 }
 
 const QVector<NodePortModel*> NodeModel::input_ports() const
@@ -123,19 +139,42 @@ void NodeModel::add_output_port_model(NodePortModel* port_model)
 	m_output_port_models.push_back(port_model);
 }
 
+void NodeModel::add_output_port_model(NodePortModel* port_model, const QString& port_label)
+{
+    add_output_port_model(port_model);
+    m_output_port_labels.insert(port_model, port_label);
+}
+
 void NodeModel::destroy_output_port_models()
 {
 	for (NodePortModel* model : m_output_port_models)
 	{
+        // TODO: We can do better
+        m_graph->disconnect_all(model);
 		delete model;
 	}
 
 	m_output_port_models.clear();
+    m_output_port_labels.clear();
 }
 
 int32_t NodeModel::output_port_nr(NodePortModel* port_model) const
 {
 	return m_output_port_models.indexOf(port_model);
+}
+
+QString NodeModel::output_port_label(NodePortModel* port_model) const
+{
+    auto alt_name = m_output_port_labels.find(port_model);
+    if (alt_name == m_output_port_labels.end())
+    {
+        return port_model->port_label();
+    }
+    else
+    {
+        return *alt_name;
+    }
+
 }
 
 const QVector<NodePortModel*> NodeModel::output_ports() const
@@ -150,9 +189,7 @@ uint32_t NodeModel::num_ports() const
 
 void NodeModel::node_property_changed()
 {
-	// TODO maybe do this with the model listeners, I'm not sure yet
-    if (m_controller != nullptr)
-        m_controller->notify_node_graph_changed();
+    m_graph->notify_node_graph_changed();
 }
 
 void NodeModel::node_model_changed()
@@ -194,9 +231,9 @@ void NodeModel::set_position(const QPointF& position)
 	m_position = position;
 }
 
-void NodeModel::set_controller(NodeGraphController* controller)
+void NodeModel::set_graph(NodeGraph* graph)
 {
-	m_controller = controller;
+    m_graph = graph;
 }
 
 const QPointF& NodeModel::position() const

@@ -21,7 +21,6 @@ public:
 	NodePortModel* input() const;
 	NodePortModel* output() const;
 	NodePortModel* other(NodePortModel* port) const;
-	void remove_port(NodePortModel* port_model); // TODO not too happy about this, but hopefully prevents crash
 
 	void set_valid(bool valid);
 	bool is_valid() const;

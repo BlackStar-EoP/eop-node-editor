@@ -1,5 +1,6 @@
 #include "NodeGraph.h"
 
+#include "controllers/NodeGraphController.h"
 #include "model/NodeModel.h"
 #include "model/NodeConnection.h"
 #include "model/NodePortModel.h"
@@ -13,10 +14,17 @@ NodeGraph::NodeGraph()
 
 NodeGraph::~NodeGraph()
 {
+    clear();
+}
+
+void NodeGraph::set_controller(NodeGraphController* controller)
+{
+    m_controller = controller;
 }
 
 void NodeGraph::give_node(NodeModel* node)
 {
+    node->set_graph(this);
 	m_nodes.push_back(node);
 }
 
@@ -25,26 +33,66 @@ void NodeGraph::remove_node(NodeModel* node)
 	int index = m_nodes.indexOf(node);
 	if (index != -1)
 	{
+        for (NodePortModel* port : node->input_ports())
+        {
+            disconnect_all(port);
+        }
+        for (NodePortModel* port : node->output_ports())
+        {
+            disconnect_all(port);
+        }
 		m_nodes.remove(index);
 		delete node;
 	}
 }
 
+NodeConnection* NodeGraph::connect(NodePortModel* input_port, NodePortModel* output_port)
+{
+    assert(input_port != nullptr);
+    assert(output_port != nullptr);
+    NodeConnection* connection = new NodeConnection(input_port, output_port);
+    m_connections.append(connection);
+    input_port->add_connection(connection);
+    output_port->add_connection(connection);
+    return connection;
+}
+
+void NodeGraph::disconnect(NodeConnection* connection)
+{
+    connection->input()->remove_connection(connection);
+    connection->output()->remove_connection(connection);
+    m_connections.removeAll(connection);
+    delete connection;
+}
+
+void NodeGraph::disconnect_all(NodePortModel* port)
+{
+    QList<NodeConnection*> connections;
+    for (NodeConnection* conn : m_connections)
+    {
+        if (conn->input() == port || conn->output() == port)
+        {
+            connections.append(conn);
+        }
+    }
+    for (NodeConnection* conn : connections)
+    {
+        disconnect(conn);
+    }
+}
+
 void NodeGraph::clear()
 {
+    while (!m_connections.isEmpty())
+	{
+        disconnect(m_connections.first());
+	}
+
 	for (NodeModel* model : m_nodes)
 	{
 		delete model;
 	}
-
 	m_nodes.clear();
-}
-
-QVector<NodeModel*> NodeGraph::release_nodes()
-{
-    QVector<NodeModel*> released = m_nodes;
-    m_nodes.clear();
-    return released;
 }
 
 bool NodeGraph::scan_left(NodeModel* start, NodeModel* target) const
@@ -93,6 +141,12 @@ bool NodeGraph::is_add_allowed(NodeModel* model) const
 
 	// TODO add the rest
 	return true;
+}
+
+void NodeGraph::notify_node_graph_changed()
+{
+    if (m_controller != nullptr)
+        m_controller->notify_node_graph_changed();
 }
 
 const QVector<NodeModel*>& NodeGraph::nodes() const

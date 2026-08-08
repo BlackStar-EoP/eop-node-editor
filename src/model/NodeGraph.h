@@ -3,8 +3,10 @@
 #include <QVector>
 
 class NodeConnection;
+class NodeGraphController;
 class NodeModel;
 class NodePolicy;
+class NodePortModel;
 
 class NodeGraph
 {
@@ -12,8 +14,15 @@ public:
 	NodeGraph();
 	~NodeGraph();
 
+    void set_controller(NodeGraphController* controller);
+
 	void give_node(NodeModel* node);
 	void remove_node(NodeModel* node);
+
+    NodeConnection* connect(NodePortModel* input_port, NodePortModel* output_port);
+    void disconnect(NodeConnection* connection);
+    void disconnect_all(NodePortModel* port);
+
 	void clear();
 
     /**
@@ -27,9 +36,16 @@ public:
 
 	bool is_add_allowed(NodeModel* model) const;
 
+    /**
+     * For internal use by NodeModel instances.
+     */
+    void notify_node_graph_changed();
+
 public:
 	const QVector<NodeModel*>& nodes() const;
 
 private:
 	QVector<NodeModel*> m_nodes;
+    QVector<NodeConnection*> m_connections;
+    NodeGraphController* m_controller;
 };

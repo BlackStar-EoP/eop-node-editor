@@ -3,6 +3,8 @@
 #include <controllers/NodeGraphController.h>
 #include <model/NodeGraph.h>
 
+#include <memory>
+
 #include <QWidget>
 #include <QVector>
 #include <QJsonObject>
@@ -32,9 +34,9 @@ public:
 
     /**
      * Replace the currently visible graph with the provided graph.
-     * Drops the currently visible graph and takes ownership of the nodes in the graph.
+     * Drops the currently visible graph and takes ownership of the provided graph.
      */
-    void adopt_graph(NodeGraph& source_graph);
+    void adopt_graph(std::unique_ptr<NodeGraph> source_graph);
 
 signals:
 	void node_graph_changed();
@@ -46,7 +48,7 @@ private:
 private:
 	QGraphicsView* m_view = nullptr;
 	NodeGraphScene* m_scene = nullptr;
+    std::unique_ptr<NodeGraph> m_node_graph;
 	NodeGraphController m_controller;
-	NodeGraph m_node_graph;
 	NodeFactory* m_node_factory = nullptr;
 };

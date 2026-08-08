@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <vector>
 
 class QPointF;
 
@@ -15,10 +14,12 @@ class NodeGraphController : public QObject
 {
 	Q_OBJECT
 public:
-	NodeGraphController(NodeGraph& node_graph);
+	NodeGraphController(NodeGraph* node_graph);
 	~NodeGraphController() = default;
 
 	void set_node_factory(NodeFactory* factory);
+    void set_node_graph(NodeGraph* node_graph);
+
 	NodeModel* add_node(const QPointF& position);
 	void delete_node(NodeModel* node_model);
 	void delete_connection(NodeConnection* connection);
@@ -44,7 +45,7 @@ signals:
 	void connection_created(NodeConnection* connection);
 
 private:
-	NodeGraph& m_node_graph;
+	NodeGraph* m_node_graph = nullptr;
 	NodeFactory* m_node_factory = nullptr;
 	NodePortModel* m_first_connection_port = nullptr;
 	NodePortModel* m_second_connection_port = nullptr;

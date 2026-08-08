@@ -112,10 +112,9 @@ bool NodeGraphLoader::load(const QJsonObject& json_data)
             },
             [this](NodePortModel* input, NodePortModel* output) -> bool
             {
-				m_controller.set_first_connection_port(input);
-				m_controller.set_second_connection_port(output);
-				NodeConnection* connection = m_controller.create_connection();
-				return connection != nullptr;
+                m_controller.set_first_connection_port(input);
+                m_controller.set_second_connection_port(output);
+                return m_controller.create_connection() != nullptr;
             }
             );
 
@@ -126,27 +125,31 @@ bool NodeGraphLoader::load(const QJsonObject& json_data)
 bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const QJsonObject& json_data)
 {
     graph.clear();
+    NodeGraphController controller(&graph);
 
-    return load_impl(
+    bool result = load_impl(
             json_data,
             [&graph, &factory](uint32_t id, const QJsonObject& node_data) -> NodeModel*
             {
                 Q_UNUSED(id);
                 factory.set_current_node_type(node_data["node_type"].toString());
                 NodeModel* model = factory.create_node_model_and_set_type();
-                assert(model != nullptr);
+assert(model != nullptr);
                 graph.give_node(model);
                 model->set_position(QPointF(node_data["pos_x"].toDouble(),
                                             node_data["pos_y"].toDouble()));
                 model->create_port_models();
                 return model;
             },
-            [](NodePortModel* input, NodePortModel* output) -> bool
+            [&controller](NodePortModel* input, NodePortModel* output) -> bool
             {
-                new NodeConnection(input, output);
-                return true;
+                controller.set_first_connection_port(input);
+                controller.set_second_connection_port(output);
+                return controller.create_connection() != nullptr;
             }
             );
+    graph.set_controller(nullptr);
+    return result;
 }
 
 bool NodeGraphLoader::load_impl(

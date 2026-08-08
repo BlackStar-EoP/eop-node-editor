@@ -141,21 +141,17 @@ void NodeGraphicsItem::initUI()
 
 void NodeGraphicsItem::init_input_ports()
 {
-	uint32_t num_input_ports = m_node_model->num_input_ports();
-	for (uint32_t i = 0; i < num_input_ports; ++i)
-	{
-		NodePortModel* port_model = m_node_model->input_port_model(i);
-        m_input_port_layout->addWidget(new NodePortWidget(port_model, i));
-	}
+    for (NodePortModel* port_model : m_node_model->input_ports())
+    {
+        m_input_port_layout->addWidget(new NodePortWidget(port_model, m_node_model->input_port_label(port_model)));
+    }
 }
 
 void NodeGraphicsItem::init_output_ports()
 {
-	uint32_t num_output_ports = m_node_model->num_output_ports();
-	for (uint32_t i = 0; i < num_output_ports; ++i)
+    for (NodePortModel* port_model : m_node_model->output_ports())
 	{
-		NodePortModel* port_model = m_node_model->output_port_model(i);
-        m_output_port_layout->addWidget(new NodePortWidget(port_model, i));
+        m_output_port_layout->addWidget(new NodePortWidget(port_model, m_node_model->output_port_label(port_model)));
 	}
 }
 
