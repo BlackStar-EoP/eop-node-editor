@@ -112,7 +112,7 @@ NodeConnection* NodeGraphController::create_connection()
 		return nullptr;
 	}
 
-	if (m_first_connection_port->node_model() == m_second_connection_port->node_model())
+	if (m_first_connection_port->owning_node() == m_second_connection_port->owning_node())
 	{
 		emit message("Connection to the same node is not allowed!", false);
 		return nullptr;
@@ -145,7 +145,7 @@ NodeConnection* NodeGraphController::create_connection()
 	}
 
 	// If output goes to an input of node earlier in graph, we have a circular dependency
-	if (m_node_graph->scan_left(output_port->node_model(), input_port->node_model()))
+	if (m_node_graph->scan_left(output_port->owning_node(), input_port->owning_node()))
 	{
 		emit message("Circular dependency found, this is not allowed!", false);
 		return nullptr;

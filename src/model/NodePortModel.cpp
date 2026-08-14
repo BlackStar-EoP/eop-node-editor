@@ -7,6 +7,12 @@
 
 #include <assert.h>
 
+NodePortModel::NodePortModel(NodeModel* owning_node)
+    : m_owning_node_model(owning_node)
+    , m_exposing_node_model(owning_node)
+{
+}
+
 NodePortModel::~NodePortModel()
 {
     assert(m_connections.isEmpty());
@@ -38,14 +44,19 @@ void NodePortModel::update_connector_widget()
         m_connector_widget->update_pos();
 }
 
-void NodePortModel::set_node_model(NodeModel* node_model)
+NodeModel* NodePortModel::owning_node() const
 {
-	m_node_model = node_model;
+	return m_owning_node_model;
 }
 
-NodeModel* NodePortModel::node_model() const
+void NodePortModel::set_exposing_node(NodeModel* node_model)
 {
-	return m_node_model;
+	m_exposing_node_model = node_model;
+}
+
+NodeModel* NodePortModel::exposing_node() const
+{
+	return m_exposing_node_model;
 }
 
 NodeConnection* NodePortModel::connection(uint32_t index) const
@@ -59,8 +70,8 @@ void NodePortModel::add_connection(NodeConnection* connection)
 	assert(m_connections.indexOf(connection) == -1);
 	m_connections.push_back(connection);
 
-    assert(m_node_model != nullptr);
-	m_node_model->connection_added(this, connection);
+    assert(m_owning_node_model != nullptr);
+	m_owning_node_model->connection_added(this, connection);
 }
 
 void NodePortModel::remove_connection(NodeConnection* connection)
@@ -68,8 +79,8 @@ void NodePortModel::remove_connection(NodeConnection* connection)
     int32_t index = m_connections.indexOf(connection);
     assert(index != -1);
     m_connections.remove(index);
-    assert(m_node_model != nullptr);
-    m_node_model->connection_removed(this, connection);
+    assert(m_owning_node_model != nullptr);
+    m_owning_node_model->connection_removed(this, connection);
 }
 
 uint32_t NodePortModel::num_connections() const

@@ -98,7 +98,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (InputNodeType* node = qobject_cast<InputNodeType*>(connection->output()->node_model());
+                if (InputNodeType* node = qobject_cast<InputNodeType*>(connection->output()->owning_node());
                         node != nullptr)
                 {
                     assert(!port->supports_multiple_connections());
@@ -161,7 +161,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (qobject_cast<OutputNodeType*>(connection->input()->node_model()) != nullptr)
+                if (qobject_cast<OutputNodeType*>(connection->input()->owning_node()) != nullptr)
                 {
                     assert(!port->supports_multiple_connections());
                     return connection;
@@ -185,7 +185,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (NodeType* node = qobject_cast<NodeType*>(connection->output()->node_model()); node != nullptr)
+                if (NodeType* node = qobject_cast<NodeType*>(connection->output()->owning_node()); node != nullptr)
                 {
                     connected_nodes.push_back(node);
                 }
@@ -196,7 +196,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (NodeType* node = qobject_cast<NodeType*>(connection->input()->node_model()); node != nullptr)
+                if (NodeType* node = qobject_cast<NodeType*>(connection->input()->owning_node()); node != nullptr)
                 {
                     connected_nodes.push_back(node);
                 }

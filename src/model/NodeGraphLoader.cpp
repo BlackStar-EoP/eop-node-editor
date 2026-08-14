@@ -71,10 +71,10 @@ QJsonObject NodeGraphLoader::save(const NodeGraph& graph)
 		QJsonObject json_connection;
 		NodePortModel* input = connection->input();
 		NodePortModel* output = connection->output();
-		uint32_t input_model_id = node_model_map[input->node_model()];
-		uint32_t output_model_id = node_model_map[output->node_model()];
-		int32_t input_port_index = input->node_model()->input_port_nr(input);
-		int32_t output_port_index = output->node_model()->output_port_nr(output);
+		uint32_t input_model_id = node_model_map[input->exposing_node()];
+		uint32_t output_model_id = node_model_map[output->exposing_node()];
+		int32_t input_port_index = input->exposing_node()->input_port_nr(input);
+		int32_t output_port_index = output->exposing_node()->output_port_nr(output);
 
 		json_connection["input_model_id"] = (qint64) input_model_id;
 		json_connection["output_model_id"] = (qint64) output_model_id;

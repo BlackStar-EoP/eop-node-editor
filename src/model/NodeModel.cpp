@@ -61,7 +61,7 @@ NodePortModel* NodeModel::input_port_model(uint32_t port_nr)
 
 void NodeModel::add_input_port_model(NodePortModel* port_model)
 {
-    port_model->set_node_model(this);
+    port_model->set_exposing_node(this);
 	m_input_port_models.push_back(port_model);
 }
 
@@ -114,7 +114,7 @@ QVector<NodeModel*> NodeModel::get_input_nodes() const
     {
         for (NodeConnection* connection : input_port->connections())
         {
-            input_nodes.append(connection->output()->node_model());
+            input_nodes.append(connection->output()->owning_node());
         }
     }
     return input_nodes;
@@ -135,7 +135,7 @@ NodePortModel* NodeModel::output_port_model(uint32_t port_nr)
 
 void NodeModel::add_output_port_model(NodePortModel* port_model)
 {
-    port_model->set_node_model(this);
+    port_model->set_exposing_node(this);
 	m_output_port_models.push_back(port_model);
 }
 
@@ -335,7 +335,7 @@ QVector<KeyNode> NodeModel::find_ordered_key_nodes()
         {
             for (NodeConnection* connection : port_model->connections())
             {
-                NodeModel* previous = connection->output()->node_model();
+                NodeModel* previous = connection->output()->owning_node();
                 traversal_queue.emplaceBack(previous, downstream_pass);
             }
         }
