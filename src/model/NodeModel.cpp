@@ -8,8 +8,14 @@
 
 NodeModel::~NodeModel()
 {
-    qDeleteAll(m_input_port_models);
-    qDeleteAll(m_output_port_models);
+	for (NodePortModel* model : m_input_port_models)
+	{
+        if (model->owning_node() == this) delete model;
+	}
+	for (NodePortModel* model : m_output_port_models)
+	{
+        if (model->owning_node() == this) delete model;
+	}
 	emit node_model_destroyed();
 }
 
@@ -77,7 +83,7 @@ void NodeModel::destroy_input_port_models()
 	{
         // TODO: We can do better
         m_graph->disconnect_all(model);
-		delete model;
+        if (model->owning_node() == this) delete model;
 	}
 	m_input_port_models.clear();
     m_input_port_labels.clear();
@@ -151,7 +157,7 @@ void NodeModel::destroy_output_port_models()
 	{
         // TODO: We can do better
         m_graph->disconnect_all(model);
-		delete model;
+        if (model->owning_node() == this) delete model;
 	}
 
 	m_output_port_models.clear();

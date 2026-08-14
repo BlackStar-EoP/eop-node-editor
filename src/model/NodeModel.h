@@ -253,7 +253,7 @@ public:
 signals:
 	void node_model_destroyed();
 
-protected: // TODO make this private again, and make the json methods non-const.
+private:
 	QVector<NodePortModel*> m_input_port_models;
 	QVector<NodePortModel*> m_output_port_models;
     QMap<NodePortModel*, QString> m_input_port_labels;
@@ -265,6 +265,5 @@ private:
 
 	QWidget* m_widget = nullptr;
 	NodeType m_node_type;
-protected: // TODO: make this private again
     NodeGraph* m_graph = nullptr;
 };
