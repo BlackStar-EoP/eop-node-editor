@@ -21,6 +21,7 @@ public:
 		OUTPUT
 	};
 
+    NodePortModel(NodeModel* owning_node);
 	virtual ~NodePortModel();
 	virtual EPortType port_type() const = 0;
 	virtual QString port_label() const = 0;
@@ -40,8 +41,10 @@ public:
     NodePortConnectorWidget* connector_widget();
     void update_connector_widget();
 
-	void set_node_model(NodeModel* node_model);
-	NodeModel* node_model() const;
+    NodeModel* owning_node() const;
+
+    void set_exposing_node(NodeModel* node_model);
+    NodeModel* exposing_node() const;
 
 	NodeConnection* connection(uint32_t index) const;
 	uint32_t num_connections() const;
@@ -59,11 +62,22 @@ public:
         {
             return nullptr;
         }
-        return qobject_cast<NodeType*>(m_connections.front()->other(this)->node_model());
+        return qobject_cast<NodeType*>(m_connections.front()->other(this)->owning_node());
     }
 
 private:
-	NodeModel* m_node_model = nullptr;
+    /**
+     * Node this port directly connects to. That is also the node responsible for clean up.
+     * Follow this node when traversing the full graph.
+     */
+	NodeModel* m_owning_node_model = nullptr;
+    /**
+     * Node that exposes this port in the editor. Can be the same as the owning node, but can also be another node that
+     * exposes a subgraph.
+     * Use this node for UI activities and saving the graph shown to the user.
+     */
+    NodeModel* m_exposing_node_model = nullptr;
+
 	QVector<NodeConnection*> m_connections;
 	QWidget* m_widget = nullptr;
     QPointer<NodePortConnectorWidget> m_connector_widget = nullptr;

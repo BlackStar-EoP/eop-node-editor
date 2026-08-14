@@ -70,7 +70,7 @@ public:
 	NodePortModel* input_port_model(uint32_t port_nr);
 	void add_input_port_model(NodePortModel* port_model);
 	void add_input_port_model(NodePortModel* port_model, const QString& port_label);
-	void destroy_input_port_models();
+	virtual void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
     QString input_port_label(NodePortModel* port_model) const;
 
@@ -98,7 +98,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (InputNodeType* node = qobject_cast<InputNodeType*>(connection->output()->node_model());
+                if (InputNodeType* node = qobject_cast<InputNodeType*>(connection->output()->owning_node());
                         node != nullptr)
                 {
                     assert(!port->supports_multiple_connections());
@@ -138,7 +138,7 @@ public:
 	NodePortModel* output_port_model(uint32_t port_nr);
 	void add_output_port_model(NodePortModel* port_model);
 	void add_output_port_model(NodePortModel* port_model, const QString& port_label);
-	void destroy_output_port_models();
+	virtual void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
     QString output_port_label(NodePortModel* port_model) const;
 
@@ -161,7 +161,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (qobject_cast<OutputNodeType*>(connection->input()->node_model()) != nullptr)
+                if (qobject_cast<OutputNodeType*>(connection->input()->owning_node()) != nullptr)
                 {
                     assert(!port->supports_multiple_connections());
                     return connection;
@@ -185,7 +185,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (NodeType* node = qobject_cast<NodeType*>(connection->output()->node_model()); node != nullptr)
+                if (NodeType* node = qobject_cast<NodeType*>(connection->output()->owning_node()); node != nullptr)
                 {
                     connected_nodes.push_back(node);
                 }
@@ -196,7 +196,7 @@ public:
         {
             for (NodeConnection* connection : port->connections())
             {
-                if (NodeType* node = qobject_cast<NodeType*>(connection->input()->node_model()); node != nullptr)
+                if (NodeType* node = qobject_cast<NodeType*>(connection->input()->owning_node()); node != nullptr)
                 {
                     connected_nodes.push_back(node);
                 }
@@ -253,7 +253,7 @@ public:
 signals:
 	void node_model_destroyed();
 
-protected: // TODO make this private again, and make the json methods non-const.
+private:
 	QVector<NodePortModel*> m_input_port_models;
 	QVector<NodePortModel*> m_output_port_models;
     QMap<NodePortModel*, QString> m_input_port_labels;
