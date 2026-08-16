@@ -10,6 +10,11 @@
 #include <QJsonArray>
 #include <QSet>
 
+NodeGraphLoader::LoadFailure::LoadFailure(const QString& arg_what)
+    : std::runtime_error(arg_what.toStdString())
+{
+}
+
 NodeGraphLoader::NodeGraphLoader(NodeGraph& graph, NodeGraphController& controller, NodeFactory& factory)
 : m_graph(graph)
 , m_controller(controller)
@@ -95,39 +100,48 @@ bool NodeGraphLoader::load(const QJsonObject& json_data)
     m_controller.clear_graph();
     m_graph.clear();
 
-    const bool result = load_impl(
-            json_data,
-            [this](uint32_t id, const QJsonObject& node_data) -> NodeModel*
-            {
-                Q_UNUSED(id);
-                const float x_pos = node_data["pos_x"].toDouble();
-                const float y_pos = node_data["pos_y"].toDouble();
-                const QString node_type = node_data["node_type"].toString();
-                const QJsonObject user_data = node_data["user_data"].toObject();
+    try
+    {
+        load_impl(
+                json_data,
+                [this](uint32_t id, const QJsonObject& node_data) -> NodeModel*
+                {
+                    Q_UNUSED(id);
+                    const float x_pos = node_data["pos_x"].toDouble();
+                    const float y_pos = node_data["pos_y"].toDouble();
+                    const QString node_type = node_data["node_type"].toString();
+                    const QJsonObject user_data = node_data["user_data"].toObject();
 
-                m_factory.set_current_node_type(node_type);
-                NodeModel* node_model = m_controller.add_node(QPoint(x_pos, y_pos));
-                assert(node_model != nullptr);
-                return node_model;
-            },
-            [this](NodePortModel* input, NodePortModel* output) -> bool
-            {
-                m_controller.set_first_connection_port(input);
-                m_controller.set_second_connection_port(output);
-                return m_controller.create_connection() != nullptr;
-            }
-            );
+                    m_factory.set_current_node_type(node_type);
+                    NodeModel* node_model = m_controller.add_node(QPoint(x_pos, y_pos));
+                    assert(node_model != nullptr);
+                    return node_model;
+                },
+                [this](NodePortModel* input, NodePortModel* output) -> bool
+                {
+                    m_controller.set_first_connection_port(input);
+                    m_controller.set_second_connection_port(output);
+                    return m_controller.create_connection() != nullptr;
+                }
+                );
+        m_controller.end_load();
+        return true;
+    }
+    catch (const LoadFailure& ex)
+    {
+        m_last_error = ex.what();
+        m_controller.end_load();
+        return false;
+    }
 
-    m_controller.end_load();
-    return result;
 }
 
-bool NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const QJsonObject& json_data)
+void NodeGraphLoader::load_graph(NodeGraph& graph, NodeFactory& factory, const QJsonObject& json_data)
 {
     graph.clear();
     NodeGraphController controller(&graph);
 
-    bool result = load_impl(
+    load_impl(
             json_data,
             [&graph, &factory](uint32_t id, const QJsonObject& node_data) -> NodeModel*
             {
@@ -149,18 +163,14 @@ assert(model != nullptr);
             }
             );
     graph.set_controller(nullptr);
-    return result;
 }
 
-bool NodeGraphLoader::load_impl(
+void NodeGraphLoader::load_impl(
             const QJsonObject& json_data,
             const std::function<NodeModel*(uint32_t id, const QJsonObject& node_data)>& create_node,
-            const std::function<bool(NodePortModel* input, NodePortModel* output)>& create_connection,
-            QString* out_error
+            const std::function<bool(NodePortModel* input, NodePortModel* output)>& create_connection
             )
 {
-    Q_UNUSED(out_error);
-
     QJsonArray nodes_json = json_data["nodes"].toArray();
     QJsonArray connections_json = json_data["connections"].toArray();
     QMap<uint32_t, NodeModel*> node_models;
@@ -200,7 +210,9 @@ bool NodeGraphLoader::load_impl(
         if (pending.isEmpty())
             break;
         if (!progress)
-            return false;
+        {
+            throw LoadFailure(QString("Unable to load %1 nodes.").arg(pending.count()));
+        }
     }
 
     QJsonArray pending_connections = connections_json;
@@ -234,8 +246,8 @@ bool NodeGraphLoader::load_impl(
         if (pending_connections.isEmpty())
             break;
         if (!progress)
-            return false;
+        {
+            throw LoadFailure(QString("Unable to load %1 connections.").arg(pending.count()));
+        }
     }
-
-    return true;
 }
