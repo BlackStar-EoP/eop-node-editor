@@ -2,12 +2,13 @@
 
 #include <QObject>
 #include <model/NodeModel.h>
+#include <model/NodePortModel.h>
 #include <QGraphicsItem>
 #include <QVector>
 
 class QBoxLayout;
 
-class NodeGraphicsItem : public QObject, public QGraphicsItem, public INodeModelListener
+class NodeGraphicsItem : public QObject, public QGraphicsItem
 {
 	Q_OBJECT
 	Q_INTERFACES(QGraphicsItem)
@@ -28,14 +29,15 @@ private:
 	void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
 	void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-	void node_model_changed() override;
-    void input_nodes_changed() override;
-	void output_nodes_changed() override;
+	void node_model_changed();
+    void input_nodes_changed();
+	void output_nodes_changed();
     void remove_input_nodes();
     void remove_output_nodes();
 
 private slots:
 	void self_destruct();
+    void node_ports_changed(NodePortModel::EPortType port_type);
 
 public:
 	NodeModel* node_model();

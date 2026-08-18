@@ -200,36 +200,17 @@ void NodeModel::node_property_changed()
 
 void NodeModel::node_model_changed()
 {
-	for (INodeModelListener* l : m_node_model_listeners)
-	{
-		l->node_model_changed();
-	}
+    emit node_ports_changed(NodePortModel::BOTH);
 }
 
 void NodeModel::input_nodes_changed()
 {
-    for (INodeModelListener* l : m_node_model_listeners)
-    {
-        l->input_nodes_changed();
-    }
+    emit node_ports_changed(NodePortModel::INPUT);
 }
 
 void NodeModel::output_nodes_changed()
 {
-	for (INodeModelListener* l : m_node_model_listeners)
-	{
-		l->output_nodes_changed();
-	}
-}
-
-void NodeModel::register_node_model_listener(INodeModelListener* listener)
-{
-	m_node_model_listeners.push_back(listener);
-}
-
-void NodeModel::unregister_node_model_listener(INodeModelListener* listener)
-{
-	m_node_model_listeners.removeAll(listener);
+    emit node_ports_changed(NodePortModel::OUTPUT);
 }
 
 void NodeModel::set_position(const QPointF& position)

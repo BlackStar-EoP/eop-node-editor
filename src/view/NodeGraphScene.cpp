@@ -35,7 +35,6 @@ void NodeGraphScene::build_scene_from_graph(const QVector<NodeModel*>& nodes)
     for (NodeModel* node_model : nodes)
     {
         NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
-        node_model->register_node_model_listener(node_gfx_item);
         addItem(node_gfx_item);
     }
 
@@ -248,7 +247,6 @@ void NodeGraphScene::node_added(NodeModel* node_model)
     node_model->create_widget();
     node_model->sync_widget_from_model();
 	NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
-	node_model->register_node_model_listener(node_gfx_item);
 	addItem(node_gfx_item);
 }
 

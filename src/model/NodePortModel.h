@@ -15,10 +15,12 @@ class NodePortModel : public QObject
 {
 	Q_OBJECT
 public:
+    // TODO: Replace
 	enum EPortType : int32_t
 	{
-		INPUT,
-		OUTPUT
+        INPUT = 1,
+        OUTPUT = 2,
+        BOTH = INPUT | OUTPUT
 	};
 
     NodePortModel(NodeModel* owning_node);

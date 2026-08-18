@@ -55,7 +55,8 @@ NodeGraphicsItem::NodeGraphicsItem(NodeModel* node_model)
 	setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges);
 	initUI();
 	setAcceptHoverEvents(true);
-	connect(node_model, SIGNAL(node_model_destroyed()), this, SLOT(self_destruct()));
+    connect(node_model, &NodeModel::node_ports_changed, this, &NodeGraphicsItem::node_ports_changed);
+	connect(node_model, &NodeModel::node_model_destroyed, this, &NodeGraphicsItem::self_destruct);
 	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
 		update();
 	});
@@ -63,7 +64,6 @@ NodeGraphicsItem::NodeGraphicsItem(NodeModel* node_model)
 
 NodeGraphicsItem::~NodeGraphicsItem()
 {
-    m_node_model->unregister_node_model_listener(this);
 }
 
 QRectF NodeGraphicsItem::boundingRect() const
@@ -201,28 +201,17 @@ void NodeGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 void NodeGraphicsItem::node_model_changed()
 {
-    remove_input_nodes();
-    remove_output_nodes();
-	init_input_ports();
-	init_output_ports();
-	recalculate_size();
-	update();
+    node_ports_changed(NodePortModel::BOTH);
 }
 
 void NodeGraphicsItem::input_nodes_changed()
 {
-    remove_input_nodes();
-    init_input_ports();
-    recalculate_size();
-    update();
+    node_ports_changed(NodePortModel::INPUT);
 }
 
 void NodeGraphicsItem::output_nodes_changed()
 {
-    remove_output_nodes();
-	init_output_ports();
-	recalculate_size();
-	update();
+    node_ports_changed(NodePortModel::OUTPUT);
 }
 
 void NodeGraphicsItem::remove_input_nodes()
@@ -254,6 +243,22 @@ void NodeGraphicsItem::remove_output_nodes()
 void NodeGraphicsItem::self_destruct()
 {
 	delete this;
+}
+
+void NodeGraphicsItem::node_ports_changed(NodePortModel::EPortType port_type)
+{
+    if ((port_type & NodePortModel::INPUT) == NodePortModel::INPUT)
+    {
+        remove_input_nodes();
+        init_input_ports();
+    }
+    if ((port_type & NodePortModel::OUTPUT) == NodePortModel::OUTPUT)
+    {
+        remove_output_nodes();
+        init_output_ports();
+    }
+	recalculate_size();
+	update();
 }
 
 NodeModel* NodeGraphicsItem::node_model()

@@ -13,14 +13,6 @@
 class NodeGraph;
 class NodeGraphController;
 
-class INodeModelListener
-{
-public:
-	virtual void node_model_changed() = 0;
-    virtual void input_nodes_changed() = 0;
-	virtual void output_nodes_changed() = 0;
-};
-
 class KeyNode
 {
 public:
@@ -216,8 +208,6 @@ public:
 	void node_property_changed();
     void input_nodes_changed();
 	void output_nodes_changed();
-	void register_node_model_listener(INodeModelListener* listener);
-    void unregister_node_model_listener(INodeModelListener* listener);
 
 	void set_position(const QPointF& position);
 	const QPointF& position() const;
@@ -252,6 +242,7 @@ public:
 
 signals:
 	void node_model_destroyed();
+    void node_ports_changed(NodePortModel::EPortType port_type);
 
 private:
 	QVector<NodePortModel*> m_input_port_models;
@@ -260,7 +251,6 @@ private:
     QMap<NodePortModel*, QString> m_output_port_labels;
 
 private:
-	QVector<INodeModelListener*> m_node_model_listeners;
 	QPointF m_position;
 
 	QWidget* m_widget = nullptr;
