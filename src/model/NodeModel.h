@@ -204,10 +204,7 @@ public:
 	virtual void connection_added(NodePortModel* port_model, NodeConnection* connection) = 0;
 	virtual void connection_removed(NodePortModel* port_model, NodeConnection* connection) = 0;
 
-	void node_model_changed();
 	void node_property_changed();
-    void input_nodes_changed();
-	void output_nodes_changed();
 
 	void set_position(const QPointF& position);
 	const QPointF& position() const;

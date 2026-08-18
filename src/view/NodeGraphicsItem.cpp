@@ -199,21 +199,6 @@ void NodeGraphicsItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 	update();
 }
 
-void NodeGraphicsItem::node_model_changed()
-{
-    node_ports_changed(NodePortModel::BOTH);
-}
-
-void NodeGraphicsItem::input_nodes_changed()
-{
-    node_ports_changed(NodePortModel::INPUT);
-}
-
-void NodeGraphicsItem::output_nodes_changed()
-{
-    node_ports_changed(NodePortModel::OUTPUT);
-}
-
 void NodeGraphicsItem::remove_input_nodes()
 {
     while (QLayoutItem* item = m_input_port_layout->takeAt(0))

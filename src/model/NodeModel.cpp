@@ -198,21 +198,6 @@ void NodeModel::node_property_changed()
     m_graph->notify_node_graph_changed();
 }
 
-void NodeModel::node_model_changed()
-{
-    emit node_ports_changed(NodePortModel::BOTH);
-}
-
-void NodeModel::input_nodes_changed()
-{
-    emit node_ports_changed(NodePortModel::INPUT);
-}
-
-void NodeModel::output_nodes_changed()
-{
-    emit node_ports_changed(NodePortModel::OUTPUT);
-}
-
 void NodeModel::set_position(const QPointF& position)
 {
 	m_position = position;
