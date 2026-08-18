@@ -39,7 +39,7 @@ public:
 	void set_widget(QWidget* widget);
 	QWidget* widget() const;
     NodePortConnectorWidget* connector_widget();
-    void update_connector_widget();
+    void update_connector_position();
 
     NodeModel* owning_node() const;
 

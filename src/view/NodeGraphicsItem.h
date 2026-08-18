@@ -33,7 +33,6 @@ private:
 	void output_nodes_changed() override;
     void remove_input_nodes();
     void remove_output_nodes();
-    void update_node_positions();
 
 private slots:
 	void self_destruct();

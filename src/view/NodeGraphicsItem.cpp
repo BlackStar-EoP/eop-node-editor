@@ -115,7 +115,7 @@ void NodeGraphicsItem::initUI()
                 {
                     if (recalculate_size())
                     {
-                        update_node_positions();
+                        m_node_model->update_port_models();
                         update();
                     }
                 })
@@ -136,7 +136,7 @@ void NodeGraphicsItem::initUI()
 
 	recalculate_size();
 
-    update_node_positions();
+    m_node_model->update_port_models();
 }
 
 void NodeGraphicsItem::init_input_ports()
@@ -180,7 +180,6 @@ QVariant NodeGraphicsItem::itemChange(GraphicsItemChange change, const QVariant&
 	if (change == ItemPositionHasChanged)
 	{
 		m_node_model->set_position(pos());
-        m_node_model->update_port_models();
 	}
 
 	return QGraphicsItem::itemChange(change, value);
@@ -207,8 +206,6 @@ void NodeGraphicsItem::node_model_changed()
 	init_input_ports();
 	init_output_ports();
 	recalculate_size();
-    update_node_positions();
-
 	update();
 }
 
@@ -217,7 +214,6 @@ void NodeGraphicsItem::input_nodes_changed()
     remove_input_nodes();
     init_input_ports();
     recalculate_size();
-    update_node_positions();
     update();
 }
 
@@ -226,7 +222,6 @@ void NodeGraphicsItem::output_nodes_changed()
     remove_output_nodes();
 	init_output_ports();
 	recalculate_size();
-    update_node_positions();
 	update();
 }
 
@@ -254,11 +249,6 @@ void NodeGraphicsItem::remove_output_nodes()
         }
         delete item;
     }
-}
-
-void NodeGraphicsItem::update_node_positions()
-{
-    m_node_model->update_port_models();
 }
 
 void NodeGraphicsItem::self_destruct()

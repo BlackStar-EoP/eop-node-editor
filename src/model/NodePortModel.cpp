@@ -38,7 +38,7 @@ NodePortConnectorWidget* NodePortModel::connector_widget()
     return m_connector_widget;
 }
 
-void NodePortModel::update_connector_widget()
+void NodePortModel::update_connector_position()
 {
     if (m_connector_widget != nullptr)
         m_connector_widget->update_pos();

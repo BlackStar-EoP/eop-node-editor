@@ -44,11 +44,11 @@ void NodeModel::update_port_models()
 {
     for (NodePortModel* input_port : m_input_port_models)
     {
-        input_port->update_connector_widget();
+        input_port->update_connector_position();
     }
     for (NodePortModel* output_port : m_output_port_models)
     {
-        output_port->update_connector_widget();
+        output_port->update_connector_position();
     }
 }
 
@@ -235,6 +235,7 @@ void NodeModel::unregister_node_model_listener(INodeModelListener* listener)
 void NodeModel::set_position(const QPointF& position)
 {
 	m_position = position;
+    update_port_models();
 }
 
 void NodeModel::set_graph(NodeGraph* graph)
