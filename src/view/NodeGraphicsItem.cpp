@@ -105,10 +105,11 @@ void NodeGraphicsItem::initUI()
                 m_node_model->set_title(text);
             });
 
-	if (m_node_model->widget() != nullptr)
+	if (QWidget* widget = m_node_model->create_widget();
+            widget != nullptr)
 	{
         m_layout->addSpacing(8);
-        m_layout->addWidget(m_node_model->widget());
+        m_layout->addWidget(widget);
 	}
     m_contents->installEventFilter(
             new ProxyWidgetSizeFilter(m_contents, [this]

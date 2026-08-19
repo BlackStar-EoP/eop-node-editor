@@ -5,6 +5,8 @@
 #include <QJsonObject>
 #include <QPointF>
 #include <QMap>
+#include <QPointer>
+#include <QWidget>
 
 #include "NodeConnection.h"
 #include "NodeType.h"
@@ -39,17 +41,7 @@ public:
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
     virtual bool data_loaded() const = 0;
 
-    /**
-     * Create the corresponding widget to show on the UI.
-     * No-op if the node has no corresponding widget.
-     */
-    virtual void create_widget() {}
-
-    /**
-     * Update the UI widget with changes made on the model.
-     * No-op if the node has no corresponding widget.
-     */
-    virtual void sync_widget_from_model() {}
+    virtual QWidget* create_widget() { return nullptr; }
 
 	QJsonObject to_json() const;
 
@@ -212,8 +204,6 @@ public:
     void set_graph(NodeGraph* graph);
 
 	bool is_orphan() const;
-	void set_widget(QWidget* widget);
-	QWidget* widget() const;
 
 	void set_node_type(const NodeType& node_type);
 
@@ -250,7 +240,6 @@ private:
 private:
 	QPointF m_position;
 
-	QWidget* m_widget = nullptr;
 	NodeType m_node_type;
     NodeGraph* m_graph = nullptr;
 };

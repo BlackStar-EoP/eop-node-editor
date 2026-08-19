@@ -231,17 +231,6 @@ bool NodeModel::is_orphan() const
 	return true;
 }
 
-void NodeModel::set_widget(QWidget* widget)
-{
-	m_widget = widget;
-	// TODO model_changed()?
-}
-
-QWidget* NodeModel::widget() const
-{
-	return m_widget;
-}
-
 void NodeModel::set_node_type(const NodeType& node_type)
 {
 	m_node_type = node_type;

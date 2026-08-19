@@ -19,16 +19,6 @@ NodePortModel::~NodePortModel()
 	emit node_port_model_destroyed();
 }
 
-void NodePortModel::set_widget(QWidget* widget)
-{
-	m_widget = widget;
-}
-
-QWidget* NodePortModel::widget() const
-{
-	return m_widget;
-}
-
 NodePortConnectorWidget* NodePortModel::connector_widget()
 {
     if (m_connector_widget.isNull())

@@ -86,15 +86,7 @@ void NodeGraphWidget::adopt_graph(std::unique_ptr<NodeGraph> source_graph)
     m_node_graph.swap(source_graph);
     m_controller.set_node_graph(m_node_graph.get());
 
-    // TODO: Create widget on demand only. Expect deletion externally
-    const QVector<NodeModel*>& nodes = m_node_graph->nodes();
-    for (NodeModel* node : nodes)
-    {
-        node->create_widget();
-        node->sync_widget_from_model();
-    }
-
-    m_scene->build_scene_from_graph(nodes);
+    m_scene->build_scene_from_graph(m_node_graph->nodes());
 
     set_persisted();
 
@@ -103,12 +95,7 @@ void NodeGraphWidget::adopt_graph(std::unique_ptr<NodeGraph> source_graph)
 
 void NodeGraphWidget::clear()
 {
-    // TODO: Review completely. I think we should trust that a widget is always owned by the scene
 	m_controller.clear_graph();
-    for (NodeModel* node : m_node_graph->nodes())
-    {
-        node->set_widget(nullptr);
-    }
     m_scene->clear_all();
     m_node_graph->clear();
 }
