@@ -54,7 +54,7 @@ public:
 	NodePortModel* input_port_model(uint32_t port_nr);
 	void add_input_port_model(NodePortModel* port_model);
 	void add_input_port_model(NodePortModel* port_model, const QString& port_label);
-	virtual void destroy_input_port_models();
+	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
     QString input_port_label(NodePortModel* port_model) const;
 
@@ -122,7 +122,7 @@ public:
 	NodePortModel* output_port_model(uint32_t port_nr);
 	void add_output_port_model(NodePortModel* port_model);
 	void add_output_port_model(NodePortModel* port_model, const QString& port_label);
-	virtual void destroy_output_port_models();
+	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
     QString output_port_label(NodePortModel* port_model) const;
 
