@@ -23,8 +23,8 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
 , m_controller(controller)
 {
-	connect(&controller, SIGNAL(node_added(NodeModel*)), this, SLOT(node_added(NodeModel*)));
-	connect(&controller, SIGNAL(connection_created(NodeConnection*)), this, SLOT(connection_created(NodeConnection*)));
+	connect(&controller, &NodeGraphController::node_added, this, &NodeGraphScene::node_added);
+	connect(&controller, &NodeGraphController::connection_created, this, &NodeGraphScene::connection_created);
 	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
 		invalidate();
 	});
@@ -35,7 +35,6 @@ void NodeGraphScene::build_scene_from_graph(const QVector<NodeModel*>& nodes)
     for (NodeModel* node_model : nodes)
     {
         NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
-        node_model->register_node_model_listener(node_gfx_item);
         addItem(node_gfx_item);
     }
 
@@ -245,10 +244,7 @@ void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)
 void NodeGraphScene::node_added(NodeModel* node_model)
 {
 	assert(node_model != nullptr);
-    node_model->create_widget();
-    node_model->sync_widget_from_model();
 	NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
-	node_model->register_node_model_listener(node_gfx_item);
 	addItem(node_gfx_item);
 }
 

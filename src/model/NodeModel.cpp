@@ -44,11 +44,11 @@ void NodeModel::update_port_models()
 {
     for (NodePortModel* input_port : m_input_port_models)
     {
-        input_port->update_connector_widget();
+        input_port->update_connector_position();
     }
     for (NodePortModel* output_port : m_output_port_models)
     {
-        output_port->update_connector_widget();
+        output_port->update_connector_position();
     }
 }
 
@@ -75,6 +75,14 @@ void NodeModel::add_input_port_model(NodePortModel* port_model, const QString& p
 {
     add_input_port_model(port_model);
     m_input_port_labels.insert(port_model, port_label);
+}
+
+void NodeModel::remove_input_port_model(NodePortModel* port_model)
+{
+    m_graph->disconnect_all(port_model);
+    m_input_port_labels.remove(port_model);
+    m_input_port_models.removeAll(port_model);
+    if (port_model->owning_node() == this) delete port_model;
 }
 
 void NodeModel::destroy_input_port_models()
@@ -151,6 +159,14 @@ void NodeModel::add_output_port_model(NodePortModel* port_model, const QString& 
     m_output_port_labels.insert(port_model, port_label);
 }
 
+void NodeModel::remove_output_port_model(NodePortModel* port_model)
+{
+    m_graph->disconnect_all(port_model);
+    m_output_port_labels.remove(port_model);
+    m_output_port_models.removeAll(port_model);
+    if (port_model->owning_node() == this) delete port_model;
+}
+
 void NodeModel::destroy_output_port_models()
 {
 	for (NodePortModel* model : m_output_port_models)
@@ -198,43 +214,10 @@ void NodeModel::node_property_changed()
     m_graph->notify_node_graph_changed();
 }
 
-void NodeModel::node_model_changed()
-{
-	for (INodeModelListener* l : m_node_model_listeners)
-	{
-		l->node_model_changed();
-	}
-}
-
-void NodeModel::input_nodes_changed()
-{
-    for (INodeModelListener* l : m_node_model_listeners)
-    {
-        l->input_nodes_changed();
-    }
-}
-
-void NodeModel::output_nodes_changed()
-{
-	for (INodeModelListener* l : m_node_model_listeners)
-	{
-		l->output_nodes_changed();
-	}
-}
-
-void NodeModel::register_node_model_listener(INodeModelListener* listener)
-{
-	m_node_model_listeners.push_back(listener);
-}
-
-void NodeModel::unregister_node_model_listener(INodeModelListener* listener)
-{
-	m_node_model_listeners.removeAll(listener);
-}
-
 void NodeModel::set_position(const QPointF& position)
 {
 	m_position = position;
+    update_port_models();
 }
 
 void NodeModel::set_graph(NodeGraph* graph)
@@ -262,17 +245,6 @@ bool NodeModel::is_orphan() const
 	}
 
 	return true;
-}
-
-void NodeModel::set_widget(QWidget* widget)
-{
-	m_widget = widget;
-	// TODO model_changed()?
-}
-
-QWidget* NodeModel::widget() const
-{
-	return m_widget;
 }
 
 void NodeModel::set_node_type(const NodeType& node_type)

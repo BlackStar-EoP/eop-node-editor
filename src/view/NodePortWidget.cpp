@@ -24,7 +24,7 @@ void NodePortWidget::init_ui()
     if (m_port_model->port_type() == NodePortModel::INPUT)
     {
         layout->addWidget(m_port_model->connector_widget());
-        if (QWidget* widget = m_port_model->widget(); widget != nullptr)
+        if (QWidget* widget = m_port_model->create_widget(); widget != nullptr)
         {
             layout->addWidget(widget);
         }
@@ -38,7 +38,7 @@ void NodePortWidget::init_ui()
 
     if (m_port_model->port_type() == NodePortModel::OUTPUT)
     {
-        if (QWidget* widget = m_port_model->widget(); widget != nullptr)
+        if (QWidget* widget = m_port_model->create_widget(); widget != nullptr)
         {
             layout->addWidget(widget);
         }

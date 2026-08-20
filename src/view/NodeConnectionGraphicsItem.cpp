@@ -30,14 +30,16 @@ bool NodeConnectionGraphicsItem::add_port(NodePortConnectorWidget* port)
         if (m_input_port != nullptr)
             return false;
         m_input_port = port;
-        connect(m_input_port, SIGNAL(position_changed()), this, SLOT(update_port_positions()));
+        connect(m_input_port, &NodePortConnectorWidget::position_changed, this,
+                &NodeConnectionGraphicsItem::update_port_positions);
     }
     else
     {
         if (m_output_port != nullptr)
             return false;
         m_output_port = port;
-        connect(m_output_port, SIGNAL(position_changed()), this, SLOT(update_port_positions()));
+        connect(m_output_port, &NodePortConnectorWidget::position_changed, this,
+                &NodeConnectionGraphicsItem::update_port_positions);
     }
     update_port_positions();
     return true;
@@ -187,7 +189,7 @@ void NodeConnectionGraphicsItem::self_destruct()
 void NodeConnectionGraphicsItem::set_connection(NodeConnection* connection)
 {
 	m_connection = connection;
-	connect(connection, SIGNAL(connection_destroyed()), this, SLOT(self_destruct()));
+	connect(connection, &NodeConnection::connection_destroyed, this, &NodeConnectionGraphicsItem::self_destruct);
 }
 
 NodeConnection* NodeConnectionGraphicsItem::connection()

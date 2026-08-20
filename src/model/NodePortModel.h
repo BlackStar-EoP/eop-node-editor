@@ -15,10 +15,12 @@ class NodePortModel : public QObject
 {
 	Q_OBJECT
 public:
+    // TODO: Replace
 	enum EPortType : int32_t
 	{
-		INPUT,
-		OUTPUT
+        INPUT = 1,
+        OUTPUT = 2,
+        BOTH = INPUT | OUTPUT
 	};
 
     NodePortModel(NodeModel* owning_node);
@@ -29,17 +31,14 @@ public:
 	virtual bool may_connect_to(const NodePortModel& port_model) const = 0;
 	virtual bool supports_multiple_connections() const = 0;
 	virtual QString type() const = 0;
-    virtual void create_widget() {}
-    virtual void sync_widget_from_model() {}
+    virtual QWidget* create_widget() { return nullptr; }
 
 signals:
 	void node_port_model_destroyed();
 
 public:
-	void set_widget(QWidget* widget);
-	QWidget* widget() const;
     NodePortConnectorWidget* connector_widget();
-    void update_connector_widget();
+    void update_connector_position();
 
     NodeModel* owning_node() const;
 
@@ -79,6 +78,5 @@ private:
     NodeModel* m_exposing_node_model = nullptr;
 
 	QVector<NodeConnection*> m_connections;
-	QWidget* m_widget = nullptr;
     QPointer<NodePortConnectorWidget> m_connector_widget = nullptr;
 };

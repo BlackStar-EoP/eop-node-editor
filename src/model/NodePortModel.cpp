@@ -19,16 +19,6 @@ NodePortModel::~NodePortModel()
 	emit node_port_model_destroyed();
 }
 
-void NodePortModel::set_widget(QWidget* widget)
-{
-	m_widget = widget;
-}
-
-QWidget* NodePortModel::widget() const
-{
-	return m_widget;
-}
-
 NodePortConnectorWidget* NodePortModel::connector_widget()
 {
     if (m_connector_widget.isNull())
@@ -38,7 +28,7 @@ NodePortConnectorWidget* NodePortModel::connector_widget()
     return m_connector_widget;
 }
 
-void NodePortModel::update_connector_widget()
+void NodePortModel::update_connector_position()
 {
     if (m_connector_widget != nullptr)
         m_connector_widget->update_pos();

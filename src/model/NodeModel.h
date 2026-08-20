@@ -5,6 +5,8 @@
 #include <QJsonObject>
 #include <QPointF>
 #include <QMap>
+#include <QPointer>
+#include <QWidget>
 
 #include "NodeConnection.h"
 #include "NodeType.h"
@@ -12,14 +14,6 @@
 
 class NodeGraph;
 class NodeGraphController;
-
-class INodeModelListener
-{
-public:
-	virtual void node_model_changed() = 0;
-    virtual void input_nodes_changed() = 0;
-	virtual void output_nodes_changed() = 0;
-};
 
 class KeyNode
 {
@@ -47,17 +41,7 @@ public:
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
     virtual bool data_loaded() const = 0;
 
-    /**
-     * Create the corresponding widget to show on the UI.
-     * No-op if the node has no corresponding widget.
-     */
-    virtual void create_widget() {}
-
-    /**
-     * Update the UI widget with changes made on the model.
-     * No-op if the node has no corresponding widget.
-     */
-    virtual void sync_widget_from_model() {}
+    virtual QWidget* create_widget() { return nullptr; }
 
 	QJsonObject to_json() const;
 
@@ -70,7 +54,8 @@ public:
 	NodePortModel* input_port_model(uint32_t port_nr);
 	void add_input_port_model(NodePortModel* port_model);
 	void add_input_port_model(NodePortModel* port_model, const QString& port_label);
-	virtual void destroy_input_port_models();
+    void remove_input_port_model(NodePortModel* port_model);
+	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
     QString input_port_label(NodePortModel* port_model) const;
 
@@ -138,7 +123,8 @@ public:
 	NodePortModel* output_port_model(uint32_t port_nr);
 	void add_output_port_model(NodePortModel* port_model);
 	void add_output_port_model(NodePortModel* port_model, const QString& port_label);
-	virtual void destroy_output_port_models();
+    void remove_output_port_model(NodePortModel* port_model);
+	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
     QString output_port_label(NodePortModel* port_model) const;
 
@@ -212,12 +198,7 @@ public:
 	virtual void connection_added(NodePortModel* port_model, NodeConnection* connection) = 0;
 	virtual void connection_removed(NodePortModel* port_model, NodeConnection* connection) = 0;
 
-	void node_model_changed();
 	void node_property_changed();
-    void input_nodes_changed();
-	void output_nodes_changed();
-	void register_node_model_listener(INodeModelListener* listener);
-    void unregister_node_model_listener(INodeModelListener* listener);
 
 	void set_position(const QPointF& position);
 	const QPointF& position() const;
@@ -225,8 +206,6 @@ public:
     void set_graph(NodeGraph* graph);
 
 	bool is_orphan() const;
-	void set_widget(QWidget* widget);
-	QWidget* widget() const;
 
 	void set_node_type(const NodeType& node_type);
 
@@ -252,6 +231,7 @@ public:
 
 signals:
 	void node_model_destroyed();
+    void node_ports_changed(NodePortModel::EPortType port_type);
 
 private:
 	QVector<NodePortModel*> m_input_port_models;
@@ -260,10 +240,8 @@ private:
     QMap<NodePortModel*, QString> m_output_port_labels;
 
 private:
-	QVector<INodeModelListener*> m_node_model_listeners;
 	QPointF m_position;
 
-	QWidget* m_widget = nullptr;
 	NodeType m_node_type;
     NodeGraph* m_graph = nullptr;
 };
