@@ -23,8 +23,8 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 : QGraphicsScene(parent)
 , m_controller(controller)
 {
-	connect(&controller, SIGNAL(node_added(NodeModel*)), this, SLOT(node_added(NodeModel*)));
-	connect(&controller, SIGNAL(connection_created(NodeConnection*)), this, SLOT(connection_created(NodeConnection*)));
+	connect(&controller, &NodeGraphController::node_added, this, &NodeGraphScene::node_added);
+	connect(&controller, &NodeGraphController::connection_created, this, &NodeGraphScene::connection_created);
 	connect(&EditorColorScheme::instance(), &EditorColorScheme::colorsChanged, this, [this]() {
 		invalidate();
 	});
