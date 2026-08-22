@@ -45,6 +45,9 @@ public:
     void set_exposing_node(NodeModel* node_model);
     NodeModel* exposing_node() const;
 
+    void set_enabled(bool enabled);
+    bool enabled() const;
+
 	NodeConnection* connection(uint32_t index) const;
 	uint32_t num_connections() const;
 	void add_connection(NodeConnection* connection);
@@ -76,6 +79,8 @@ private:
      * Use this node for UI activities and saving the graph shown to the user.
      */
     NodeModel* m_exposing_node_model = nullptr;
+
+    bool m_enabled = true;
 
 	QVector<NodeConnection*> m_connections;
     QPointer<NodePortConnectorWidget> m_connector_widget = nullptr;

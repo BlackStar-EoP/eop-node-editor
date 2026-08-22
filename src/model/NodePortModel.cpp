@@ -24,6 +24,7 @@ NodePortConnectorWidget* NodePortModel::connector_widget()
     if (m_connector_widget.isNull())
     {
         m_connector_widget = new NodePortConnectorWidget(this, 0u);
+        m_connector_widget->set_enabled(m_enabled);
     }
     return m_connector_widget;
 }
@@ -47,6 +48,20 @@ void NodePortModel::set_exposing_node(NodeModel* node_model)
 NodeModel* NodePortModel::exposing_node() const
 {
 	return m_exposing_node_model;
+}
+
+void NodePortModel::set_enabled(bool enabled)
+{
+    m_enabled = enabled;
+    if (m_connector_widget != nullptr)
+    {
+        m_connector_widget->set_enabled(enabled);
+    }
+}
+
+bool NodePortModel::enabled() const
+{
+    return m_enabled;
 }
 
 NodeConnection* NodePortModel::connection(uint32_t index) const
@@ -96,5 +111,5 @@ const QVector<NodeConnection*> NodePortModel::connections() const
 
 bool NodePortModel::accepts_new_connections() const
 {
-    return supports_multiple_connections() || m_connections.isEmpty();
+    return (supports_multiple_connections() || m_connections.isEmpty()) && m_enabled;
 }

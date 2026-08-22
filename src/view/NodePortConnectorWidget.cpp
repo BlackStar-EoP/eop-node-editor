@@ -29,21 +29,39 @@ void NodePortConnectorWidget::paintEvent(QPaintEvent* event)
     const int x = center.x() - PORT_RADIUS;
     const int y = center.y() - PORT_RADIUS;
 
-	painter.setPen(EditorColorScheme::gridMajorColor());
+    if (m_enabled)
+    {
+        painter.setPen(EditorColorScheme::gridMajorColor());
+    }
+    else
+    {
+        painter.setPen(EditorColorScheme::gridMinorColor());
+    }
+
 	if (m_port_model->num_connections() > 0)
 	{
 		painter.setBrush(EditorColorScheme::connection_color());
-		painter.drawEllipse(x, y, 2*PORT_RADIUS, 2*PORT_RADIUS);
 	}
-	else
+	else if (!m_enabled)
 	{
-		painter.drawEllipse(x, y, 2*PORT_RADIUS, 2*PORT_RADIUS);
+		painter.setBrush(EditorColorScheme::gridMinorColor());
 	}
+    painter.drawEllipse(x, y, 2*PORT_RADIUS, 2*PORT_RADIUS);
 }
 
 QSize NodePortConnectorWidget::sizeHint() const
 {
     return QSize(2 * PORT_RADIUS + 2, 2 * PORT_RADIUS + 2);
+}
+
+void NodePortConnectorWidget::set_enabled(bool enabled)
+{
+    m_enabled = enabled;
+}
+
+bool NodePortConnectorWidget::enabled() const
+{
+    return m_enabled;
 }
 
 NodePortModel* NodePortConnectorWidget::port_model() const
