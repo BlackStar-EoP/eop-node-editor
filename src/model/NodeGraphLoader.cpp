@@ -215,14 +215,15 @@ void NodeGraphLoader::load_impl(
         }
     }
 
-    QJsonArray pending_connections = connections_json;
-    for (;;)
+    constexpr int MAX_CONNECTION_ATTEMPTS = 10;
+    for (int attempt = 0;; attempt++)
     {
         bool progress = false;
+        int connections_present = 0;
 
-        for (int32_t i = pending_connections.size() - 1; i >= 0; --i)
+        for (QJsonValueRef json_conn_value : connections_json)
         {
-            QJsonObject json_conn   = pending_connections[i].toObject();
+            QJsonObject json_conn   = json_conn_value.toObject();
             uint32_t input_id       = json_conn["input_model_id"].toInt();
             uint32_t output_id      = json_conn["output_model_id"].toInt();
             uint32_t input_port_idx  = json_conn["input_port_index"].toInt();
@@ -234,18 +235,23 @@ void NodeGraphLoader::load_impl(
             if (input_port_idx  < input_model->num_input_ports() &&
                 output_port_idx < output_model->num_output_ports())
             {
-                if (create_connection(input_model->input_port_model(input_port_idx),
-                                      output_model->output_port_model(output_port_idx)))
+                NodePortModel* input_port_model = input_model->input_port_model(input_port_idx);
+                NodePortModel* output_port_model = output_model->output_port_model(output_port_idx);
+                if (input_port_model->has_connection(output_port_model))
                 {
-                    pending_connections.removeAt(i);
+                    connections_present++;
+                }
+                else if (create_connection(input_port_model, output_port_model))
+                {
+                    connections_present++;
                     progress = true;
                 }
             }
         }
 
-        if (pending_connections.isEmpty())
+        if (connections_present == connections_json.size())
             break;
-        if (!progress)
+        if (!progress || attempt > MAX_CONNECTION_ATTEMPTS)
         {
             throw LoadFailure(QString("Unable to load %1 connections.").arg(pending.count()));
         }
