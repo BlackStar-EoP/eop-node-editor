@@ -14,6 +14,9 @@ public:
     void paintEvent(QPaintEvent* event) override;
     QSize sizeHint() const override;
 
+    void set_enabled(bool enabled);
+    bool enabled() const;
+
     NodePortModel* port_model() const;
     void select();
 
@@ -39,6 +42,7 @@ private:
     NodePortModel* m_port_model = nullptr;
     uint32_t m_port_index = 0;
     bool m_selected = false;
+    bool m_enabled = true;
 
     static constexpr float PORT_RADIUS = 10.0f;
 };
