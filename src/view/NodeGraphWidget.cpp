@@ -73,11 +73,15 @@ QJsonObject NodeGraphWidget::save_graph() const
 void NodeGraphWidget::load_graph(const QJsonObject& json_data)
 {
     NodeGraphLoader loader(*m_node_graph, m_controller, *m_node_factory);
-    if (!loader.load(json_data))
+    try
     {
-        emit message(loader.last_error(), false);
+        loader.load(json_data);
+        set_persisted();
     }
-    set_persisted();
+    catch (const NodeGraphLoader::LoadFailure& ex)
+    {
+        emit message(ex.what(), false);
+    }
 }
 
 void NodeGraphWidget::adopt_graph(std::unique_ptr<NodeGraph> source_graph)
