@@ -77,6 +77,8 @@ void NodePortModel::add_connection(NodeConnection* connection)
 
     assert(m_owning_node_model != nullptr);
 	m_owning_node_model->connection_added(this, connection);
+
+    emit node_port_connections_changed();
 }
 
 void NodePortModel::remove_connection(NodeConnection* connection)
@@ -86,6 +88,8 @@ void NodePortModel::remove_connection(NodeConnection* connection)
     m_connections.remove(index);
     assert(m_owning_node_model != nullptr);
     m_owning_node_model->connection_removed(this, connection);
+
+    emit node_port_connections_changed();
 }
 
 uint32_t NodePortModel::num_connections() const

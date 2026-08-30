@@ -34,6 +34,7 @@ public:
     virtual QWidget* create_widget() { return nullptr; }
 
 signals:
+    void node_port_connections_changed();
 	void node_port_model_destroyed();
 
 public:
