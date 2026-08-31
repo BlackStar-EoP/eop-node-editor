@@ -19,6 +19,17 @@ NodePortModel::~NodePortModel()
 	emit node_port_model_destroyed();
 }
 
+QJsonObject NodePortModel::user_data() const
+{
+    return QJsonObject();
+}
+
+bool NodePortModel::load_from_user_data(const QJsonObject& user_data)
+{
+    Q_UNUSED(user_data);
+    return true;
+}
+
 NodePortConnectorWidget* NodePortModel::connector_widget()
 {
     if (m_connector_widget.isNull())

@@ -43,6 +43,7 @@ public:
 
 public:
 	const QVector<NodeModel*>& nodes() const;
+    const QVector<NodeConnection*>& connections() const;
 
 private:
 	QVector<NodeModel*> m_nodes;
