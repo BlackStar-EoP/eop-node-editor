@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QPointF>
 #include <QMap>
@@ -234,12 +235,15 @@ signals:
     void node_ports_changed(NodePortModel::EPortType port_type);
 
 private:
+    QJsonArray input_ports_user_data() const;
+    QJsonArray output_ports_user_data() const;
+
+private:
 	QVector<NodePortModel*> m_input_port_models;
 	QVector<NodePortModel*> m_output_port_models;
     QMap<NodePortModel*, QString> m_input_port_labels;
     QMap<NodePortModel*, QString> m_output_port_labels;
 
-private:
 	QPointF m_position;
 
 	NodeType m_node_type;

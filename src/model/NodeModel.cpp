@@ -26,7 +26,33 @@ QJsonObject NodeModel::to_json() const
 	node_json["pos_y"] = m_position.y();
 	node_json["node_type"] = m_node_type.node_type();
 	node_json["user_data"] = user_data();
+    node_json["input_ports"] = input_ports_user_data();
+    node_json["output_ports"] = output_ports_user_data();
 	return node_json;
+}
+
+QJsonArray NodeModel::input_ports_user_data() const
+{
+    QJsonArray ports_json;
+    for (const NodePortModel* node_port_model : input_ports())
+    {
+        QJsonObject port_data;
+        port_data["user_data"] = node_port_model->user_data();
+        ports_json.append(port_data);
+    }
+    return ports_json;
+}
+
+QJsonArray NodeModel::output_ports_user_data() const
+{
+    QJsonArray ports_json;
+    for (const NodePortModel* node_port_model : output_ports())
+    {
+        QJsonObject port_data;
+        port_data["user_data"] = node_port_model->user_data();
+        ports_json.append(port_data);
+    }
+    return ports_json;
 }
 
 const NodeType& NodeModel::node_type() const

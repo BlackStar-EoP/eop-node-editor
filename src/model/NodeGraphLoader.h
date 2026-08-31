@@ -3,11 +3,11 @@
 #include <QJsonObject>
 #include <QMap>
 #include <QString>
-#include <functional>
 #include <stdexcept>
 
+#include "controllers/NodeGraphController.h"
+
 class NodeGraph;
-class NodeGraphController;
 class NodeFactory;
 class NodeModel;
 class NodePortModel;
@@ -22,31 +22,25 @@ public:
     };
 
 public:
+    NodeGraphLoader(NodeGraph& graph, NodeFactory& factory);
     NodeGraphLoader(NodeGraph& graph, NodeGraphController& controller, NodeFactory& factory);
 
-    bool load(const QJsonObject& json_data);
-
     /**
-     * Load a graph from JSON without a controller for read-only usage without a UI.
-     * No signals will be emitted while constructing the graph.
-     *
      * @throws LoadFailure
      */
-    static void load_graph(NodeGraph& graph, NodeFactory& factory, const QJsonObject& json_data);
+    void load(const QJsonObject& json_data);
 
     static QJsonObject save(const NodeGraph& graph);
 
-    QString last_error() const;
-
 private:
-    static void load_impl(
-            const QJsonObject& json_data,
-            const std::function<NodeModel*(uint32_t id, const QJsonObject& node_data)>& create_node,
-            const std::function<bool(NodePortModel* input, NodePortModel* output)>& create_connection
-            );
+    QMap<uint32_t, NodeModel*> load_nodes(const QJsonObject& json_data);
+    NodeModel* create_node(const QJsonObject& node_data);
+    void load_connections(const QJsonObject& json_data, QMap<uint32_t, NodeModel*> node_models);
+    bool create_connection(NodePortModel* input, NodePortModel* output);
+    void load_node_ports(const QJsonObject& json_data, QMap<uint32_t, NodeModel*> node_models);
 
+    std::unique_ptr<NodeGraphController> m_default_controller;
     NodeGraph& m_graph;
     NodeGraphController& m_controller;
     NodeFactory& m_factory;
-    QString m_last_error;
 };

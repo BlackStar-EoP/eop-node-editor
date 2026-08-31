@@ -153,3 +153,8 @@ const QVector<NodeModel*>& NodeGraph::nodes() const
 {
 	return m_nodes;
 }
+
+const QVector<NodeConnection*>& NodeGraph::connections() const
+{
+    return m_connections;
+}
