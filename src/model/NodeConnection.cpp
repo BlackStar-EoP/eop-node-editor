@@ -52,3 +52,16 @@ bool NodeConnection::is_valid() const
 {
 	return m_valid;
 }
+
+void NodeConnection::notify_updated(const NodePortModel* source)
+{
+    NodePortModel::EPortType port_type = source->port_type();
+    if (port_type == NodePortModel::INPUT)
+    {
+        emit input_updated(this);
+    }
+    else
+    {
+        emit output_updated(this);
+    }
+}

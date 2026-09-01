@@ -234,6 +234,17 @@ signals:
 	void node_model_destroyed();
     void node_ports_changed(NodePortModel::EPortType port_type);
 
+protected:
+    void notify_input_ports() const;
+    void notify_output_ports() const;
+
+protected slots:
+    /**
+     * By default propagates updates down or up the graph. Override if you need to intercept the updates.
+     */
+    virtual void input_connection_updated(const NodePortModel* port_model, const NodeConnection* connection);
+    virtual void output_connection_updated(const NodePortModel* port_model, const NodeConnection* connection);
+
 private:
     QJsonArray input_ports_user_data() const;
     QJsonArray output_ports_user_data() const;

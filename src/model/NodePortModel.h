@@ -39,6 +39,7 @@ public:
 signals:
     void node_port_connections_changed();
 	void node_port_model_destroyed();
+    void connection_updated(const NodePortModel* port_model, const NodeConnection* connection);
 
 public:
     NodePortConnectorWidget* connector_widget();
@@ -70,6 +71,14 @@ public:
         }
         return qobject_cast<NodeType*>(m_connections.front()->other(this)->owning_node());
     }
+
+    /**
+     * Send a notification to all connected nodes.
+     */
+    void notify_node_updated() const;
+
+private slots:
+    void on_connection_updated(const NodeConnection* connection);
 
 private:
     /**

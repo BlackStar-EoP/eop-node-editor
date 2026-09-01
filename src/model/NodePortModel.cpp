@@ -89,6 +89,15 @@ void NodePortModel::add_connection(NodeConnection* connection)
     assert(m_owning_node_model != nullptr);
 	m_owning_node_model->connection_added(this, connection);
 
+    if (port_type() == INPUT)
+    {
+        connect(connection, &NodeConnection::output_updated, this, &NodePortModel::on_connection_updated);
+    }
+    else
+    {
+        connect(connection, &NodeConnection::input_updated, this, &NodePortModel::on_connection_updated);
+    }
+
     emit node_port_connections_changed();
 }
 
@@ -99,6 +108,8 @@ void NodePortModel::remove_connection(NodeConnection* connection)
     m_connections.remove(index);
     assert(m_owning_node_model != nullptr);
     m_owning_node_model->connection_removed(this, connection);
+
+    // No need to remove signal/slot connection. NodeConnection is expected to be deleted.
 
     emit node_port_connections_changed();
 }
@@ -127,4 +138,17 @@ const QVector<NodeConnection*> NodePortModel::connections() const
 bool NodePortModel::accepts_new_connections() const
 {
     return (supports_multiple_connections() || m_connections.isEmpty()) && m_enabled;
+}
+
+void NodePortModel::notify_node_updated() const
+{
+    for (NodeConnection* connection : m_connections)
+    {
+        connection->notify_updated(this);
+    }
+}
+
+void NodePortModel::on_connection_updated(const NodeConnection* connection)
+{
+    emit connection_updated(this, connection);
 }

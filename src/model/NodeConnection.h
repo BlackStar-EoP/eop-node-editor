@@ -25,8 +25,12 @@ public:
 	void set_valid(bool valid);
 	bool is_valid() const;
 
+    void notify_updated(const NodePortModel* source);
+
 signals:
 	void connection_destroyed();
+    void input_updated(const NodeConnection* connection);
+    void output_updated(const NodeConnection* connection);
 
 private:
 	NodePortModel* m_input = nullptr;
