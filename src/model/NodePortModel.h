@@ -15,9 +15,9 @@ class NodePortModel : public QObject
 {
 	Q_OBJECT
 public:
-    // TODO: Replace
 	enum EPortType : int32_t
 	{
+        NONE = 0,
         INPUT = 1,
         OUTPUT = 2,
         BOTH = INPUT | OUTPUT
