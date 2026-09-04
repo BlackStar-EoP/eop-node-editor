@@ -95,6 +95,7 @@ void NodeModel::add_input_port_model(NodePortModel* port_model)
 {
     port_model->set_exposing_node(this);
 	m_input_port_models.push_back(port_model);
+    connect(port_model, &NodePortModel::connection_updated, this, &NodeModel::input_connection_updated);
 }
 
 void NodeModel::add_input_port_model(NodePortModel* port_model, const QString& port_label)
@@ -106,9 +107,16 @@ void NodeModel::add_input_port_model(NodePortModel* port_model, const QString& p
 void NodeModel::remove_input_port_model(NodePortModel* port_model)
 {
     m_graph->disconnect_all(port_model);
+    take_input_port_model(port_model);
+    if (port_model->owning_node() == this) delete port_model;
+}
+
+NodePortModel* NodeModel::take_input_port_model(NodePortModel* port_model)
+{
     m_input_port_labels.remove(port_model);
     m_input_port_models.removeAll(port_model);
-    if (port_model->owning_node() == this) delete port_model;
+    disconnect(port_model, &NodePortModel::connection_updated, this, &NodeModel::input_connection_updated);
+    return port_model;
 }
 
 void NodeModel::destroy_input_port_models()
@@ -117,6 +125,7 @@ void NodeModel::destroy_input_port_models()
 	{
         // TODO: We can do better
         m_graph->disconnect_all(model);
+        disconnect(model, &NodePortModel::connection_updated, this, &NodeModel::input_connection_updated);
         if (model->owning_node() == this) delete model;
 	}
 	m_input_port_models.clear();
@@ -177,6 +186,7 @@ void NodeModel::add_output_port_model(NodePortModel* port_model)
 {
     port_model->set_exposing_node(this);
 	m_output_port_models.push_back(port_model);
+    connect(port_model, &NodePortModel::connection_updated, this, &NodeModel::output_connection_updated);
 }
 
 void NodeModel::add_output_port_model(NodePortModel* port_model, const QString& port_label)
@@ -188,9 +198,16 @@ void NodeModel::add_output_port_model(NodePortModel* port_model, const QString& 
 void NodeModel::remove_output_port_model(NodePortModel* port_model)
 {
     m_graph->disconnect_all(port_model);
+    take_output_port_model(port_model);
+    if (port_model->owning_node() == this) delete port_model;
+}
+
+NodePortModel* NodeModel::take_output_port_model(NodePortModel* port_model)
+{
     m_output_port_labels.remove(port_model);
     m_output_port_models.removeAll(port_model);
-    if (port_model->owning_node() == this) delete port_model;
+    disconnect(port_model, &NodePortModel::connection_updated, this, &NodeModel::output_connection_updated);
+    return port_model;
 }
 
 void NodeModel::destroy_output_port_models()
@@ -199,6 +216,7 @@ void NodeModel::destroy_output_port_models()
 	{
         // TODO: We can do better
         m_graph->disconnect_all(model);
+        disconnect(model, &NodePortModel::connection_updated, this, &NodeModel::output_connection_updated);
         if (model->owning_node() == this) delete model;
 	}
 
@@ -378,4 +396,34 @@ QVector<KeyNode> NodeModel::find_ordered_key_nodes()
 
     }
     return topological_order;
+}
+
+void NodeModel::notify_input_ports() const
+{
+    for (const NodePortModel* port_model : m_input_port_models)
+    {
+        port_model->notify_node_updated();
+    }
+}
+
+void NodeModel::notify_output_ports() const
+{
+    for (const NodePortModel* port_model : m_output_port_models)
+    {
+        port_model->notify_node_updated();
+    }
+}
+
+void NodeModel::input_connection_updated(const NodePortModel* port_model, const NodeConnection* connection)
+{
+    Q_UNUSED(port_model);
+    Q_UNUSED(connection);
+    notify_output_ports();
+}
+
+void NodeModel::output_connection_updated(const NodePortModel* port_model, const NodeConnection* connection)
+{
+    Q_UNUSED(port_model);
+    Q_UNUSED(connection);
+    notify_input_ports();
 }

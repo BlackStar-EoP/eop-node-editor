@@ -56,6 +56,7 @@ public:
 	void add_input_port_model(NodePortModel* port_model);
 	void add_input_port_model(NodePortModel* port_model, const QString& port_label);
     void remove_input_port_model(NodePortModel* port_model);
+    NodePortModel* take_input_port_model(NodePortModel* port_model);
 	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
     QString input_port_label(NodePortModel* port_model) const;
@@ -125,6 +126,7 @@ public:
 	void add_output_port_model(NodePortModel* port_model);
 	void add_output_port_model(NodePortModel* port_model, const QString& port_label);
     void remove_output_port_model(NodePortModel* port_model);
+    NodePortModel* take_output_port_model(NodePortModel* port_model);
 	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
     QString output_port_label(NodePortModel* port_model) const;
@@ -233,6 +235,17 @@ public:
 signals:
 	void node_model_destroyed();
     void node_ports_changed(NodePortModel::EPortType port_type);
+
+protected:
+    void notify_input_ports() const;
+    void notify_output_ports() const;
+
+protected slots:
+    /**
+     * By default propagates updates down or up the graph. Override if you need to intercept the updates.
+     */
+    virtual void input_connection_updated(const NodePortModel* port_model, const NodeConnection* connection);
+    virtual void output_connection_updated(const NodePortModel* port_model, const NodeConnection* connection);
 
 private:
     QJsonArray input_ports_user_data() const;
