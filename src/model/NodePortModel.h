@@ -27,7 +27,6 @@ public:
 	virtual ~NodePortModel();
 	virtual EPortType port_type() const = 0;
 	virtual QString port_label() const = 0;
-	virtual QString name() const = 0;
 	virtual bool may_connect_to(const NodePortModel& port_model) const = 0;
 	virtual bool supports_multiple_connections() const = 0;
 	virtual QString type() const = 0;
