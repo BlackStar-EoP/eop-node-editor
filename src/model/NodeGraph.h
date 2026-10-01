@@ -8,7 +8,7 @@ class NodeModel;
 class NodePolicy;
 class NodePortModel;
 
-class NodeGraph
+class NodeGraph 
 {
 public:
 	NodeGraph();
@@ -48,5 +48,5 @@ public:
 private:
 	QVector<NodeModel*> m_nodes;
     QVector<NodeConnection*> m_connections;
-    NodeGraphController* m_controller;
+    NodeGraphController* m_controller = nullptr;
 };

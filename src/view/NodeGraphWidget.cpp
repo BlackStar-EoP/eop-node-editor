@@ -23,6 +23,7 @@ NodeGraphWidget::NodeGraphWidget(QWidget* parent)
 , m_controller(m_node_graph.get())
 {
 	m_scene = new NodeGraphScene(this, m_controller);
+    m_node_graph->set_controller(&m_controller);
 	QBoxLayout* layout = new QBoxLayout(QBoxLayout::Down);
 	m_view = new NodeGraphView(m_scene);
 	layout->addWidget(m_view);
