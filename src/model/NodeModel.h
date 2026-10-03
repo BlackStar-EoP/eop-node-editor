@@ -121,6 +121,32 @@ public:
         return nullptr;
     }
 
+    /**
+     * Retrieve the output port of type `OutputPortType` connected to any input of this node.
+     *
+     * @pre Requires only one input port is connected to the node type and the input port to only accept a single connection.
+     *
+     * @returns nullptr if none found
+     */
+    template <class OutputPortType>
+    QVector<OutputPortType*> get_input_node_output_ports_by_type() const
+    {
+        QVector<OutputPortType*> output_ports;
+        for (NodePortModel* port : m_input_port_models)
+        {
+            for (NodeConnection* connection : port->connections())
+            {
+                if (OutputPortType* required_port = qobject_cast<OutputPortType*>(connection->output());
+                    required_port != nullptr)
+                {
+                    // TODO: assert(!port->supports_multiple_connections());
+                    output_ports.push_back(required_port);
+                }
+            }
+        }
+        return output_ports;
+    }
+
 	uint32_t num_output_ports() const;
 	NodePortModel* output_port_model(uint32_t port_nr);
 	void add_output_port_model(NodePortModel* port_model);
