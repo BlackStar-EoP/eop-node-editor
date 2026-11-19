@@ -31,6 +31,7 @@ public:
 	virtual bool supports_multiple_connections() const = 0;
 	virtual QString type() const = 0;
     virtual QWidget* create_widget() { return nullptr; }
+    virtual QString key() const { return port_label(); }
 
     virtual QJsonObject user_data() const;
     virtual bool load_from_user_data(const QJsonObject& user_data);

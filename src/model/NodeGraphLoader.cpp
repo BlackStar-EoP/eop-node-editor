@@ -67,6 +67,8 @@ QJsonObject NodeGraphLoader::save(const NodeGraph& graph)
 		json_connection["output_model_id"] = (qint64) output_model_id;
 		json_connection["input_port_index"] = (qint64) input_port_index;
 		json_connection["output_port_index"] = (qint64) output_port_index;
+        json_connection["input_port"] = input->key();
+        json_connection["output_port"] = output->key();
 		node_connection_array.push_back(json_connection);
 	}
 
