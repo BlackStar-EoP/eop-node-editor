@@ -46,6 +46,7 @@ QJsonObject NodeGraphLoader::save(const NodeGraph& graph)
 
 		QJsonObject json_node;
 		json_node["id"] = static_cast<qint64>(node_id);
+        json_node["uuid"] = node->uuid().toString();
 		json_node["node_data"] = node->to_json();
 		node_array.push_back(json_node);
 
@@ -109,7 +110,14 @@ QMap<uint32_t, NodeModel*> NodeGraphLoader::load_nodes(const QJsonObject& json_d
         QJsonObject node_data   = node_json["node_data"].toObject();
         QJsonObject user_data   = node_data["user_data"].toObject();
 
-        NodeModel* model = create_node(node_data);
+        // Temporary migration code
+        QUuid uuid;
+        if (node_json.contains("uuid"))
+            uuid = QUuid::fromString(node_json["uuid"].toString());
+        else
+            uuid = QUuid::createUuid();
+
+        NodeModel* model = create_node(uuid, node_data);
         node_models[id] = model;
 
         if (!model->load_from_user_data(user_data))
@@ -140,12 +148,13 @@ QMap<uint32_t, NodeModel*> NodeGraphLoader::load_nodes(const QJsonObject& json_d
     return node_models;
 }
 
-NodeModel* NodeGraphLoader::create_node(const QJsonObject& node_data)
+NodeModel* NodeGraphLoader::create_node(const QUuid& uuid, const QJsonObject& node_data)
 {
     m_factory.set_current_node_type(node_data["node_type"].toString());
     NodeModel* model = m_factory.create_node_model_and_set_type();
     assert(model != nullptr);
     m_graph.give_node(model);
+    model->set_uuid(uuid);
     model->set_position(QPointF(node_data["pos_x"].toDouble(),
                                 node_data["pos_y"].toDouble()));
     model->create_port_models();

@@ -21,6 +21,16 @@ NodeModel::~NodeModel()
 	emit node_model_destroyed();
 }
 
+const QUuid& NodeModel::uuid() const
+{
+    return m_uuid;
+}
+
+void NodeModel::set_uuid(const QUuid& id)
+{
+    m_uuid = id;
+}
+
 QJsonObject NodeModel::to_json() const
 {
 	QJsonObject node_json;

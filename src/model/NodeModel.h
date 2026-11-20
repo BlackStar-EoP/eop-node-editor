@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QPointer>
 #include <QWidget>
+#include <QUuid>
 
 #include "NodeConnection.h"
 #include "NodeType.h"
@@ -32,8 +33,9 @@ class NodeModel : public QObject
 {
 	Q_OBJECT
 public:
-
 	virtual ~NodeModel();
+    const QUuid& uuid() const;
+    void set_uuid(const QUuid& id);
 	virtual void create_input_port_models() = 0;
 	virtual void create_output_port_models() = 0;
 	virtual QString title() const = 0;
@@ -283,6 +285,7 @@ private:
     QMap<NodePortModel*, QString> m_input_port_labels;
     QMap<NodePortModel*, QString> m_output_port_labels;
 
+    QUuid m_uuid = QUuid::createUuid();
 	QPointF m_position;
 
 	NodeType m_node_type;
