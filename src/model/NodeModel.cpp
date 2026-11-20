@@ -4,6 +4,8 @@
 #include "NodePortModel.h"
 #include <controllers/NodeGraphController.h>
 
+#include <algorithm>
+
 #include <QQueue>
 
 NodeModel::~NodeModel()
@@ -93,6 +95,7 @@ NodePortModel* NodeModel::input_port_model(uint32_t port_nr)
 
 void NodeModel::add_input_port_model(NodePortModel* port_model)
 {
+    assert(std::ranges::find(m_input_port_models, port_model->key(), &NodePortModel::key) == m_input_port_models.end() && "Input port model keys must be unique!");
     port_model->set_exposing_node(this);
 	m_input_port_models.push_back(port_model);
     connect(port_model, &NodePortModel::connection_updated, this, &NodeModel::input_connection_updated);
@@ -184,6 +187,7 @@ NodePortModel* NodeModel::output_port_model(uint32_t port_nr)
 
 void NodeModel::add_output_port_model(NodePortModel* port_model)
 {
+    assert(std::ranges::find(m_output_port_models, port_model->key(), &NodePortModel::key) == m_output_port_models.end() && "Output port model keys must be unique!");
     port_model->set_exposing_node(this);
 	m_output_port_models.push_back(port_model);
     connect(port_model, &NodePortModel::connection_updated, this, &NodeModel::output_connection_updated);
