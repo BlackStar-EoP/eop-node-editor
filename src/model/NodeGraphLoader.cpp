@@ -53,8 +53,8 @@ QJsonObject NodeGraphLoader::save(const NodeGraph& graph)
 
         json_connection["input_model_uuid"] = input->exposing_node()->uuid().toString();
         json_connection["output_model_uuid"] = output->exposing_node()->uuid().toString();
-        json_connection["input_port_key"] = input->key();
-        json_connection["output_port_key"] = output->key();
+        json_connection["input_port_key"] = input->exposing_node()->input_port_key(input);
+        json_connection["output_port_key"] = output->exposing_node()->output_port_key(output);
 		node_connection_array.push_back(json_connection);
 	}
 
