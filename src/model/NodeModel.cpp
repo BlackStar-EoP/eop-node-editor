@@ -103,6 +103,14 @@ NodePortModel* NodeModel::input_port_model(uint32_t port_nr)
 	return nullptr;
 }
 
+NodePortModel* NodeModel::input_port_model(const QString& key) const
+{
+    auto it = std::ranges::find(m_input_port_models, key, &NodePortModel::key);
+    if (it == m_input_port_models.end())
+        return nullptr;
+    return *it;
+}
+
 void NodeModel::add_input_port_model(NodePortModel* port_model)
 {
     assert(std::ranges::find(m_input_port_models, port_model->key(), &NodePortModel::key) == m_input_port_models.end() && "Input port model keys must be unique!");
@@ -193,6 +201,14 @@ NodePortModel* NodeModel::output_port_model(uint32_t port_nr)
 		return m_output_port_models[port_nr];
 
 	return nullptr;
+}
+
+NodePortModel* NodeModel::output_port_model(const QString& key) const
+{
+    auto it = std::ranges::find(m_output_port_models, key, &NodePortModel::key);
+    if (it == m_output_port_models.end())
+        return nullptr;
+    return *it;
 }
 
 void NodeModel::add_output_port_model(NodePortModel* port_model)

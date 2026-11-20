@@ -35,22 +35,13 @@ QJsonObject NodeGraphLoader::save(const NodeGraph& graph)
 {
 	const QVector<NodeModel*>& node_vector = graph.nodes();
 
-	// Map all node models to an internal id
-	QMap<NodeModel*, uint32_t> node_model_map;
-
-	uint32_t node_id = 1;
 	QJsonArray node_array;
 	for (NodeModel* node : node_vector)
 	{
-		node_model_map[node] = node_id;
-
 		QJsonObject json_node;
-		json_node["id"] = static_cast<qint64>(node_id);
         json_node["uuid"] = node->uuid().toString();
 		json_node["node_data"] = node->to_json();
 		node_array.push_back(json_node);
-
-        node_id++;
 	}
 
 	QJsonArray node_connection_array;
@@ -59,17 +50,11 @@ QJsonObject NodeGraphLoader::save(const NodeGraph& graph)
 		QJsonObject json_connection;
 		NodePortModel* input = connection->input();
 		NodePortModel* output = connection->output();
-		uint32_t input_model_id = node_model_map[input->exposing_node()];
-		uint32_t output_model_id = node_model_map[output->exposing_node()];
-		int32_t input_port_index = input->exposing_node()->input_port_nr(input);
-		int32_t output_port_index = output->exposing_node()->output_port_nr(output);
 
-		json_connection["input_model_id"] = (qint64) input_model_id;
-		json_connection["output_model_id"] = (qint64) output_model_id;
-		json_connection["input_port_index"] = (qint64) input_port_index;
-		json_connection["output_port_index"] = (qint64) output_port_index;
-        json_connection["input_port"] = input->key();
-        json_connection["output_port"] = output->key();
+        json_connection["input_model_uuid"] = input->exposing_node()->uuid().toString();
+        json_connection["output_model_uuid"] = output->exposing_node()->uuid().toString();
+        json_connection["input_port_key"] = input->key();
+        json_connection["output_port_key"] = output->key();
 		node_connection_array.push_back(json_connection);
 	}
 
@@ -85,7 +70,7 @@ void NodeGraphLoader::load(const QJsonObject& json_data)
     m_controller.clear_graph();
     m_graph.clear();
 
-    QMap<uint32_t, NodeModel*> node_models = load_nodes(json_data);
+    QMap<QUuid, NodeModel*> node_models = load_nodes(json_data);
     load_connections(json_data, node_models);
     // Important: load ports after restoring all connections. While loading connections, not all ports are final yet
     load_node_ports(json_data, node_models);
@@ -93,35 +78,28 @@ void NodeGraphLoader::load(const QJsonObject& json_data)
     m_controller.end_load();
 }
 
-QMap<uint32_t, NodeModel*> NodeGraphLoader::load_nodes(const QJsonObject& json_data)
+QMap<QUuid, NodeModel*> NodeGraphLoader::load_nodes(const QJsonObject& json_data)
 {
     QJsonArray nodes_json = json_data["nodes"].toArray();
-    QMap<uint32_t, NodeModel*> node_models;
+    QMap<QUuid, NodeModel*> node_models;
 
     // Create all node models in one pass, track those whose load_from_user_data
     // fails (e.g. forward references to objects not yet loaded).
-    struct PendingNode { uint32_t id; QJsonObject user_data; };
+    struct PendingNode { QUuid uuid; QJsonObject user_data; };
     QVector<PendingNode> pending;
 
     for (int32_t i = 0; i < nodes_json.size(); ++i)
     {
         QJsonObject node_json   = nodes_json[i].toObject();
-        uint32_t id             = node_json["id"].toInt();
+        QUuid uuid = QUuid::fromString(node_json["uuid"].toString());
         QJsonObject node_data   = node_json["node_data"].toObject();
         QJsonObject user_data   = node_data["user_data"].toObject();
 
-        // Temporary migration code
-        QUuid uuid;
-        if (node_json.contains("uuid"))
-            uuid = QUuid::fromString(node_json["uuid"].toString());
-        else
-            uuid = QUuid::createUuid();
-
         NodeModel* model = create_node(uuid, node_data);
-        node_models[id] = model;
+        node_models[uuid] = model;
 
         if (!model->load_from_user_data(user_data))
-            pending.push_back({id, user_data});
+            pending.push_back({uuid, user_data});
     }
 
     // Retry load_from_user_data for nodes that failed (forward references).
@@ -131,7 +109,7 @@ QMap<uint32_t, NodeModel*> NodeGraphLoader::load_nodes(const QJsonObject& json_d
         bool progress = false;
         for (int32_t i = pending.size() - 1; i >= 0; --i)
         {
-            if (node_models[pending[i].id]->load_from_user_data(pending[i].user_data))
+            if (node_models[pending[i].uuid]->load_from_user_data(pending[i].user_data))
             {
                 pending.removeAt(i);
                 progress = true;
@@ -161,7 +139,7 @@ NodeModel* NodeGraphLoader::create_node(const QUuid& uuid, const QJsonObject& no
     return model;
 }
 
-void NodeGraphLoader::load_connections(const QJsonObject& json_data, QMap<uint32_t, NodeModel*> node_models)
+void NodeGraphLoader::load_connections(const QJsonObject& json_data, QMap<QUuid, NodeModel*> node_models)
 {
     QJsonArray connections_json = json_data["connections"].toArray();
     constexpr int MAX_CONNECTION_ATTEMPTS = 10;
@@ -173,19 +151,18 @@ void NodeGraphLoader::load_connections(const QJsonObject& json_data, QMap<uint32
         for (QJsonValueRef json_conn_value : connections_json)
         {
             QJsonObject json_conn   = json_conn_value.toObject();
-            uint32_t input_id       = json_conn["input_model_id"].toInt();
-            uint32_t output_id      = json_conn["output_model_id"].toInt();
-            uint32_t input_port_idx  = json_conn["input_port_index"].toInt();
-            uint32_t output_port_idx = json_conn["output_port_index"].toInt();
+            QUuid input_uuid        = QUuid::fromString(json_conn["input_model_uuid"].toString());
+            QUuid output_uuid       = QUuid::fromString(json_conn["output_model_uuid"].toString());
+            QString input_port_key  = json_conn["input_port_key"].toString();
+            QString output_port_key = json_conn["output_port_key"].toString();
 
-            NodeModel* input_model  = node_models[input_id];
-            NodeModel* output_model = node_models[output_id];
+            NodeModel* input_model  = node_models[input_uuid];
+            NodeModel* output_model = node_models[output_uuid];
+            NodePortModel* input_port_model = input_model->input_port_model(input_port_key);
+            NodePortModel* output_port_model = output_model->output_port_model(output_port_key);
 
-            if (input_port_idx  < input_model->num_input_ports() &&
-                output_port_idx < output_model->num_output_ports())
+            if (input_port_model != nullptr && output_port_model != nullptr)
             {
-                NodePortModel* input_port_model = input_model->input_port_model(input_port_idx);
-                NodePortModel* output_port_model = output_model->output_port_model(output_port_idx);
                 if (input_port_model->has_connection(output_port_model))
                 {
                     connections_present++;
@@ -215,7 +192,7 @@ bool NodeGraphLoader::create_connection(NodePortModel* input, NodePortModel* out
     return m_controller.create_connection() != nullptr;
 }
 
-void NodeGraphLoader::load_node_ports(const QJsonObject& json_data, QMap<uint32_t, NodeModel*> node_models)
+void NodeGraphLoader::load_node_ports(const QJsonObject& json_data, QMap<QUuid, NodeModel*> node_models)
 {
     QJsonArray nodes_json = json_data["nodes"].toArray();
 
@@ -223,8 +200,8 @@ void NodeGraphLoader::load_node_ports(const QJsonObject& json_data, QMap<uint32_
     {
         QJsonObject node_json = node_json_value.toObject();
 
-        const uint32_t id = node_json["id"].toInt();
-        NodeModel* model = node_models[id];
+        const QUuid uuid = QUuid::fromString(node_json["uuid"].toString());
+        NodeModel* model = node_models[uuid];
 
         QJsonObject node_data = node_json["node_data"].toObject();
 
