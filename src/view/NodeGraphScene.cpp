@@ -4,6 +4,7 @@
 #include "NodeGraphicsItem.h"
 #include "EditorColorScheme.h"
 #include "controllers/NodeGraphController.h"
+#include "model/NodeGraph.h"
 
 //#include "model/NodeModel.h" TODO al geinclude in nodegraphicsitem vanwege interface
 #include "model/NodePortModel.h"
@@ -30,27 +31,24 @@ NodeGraphScene::NodeGraphScene(QObject* parent, NodeGraphController& controller)
 	});
 }
 
-void NodeGraphScene::build_scene_from_graph(const QVector<NodeModel*>& nodes)
+void NodeGraphScene::build_scene_from_graph(const NodeGraph& graph)
 {
-    for (NodeModel* node_model : nodes)
+    for (NodeModel* node_model : graph.nodes())
     {
         NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
         addItem(node_gfx_item);
     }
 
-    for (NodeModel* node_model : nodes)
+    for (NodeConnection* connection : graph.connections())
     {
-        for (NodePortModel* port : node_model->input_ports())
-        {
-            for (NodeConnection* connection : port->connections())
-            {
-                NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
-                connection_gfx_item->add_port(connection->input()->connector_widget());
-                connection_gfx_item->add_port(connection->output()->connector_widget());
-                connection_gfx_item->set_connection(connection);
-                addItem(connection_gfx_item);
-            }
-        }
+        assert(graph.nodes().contains(connection->input()->exposing_node()));
+        assert(graph.nodes().contains(connection->output()->exposing_node()));
+
+        NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
+        connection_gfx_item->add_port(connection->input()->connector_widget());
+        connection_gfx_item->add_port(connection->output()->connector_widget());
+        connection_gfx_item->set_connection(connection);
+        addItem(connection_gfx_item);
     }
 }
 
