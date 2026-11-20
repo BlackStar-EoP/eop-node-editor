@@ -117,7 +117,8 @@ NodePortModel* NodeModel::input_port_model(const QString& key) const
 
 void NodeModel::add_input_port_model(NodePortModel* port_model, PortPresentation presentation)
 {
-    assert(std::ranges::find(m_input_port_models, port_model->key(),
+    assert(std::ranges::find(m_input_port_models,
+                presentation.key.isEmpty() ? port_model->key() : presentation.key,
                 [this](NodePortModel* port) -> QString
                 {
                     return input_port_key(port);
@@ -235,7 +236,8 @@ NodePortModel* NodeModel::output_port_model(const QString& key) const
 
 void NodeModel::add_output_port_model(NodePortModel* port_model, PortPresentation presentation)
 {
-    assert(std::ranges::find(m_output_port_models, port_model->key(),
+    assert(std::ranges::find(m_output_port_models,
+                presentation.key.isEmpty() ? port_model->key() : presentation.key,
                 [this](NodePortModel* port) -> QString
                 {
                     return output_port_key(port);
