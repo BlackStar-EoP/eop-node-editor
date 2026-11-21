@@ -3,11 +3,12 @@
 #include <QGraphicsScene>
 #include <QVector>
 
-class NodeGraphController;
-class NodeConnectionGraphicsItem;
-class NodeModel;
 class NodeConnection;
+class NodeConnectionGraphicsItem;
+class NodeGraph;
+class NodeGraphController;
 class NodeGraphicsItem;
+class NodeModel;
 class NodePortConnectorWidget;
 
 class NodeGraphScene : public QGraphicsScene
@@ -16,7 +17,7 @@ class NodeGraphScene : public QGraphicsScene
 public:
 	NodeGraphScene(QObject* parent, NodeGraphController& controller);
 
-    void build_scene_from_graph(const QVector<NodeModel*>& nodes);
+    void build_scene_from_graph(const NodeGraph& graph);
 
     /**
      * Remove all nodes and reset the state.

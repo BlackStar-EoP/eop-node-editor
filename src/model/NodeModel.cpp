@@ -4,6 +4,8 @@
 #include "NodePortModel.h"
 #include <controllers/NodeGraphController.h>
 
+#include <algorithm>
+
 #include <QQueue>
 
 NodeModel::~NodeModel()
@@ -17,6 +19,16 @@ NodeModel::~NodeModel()
         if (model->owning_node() == this) delete model;
 	}
 	emit node_model_destroyed();
+}
+
+const QUuid& NodeModel::uuid() const
+{
+    return m_uuid;
+}
+
+void NodeModel::set_uuid(const QUuid& id)
+{
+    m_uuid = id;
 }
 
 QJsonObject NodeModel::to_json() const
@@ -91,17 +103,31 @@ NodePortModel* NodeModel::input_port_model(uint32_t port_nr)
 	return nullptr;
 }
 
-void NodeModel::add_input_port_model(NodePortModel* port_model)
+NodePortModel* NodeModel::input_port_model(const QString& key) const
 {
+    auto it = std::ranges::find(m_input_port_models, key,
+            [this](NodePortModel* port) -> QString
+            {
+                return input_port_key(port);
+            });
+    if (it == m_input_port_models.end())
+        return nullptr;
+    return *it;
+}
+
+void NodeModel::add_input_port_model(NodePortModel* port_model, PortPresentation presentation)
+{
+    assert(std::ranges::find(m_input_port_models,
+                presentation.key.isEmpty() ? port_model->key() : presentation.key,
+                [this](NodePortModel* port) -> QString
+                {
+                    return input_port_key(port);
+                }) == m_input_port_models.end() && "Input port model keys must be unique!");
+
     port_model->set_exposing_node(this);
 	m_input_port_models.push_back(port_model);
     connect(port_model, &NodePortModel::connection_updated, this, &NodeModel::input_connection_updated);
-}
-
-void NodeModel::add_input_port_model(NodePortModel* port_model, const QString& port_label)
-{
-    add_input_port_model(port_model);
-    m_input_port_labels.insert(port_model, port_label);
+    m_input_port_presentation[port_model] = presentation;
 }
 
 void NodeModel::remove_input_port_model(NodePortModel* port_model)
@@ -113,7 +139,7 @@ void NodeModel::remove_input_port_model(NodePortModel* port_model)
 
 NodePortModel* NodeModel::take_input_port_model(NodePortModel* port_model)
 {
-    m_input_port_labels.remove(port_model);
+    m_input_port_presentation.remove(port_model);
     m_input_port_models.removeAll(port_model);
     disconnect(port_model, &NodePortModel::connection_updated, this, &NodeModel::input_connection_updated);
     return port_model;
@@ -129,7 +155,7 @@ void NodeModel::destroy_input_port_models()
         if (model->owning_node() == this) delete model;
 	}
 	m_input_port_models.clear();
-    m_input_port_labels.clear();
+    m_input_port_presentation.clear();
 }
 
 int32_t NodeModel::input_port_nr(NodePortModel* port_model) const
@@ -139,19 +165,33 @@ int32_t NodeModel::input_port_nr(NodePortModel* port_model) const
 
 QString NodeModel::input_port_label(NodePortModel* port_model) const
 {
-    auto alt_name = m_input_port_labels.find(port_model);
-    if (alt_name == m_input_port_labels.end())
+    auto presentation = m_input_port_presentation.constFind(port_model);
+    if (presentation == m_input_port_presentation.end() || presentation->label.isEmpty())
     {
         return port_model->port_label();
     }
     else
     {
-        return *alt_name;
+        return presentation->label;
     }
 
 }
 
-const QVector<NodePortModel*> NodeModel::input_ports() const
+QString NodeModel::input_port_key(NodePortModel* port_model) const
+{
+    auto presentation = m_input_port_presentation.constFind(port_model);
+    if (presentation == m_input_port_presentation.end() || presentation->key.isEmpty())
+    {
+        return port_model->key();
+    }
+    else
+    {
+        return presentation->key;
+    }
+
+}
+
+QVector<NodePortModel*> NodeModel::input_ports() const
 {
     return m_input_port_models;
 }
@@ -182,17 +222,31 @@ NodePortModel* NodeModel::output_port_model(uint32_t port_nr)
 	return nullptr;
 }
 
-void NodeModel::add_output_port_model(NodePortModel* port_model)
+NodePortModel* NodeModel::output_port_model(const QString& key) const
 {
+    auto it = std::ranges::find(m_output_port_models, key,
+            [this](NodePortModel* port) -> QString
+            {
+                return output_port_key(port);
+            });
+    if (it == m_output_port_models.end())
+        return nullptr;
+    return *it;
+}
+
+void NodeModel::add_output_port_model(NodePortModel* port_model, PortPresentation presentation)
+{
+    assert(std::ranges::find(m_output_port_models,
+                presentation.key.isEmpty() ? port_model->key() : presentation.key,
+                [this](NodePortModel* port) -> QString
+                {
+                    return output_port_key(port);
+                }) == m_output_port_models.end() && "Output port model keys must be unique!");
+
     port_model->set_exposing_node(this);
 	m_output_port_models.push_back(port_model);
     connect(port_model, &NodePortModel::connection_updated, this, &NodeModel::output_connection_updated);
-}
-
-void NodeModel::add_output_port_model(NodePortModel* port_model, const QString& port_label)
-{
-    add_output_port_model(port_model);
-    m_output_port_labels.insert(port_model, port_label);
+    m_output_port_presentation[port_model] = presentation;
 }
 
 void NodeModel::remove_output_port_model(NodePortModel* port_model)
@@ -204,7 +258,7 @@ void NodeModel::remove_output_port_model(NodePortModel* port_model)
 
 NodePortModel* NodeModel::take_output_port_model(NodePortModel* port_model)
 {
-    m_output_port_labels.remove(port_model);
+    m_output_port_presentation.remove(port_model);
     m_output_port_models.removeAll(port_model);
     disconnect(port_model, &NodePortModel::connection_updated, this, &NodeModel::output_connection_updated);
     return port_model;
@@ -221,7 +275,7 @@ void NodeModel::destroy_output_port_models()
 	}
 
 	m_output_port_models.clear();
-    m_output_port_labels.clear();
+    m_output_port_presentation.clear();
 }
 
 int32_t NodeModel::output_port_nr(NodePortModel* port_model) const
@@ -231,19 +285,31 @@ int32_t NodeModel::output_port_nr(NodePortModel* port_model) const
 
 QString NodeModel::output_port_label(NodePortModel* port_model) const
 {
-    auto alt_name = m_output_port_labels.find(port_model);
-    if (alt_name == m_output_port_labels.end())
+    auto presentation = m_output_port_presentation.constFind(port_model);
+    if (presentation == m_output_port_presentation.end() || presentation->label.isEmpty())
     {
         return port_model->port_label();
     }
     else
     {
-        return *alt_name;
+        return presentation->label;
     }
-
 }
 
-const QVector<NodePortModel*> NodeModel::output_ports() const
+QString NodeModel::output_port_key(NodePortModel* port_model) const
+{
+    auto presentation = m_output_port_presentation.constFind(port_model);
+    if (presentation == m_output_port_presentation.end() || presentation->key.isEmpty())
+    {
+        return port_model->key();
+    }
+    else
+    {
+        return presentation->key;
+    }
+}
+
+QVector<NodePortModel*> NodeModel::output_ports() const
 {
     return m_output_port_models;
 }

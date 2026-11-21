@@ -91,7 +91,7 @@ void NodeGraphWidget::adopt_graph(std::unique_ptr<NodeGraph> source_graph)
     m_node_graph.swap(source_graph);
     m_controller.set_node_graph(m_node_graph.get());
 
-    m_scene->build_scene_from_graph(m_node_graph->nodes());
+    m_scene->build_scene_from_graph(*m_node_graph);
 
     set_persisted();
 

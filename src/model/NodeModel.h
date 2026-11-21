@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QPointer>
 #include <QWidget>
+#include <QUuid>
 
 #include "NodeConnection.h"
 #include "NodeType.h"
@@ -28,12 +29,20 @@ public:
     QVector<NodeModel*> upstream_nodes_;
 };
 
+class PortPresentation
+{
+public:
+    QString key = {};
+    QString label = {};
+};
+
 class NodeModel : public QObject
 {
 	Q_OBJECT
 public:
-
 	virtual ~NodeModel();
+    const QUuid& uuid() const;
+    void set_uuid(const QUuid& id);
 	virtual void create_input_port_models() = 0;
 	virtual void create_output_port_models() = 0;
 	virtual QString title() const = 0;
@@ -53,18 +62,19 @@ public:
 
 	uint32_t num_input_ports() const;
 	NodePortModel* input_port_model(uint32_t port_nr);
-	void add_input_port_model(NodePortModel* port_model);
-	void add_input_port_model(NodePortModel* port_model, const QString& port_label);
+    NodePortModel* input_port_model(const QString& key) const;
+	void add_input_port_model(NodePortModel* port_model, PortPresentation presentation = {});
     void remove_input_port_model(NodePortModel* port_model);
     NodePortModel* take_input_port_model(NodePortModel* port_model);
 	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
     QString input_port_label(NodePortModel* port_model) const;
+    QString input_port_key(NodePortModel* port_model) const;
 
     /**
      * All input ports for this node.
      */
-    const QVector<NodePortModel*> input_ports() const;
+    QVector<NodePortModel*> input_ports() const;
 
     /**
      * Retrieve all nodes connected to an input port of the current node.
@@ -149,18 +159,19 @@ public:
 
 	uint32_t num_output_ports() const;
 	NodePortModel* output_port_model(uint32_t port_nr);
-	void add_output_port_model(NodePortModel* port_model);
-	void add_output_port_model(NodePortModel* port_model, const QString& port_label);
+    NodePortModel* output_port_model(const QString& key) const;
+	void add_output_port_model(NodePortModel* port_model, PortPresentation presentation = {});
     void remove_output_port_model(NodePortModel* port_model);
     NodePortModel* take_output_port_model(NodePortModel* port_model);
 	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
     QString output_port_label(NodePortModel* port_model) const;
+    QString output_port_key(NodePortModel* port_model) const;
 
     /**
      * All output ports for this node.
      */
-    const QVector<NodePortModel*> output_ports() const;
+    QVector<NodePortModel*> output_ports() const;
 
     /**
      * Retrieve the connection on any output port towards a node of type `OutputNodeType`.
@@ -280,9 +291,10 @@ private:
 private:
 	QVector<NodePortModel*> m_input_port_models;
 	QVector<NodePortModel*> m_output_port_models;
-    QMap<NodePortModel*, QString> m_input_port_labels;
-    QMap<NodePortModel*, QString> m_output_port_labels;
+	QHash<NodePortModel*, PortPresentation> m_input_port_presentation;
+	QHash<NodePortModel*, PortPresentation> m_output_port_presentation;
 
+    QUuid m_uuid = QUuid::createUuid();
 	QPointF m_position;
 
 	NodeType m_node_type;
