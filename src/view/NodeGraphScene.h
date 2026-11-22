@@ -31,6 +31,9 @@ private:
 	void keyPressEvent(QKeyEvent* keyEvent) override;
 	void drawBackground(QPainter* painter, const QRectF& rect) override;
 
+    void create_node_item(NodeModel* node_model);
+    void create_connection_item(NodeConnection* connection);
+    void sync_connection_items(NodeModel* node);
     NodePortConnectorWidget* port_connector_at(const QPointF& scene_pos) const;
 
 private slots:

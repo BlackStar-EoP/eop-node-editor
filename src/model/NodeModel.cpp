@@ -145,6 +145,39 @@ NodePortModel* NodeModel::take_input_port_model(NodePortModel* port_model)
     return port_model;
 }
 
+void NodeModel::swap_input_port_models(const SwapPortModelsList& new_port_models)
+{
+    for (auto& [port_model, presentation] : new_port_models)
+    {
+        if (m_input_port_models.contains(port_model))
+        {
+            take_input_port_model(port_model);
+        }
+        else
+        {
+            const QString& key = presentation.key.isEmpty() ? port_model->key() : presentation.key;
+            NodePortModel* existing_port = input_port_model(key);
+            if (existing_port != nullptr)
+            {
+                for (NodeConnection* conn : existing_port->connections())
+                {
+                    NodePortModel* output_port = conn->output();
+                    m_graph->disconnect(conn);
+                    m_graph->connect(port_model, output_port);
+                    port_model->load_from_user_data(existing_port->user_data());
+                }
+            }
+        }
+    }
+
+    destroy_input_port_models();
+    for (auto& [port_model, presentation] : new_port_models)
+    {
+        add_input_port_model(port_model, presentation);
+    }
+    emit node_ports_changed(NodePortModel::INPUT);
+}
+
 void NodeModel::destroy_input_port_models()
 {
 	for (NodePortModel* model : m_input_port_models)
@@ -262,6 +295,39 @@ NodePortModel* NodeModel::take_output_port_model(NodePortModel* port_model)
     m_output_port_models.removeAll(port_model);
     disconnect(port_model, &NodePortModel::connection_updated, this, &NodeModel::output_connection_updated);
     return port_model;
+}
+
+void NodeModel::swap_output_port_models(const SwapPortModelsList& new_port_models)
+{
+    for (auto& [port_model, presentation] : new_port_models)
+    {
+        if (m_output_port_models.contains(port_model))
+        {
+            take_output_port_model(port_model);
+        }
+        else
+        {
+            const QString& key = presentation.key.isEmpty() ? port_model->key() : presentation.key;
+            NodePortModel* existing_port = output_port_model(key);
+            if (existing_port != nullptr)
+            {
+                for (NodeConnection* conn : existing_port->connections())
+                {
+                    NodePortModel* input_port = conn->input();
+                    m_graph->disconnect(conn);
+                    m_graph->connect(input_port, port_model);
+                    port_model->load_from_user_data(existing_port->user_data());
+                }
+            }
+        }
+    }
+
+    destroy_output_port_models();
+    for (auto& [port_model, presentation] : new_port_models)
+    {
+        add_output_port_model(port_model, presentation);
+    }
+    emit node_ports_changed(NodePortModel::OUTPUT);
 }
 
 void NodeModel::destroy_output_port_models()

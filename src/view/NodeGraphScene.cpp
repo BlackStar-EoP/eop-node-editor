@@ -35,20 +35,14 @@ void NodeGraphScene::build_scene_from_graph(const NodeGraph& graph)
 {
     for (NodeModel* node_model : graph.nodes())
     {
-        NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
-        addItem(node_gfx_item);
+        create_node_item(node_model);
     }
 
     for (NodeConnection* connection : graph.connections())
     {
         assert(graph.nodes().contains(connection->input()->exposing_node()));
         assert(graph.nodes().contains(connection->output()->exposing_node()));
-
-        NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
-        connection_gfx_item->add_port(connection->input()->connector_widget());
-        connection_gfx_item->add_port(connection->output()->connector_widget());
-        connection_gfx_item->set_connection(connection);
-        addItem(connection_gfx_item);
+        create_connection_item(connection);
     }
 }
 
@@ -56,6 +50,50 @@ void NodeGraphScene::clear_all()
 {
     m_line_edit_item = nullptr;
     QGraphicsScene::clear();
+}
+
+void NodeGraphScene::create_node_item(NodeModel* node_model)
+{
+	NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
+	addItem(node_gfx_item);
+    connect(node_model, &NodeModel::node_ports_changed,
+            [this, node_model]() { sync_connection_items(node_model); });
+}
+
+void NodeGraphScene::create_connection_item(NodeConnection* connection)
+{
+    NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
+    connection_gfx_item->add_port(connection->input()->connector_widget());
+    connection_gfx_item->add_port(connection->output()->connector_widget());
+    connection_gfx_item->set_connection(connection);
+    addItem(connection_gfx_item);
+}
+
+void NodeGraphScene::sync_connection_items(NodeModel* node)
+{
+    QSet<NodeConnection*> current_connections;
+    for (QGraphicsItem* item : items())
+    {
+        if (auto* conn = dynamic_cast<NodeConnectionGraphicsItem*>(item); conn != nullptr)
+        {
+            current_connections.insert(conn->connection());
+        }
+    }
+    const auto sync = [&](const QList<NodePortModel*>& ports)
+    {
+        for (NodePortModel* port : ports)
+        {
+            for (NodeConnection* conn : port->connections())
+            {
+                if (not current_connections.contains(conn))
+                {
+                    create_connection_item(conn);
+                }
+            }
+        }
+    };
+    sync(node->input_ports());
+    sync(node->output_ports());
 }
 
 NodePortConnectorWidget* NodeGraphScene::port_connector_at(const QPointF& scene_pos) const
@@ -242,16 +280,10 @@ void NodeGraphScene::drawBackground(QPainter* painter, const QRectF& rect)
 void NodeGraphScene::node_added(NodeModel* node_model)
 {
 	assert(node_model != nullptr);
-	NodeGraphicsItem* node_gfx_item = new NodeGraphicsItem(node_model);
-	addItem(node_gfx_item);
+    create_node_item(node_model);
 }
 
 void NodeGraphScene::connection_created(NodeConnection* connection)
 {
-	NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
-
-	connection_gfx_item->add_port(connection->input()->connector_widget());
-	connection_gfx_item->add_port(connection->output()->connector_widget());
-	connection_gfx_item->set_connection(connection);
-	addItem(connection_gfx_item);
+    create_connection_item(connection);
 }

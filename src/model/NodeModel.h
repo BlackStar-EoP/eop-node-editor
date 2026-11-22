@@ -36,6 +36,8 @@ public:
     QString label = {};
 };
 
+using SwapPortModelsList = QList<std::pair<NodePortModel*, PortPresentation>>;
+
 class NodeModel : public QObject
 {
 	Q_OBJECT
@@ -66,6 +68,7 @@ public:
 	void add_input_port_model(NodePortModel* port_model, PortPresentation presentation = {});
     void remove_input_port_model(NodePortModel* port_model);
     NodePortModel* take_input_port_model(NodePortModel* port_model);
+    void swap_input_port_models(const SwapPortModelsList& new_port_models);
 	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
     QString input_port_label(NodePortModel* port_model) const;
@@ -163,6 +166,7 @@ public:
 	void add_output_port_model(NodePortModel* port_model, PortPresentation presentation = {});
     void remove_output_port_model(NodePortModel* port_model);
     NodePortModel* take_output_port_model(NodePortModel* port_model);
+    void swap_output_port_models(const SwapPortModelsList& new_port_models);
 	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
     QString output_port_label(NodePortModel* port_model) const;
