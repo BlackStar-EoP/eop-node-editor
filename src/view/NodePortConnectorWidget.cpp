@@ -71,7 +71,7 @@ NodePortModel* NodePortConnectorWidget::port_model() const
 
 QPointF NodePortConnectorWidget::attachment_scene_pos() const
 {
-    const QWidget* current = parentWidget();
+    const QWidget* current = this;
     while (current->parentWidget() != nullptr)
     {
         current = current->parentWidget();

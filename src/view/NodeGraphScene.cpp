@@ -62,9 +62,18 @@ void NodeGraphScene::create_node_item(NodeModel* node_model)
 
 void NodeGraphScene::create_connection_item(NodeConnection* connection)
 {
+    NodePortConnectorWidget* input_widget = connection->input()->connector_widget();
+    NodePortConnectorWidget* output_widget = connection->output()->connector_widget();
+    if (input_widget->parentWidget() == nullptr || output_widget->parentWidget() == nullptr)
+    {
+        // Skip connection if connectors are not placed on the UI yet
+        // Adding the other widget will trigger syncing of the connectors again
+        return;
+    }
+
     NodeConnectionGraphicsItem* connection_gfx_item = new NodeConnectionGraphicsItem();
-    connection_gfx_item->add_port(connection->input()->connector_widget());
-    connection_gfx_item->add_port(connection->output()->connector_widget());
+    connection_gfx_item->add_port(input_widget);
+    connection_gfx_item->add_port(output_widget);
     connection_gfx_item->set_connection(connection);
     addItem(connection_gfx_item);
 }
