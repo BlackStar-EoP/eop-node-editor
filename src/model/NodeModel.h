@@ -281,6 +281,11 @@ protected:
     void notify_input_ports() const;
     void notify_output_ports() const;
 
+    // Opt-in to change notifications. Otherwise you get connection_removed + connection_added.
+    virtual bool handles_endpoint_changes() const { return false; }
+    virtual void connection_endpoint_changed(NodePortModel* own_port, NodeConnection* connection)
+    { Q_UNUSED(own_port); Q_UNUSED(connection); }
+
 protected slots:
     /**
      * By default propagates updates down or up the graph. Override if you need to intercept the updates.
@@ -291,6 +296,14 @@ protected slots:
 private:
     QJsonArray input_ports_user_data() const;
     QJsonArray output_ports_user_data() const;
+
+    struct PendingChangeNotification
+    {
+        QPointer<NodePortModel> far_port;
+        QPointer<NodeConnection> conn;
+    };
+    void move_connections(NodePortModel* from_port, NodePortModel* to_port,
+            QList<PendingChangeNotification>& pending_notifications);
 
 private:
 	QVector<NodePortModel*> m_input_port_models;

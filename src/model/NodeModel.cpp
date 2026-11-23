@@ -147,6 +147,7 @@ NodePortModel* NodeModel::take_input_port_model(NodePortModel* port_model)
 
 void NodeModel::swap_input_port_models(const SwapPortModelsList& new_port_models)
 {
+    QList<PendingChangeNotification> pending_notifications;
     for (auto& [port_model, presentation] : new_port_models)
     {
         if (m_input_port_models.contains(port_model))
@@ -159,13 +160,8 @@ void NodeModel::swap_input_port_models(const SwapPortModelsList& new_port_models
             NodePortModel* existing_port = input_port_model(key);
             if (existing_port != nullptr)
             {
-                for (NodeConnection* conn : existing_port->connections())
-                {
-                    NodePortModel* output_port = conn->output();
-                    m_graph->disconnect(conn);
-                    m_graph->connect(port_model, output_port);
-                    port_model->load_from_user_data(existing_port->user_data());
-                }
+                move_connections(existing_port, port_model, pending_notifications);
+                port_model->load_from_user_data(existing_port->user_data());
             }
         }
     }
@@ -176,6 +172,14 @@ void NodeModel::swap_input_port_models(const SwapPortModelsList& new_port_models
         add_input_port_model(port_model, presentation);
     }
     emit node_ports_changed(NodePortModel::INPUT);
+
+    // Notify when we are in a stable/consistent state
+    for (auto& [far_port, conn] : pending_notifications)
+    {
+        if (far_port.isNull() || conn.isNull())
+            continue;
+        far_port->owning_node()->connection_endpoint_changed(far_port, conn);
+    }
 }
 
 void NodeModel::destroy_input_port_models()
@@ -299,6 +303,7 @@ NodePortModel* NodeModel::take_output_port_model(NodePortModel* port_model)
 
 void NodeModel::swap_output_port_models(const SwapPortModelsList& new_port_models)
 {
+    QList<PendingChangeNotification> pending_notifications;
     for (auto& [port_model, presentation] : new_port_models)
     {
         if (m_output_port_models.contains(port_model))
@@ -311,13 +316,8 @@ void NodeModel::swap_output_port_models(const SwapPortModelsList& new_port_model
             NodePortModel* existing_port = output_port_model(key);
             if (existing_port != nullptr)
             {
-                for (NodeConnection* conn : existing_port->connections())
-                {
-                    NodePortModel* input_port = conn->input();
-                    m_graph->disconnect(conn);
-                    m_graph->connect(input_port, port_model);
-                    port_model->load_from_user_data(existing_port->user_data());
-                }
+                move_connections(existing_port, port_model, pending_notifications);
+                port_model->load_from_user_data(existing_port->user_data());
             }
         }
     }
@@ -328,6 +328,14 @@ void NodeModel::swap_output_port_models(const SwapPortModelsList& new_port_model
         add_output_port_model(port_model, presentation);
     }
     emit node_ports_changed(NodePortModel::OUTPUT);
+
+    // Notify when we are in a stable/consistent state
+    for (auto& [far_port, conn] : pending_notifications)
+    {
+        if (far_port.isNull() || conn.isNull())
+            continue;
+        far_port->owning_node()->connection_endpoint_changed(far_port, conn);
+    }
 }
 
 void NodeModel::destroy_output_port_models()
@@ -543,6 +551,31 @@ void NodeModel::notify_output_ports() const
     for (const NodePortModel* port_model : m_output_port_models)
     {
         port_model->notify_node_updated();
+    }
+}
+
+void NodeModel::move_connections(NodePortModel* from_port, NodePortModel* to_port,
+        QList<PendingChangeNotification>& pending_notifications)
+{
+    for (NodeConnection* conn : from_port->connections())
+    {
+        NodePortModel* far_port = conn->other(from_port);
+        NodeModel* far_node = far_port->owning_node();
+        const bool notify_as_change = far_node->handles_endpoint_changes();
+
+        if (not notify_as_change)
+        {
+            far_node->connection_removed(far_port, conn);
+        }
+        m_graph->move_endpoint(conn, from_port, to_port);
+        if (not notify_as_change)
+        {
+            far_node->connection_added(far_port, conn);
+        }
+        else
+        {
+            pending_notifications.emplace_back(far_port, conn);
+        }
     }
 }
 

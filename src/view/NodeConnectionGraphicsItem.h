@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QGraphicsItem>
+#include <QPointer>
 
 class NodeConnection;
 class NodePortConnectorWidget;
@@ -39,8 +40,8 @@ private:
 
 private:
 	NodeConnection* m_connection = nullptr;
-	NodePortConnectorWidget* m_input_port = nullptr;
-	NodePortConnectorWidget* m_output_port = nullptr;
+	QPointer<NodePortConnectorWidget> m_input_port = nullptr;
+	QPointer<NodePortConnectorWidget> m_output_port = nullptr;
 	bool m_hover = false;
 
 	QPointF m_input_pos;

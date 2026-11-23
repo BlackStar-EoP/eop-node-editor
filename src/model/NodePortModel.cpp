@@ -83,11 +83,16 @@ NodeConnection* NodePortModel::connection(uint32_t index) const
 
 void NodePortModel::add_connection(NodeConnection* connection)
 {
-	assert(m_connections.indexOf(connection) == -1);
-	m_connections.push_back(connection);
-
+    add_connection_silent(connection);
     assert(m_owning_node_model != nullptr);
 	m_owning_node_model->connection_added(this, connection);
+    emit node_port_connections_changed();
+}
+
+void NodePortModel::add_connection_silent(NodeConnection* connection)
+{
+	assert(m_connections.indexOf(connection) == -1);
+	m_connections.push_back(connection);
 
     if (port_type() == INPUT)
     {
@@ -97,21 +102,30 @@ void NodePortModel::add_connection(NodeConnection* connection)
     {
         connect(connection, &NodeConnection::input_updated, this, &NodePortModel::on_connection_updated);
     }
-
-    emit node_port_connections_changed();
 }
 
 void NodePortModel::remove_connection(NodeConnection* connection)
 {
+    remove_connection_silent(connection);
+    assert(m_owning_node_model != nullptr);
+    m_owning_node_model->connection_removed(this, connection);
+    emit node_port_connections_changed();
+}
+
+void NodePortModel::remove_connection_silent(NodeConnection* connection)
+{
     int32_t index = m_connections.indexOf(connection);
     assert(index != -1);
     m_connections.remove(index);
-    assert(m_owning_node_model != nullptr);
-    m_owning_node_model->connection_removed(this, connection);
 
-    // No need to remove signal/slot connection. NodeConnection is expected to be deleted.
-
-    emit node_port_connections_changed();
+    if (port_type() == INPUT)
+    {
+        disconnect(connection, &NodeConnection::output_updated, this, &NodePortModel::on_connection_updated);
+    }
+    else
+    {
+        disconnect(connection, &NodeConnection::input_updated, this, &NodePortModel::on_connection_updated);
+    }
 }
 
 uint32_t NodePortModel::num_connections() const

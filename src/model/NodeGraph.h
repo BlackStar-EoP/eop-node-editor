@@ -8,7 +8,7 @@ class NodeModel;
 class NodePolicy;
 class NodePortModel;
 
-class NodeGraph 
+class NodeGraph
 {
 public:
 	NodeGraph();
@@ -22,6 +22,7 @@ public:
     NodeConnection* connect(NodePortModel* input_port, NodePortModel* output_port);
     void disconnect(NodeConnection* connection);
     void disconnect_all(NodePortModel* port);
+    void move_endpoint(NodeConnection* connection, NodePortModel* from_port, NodePortModel* to_port);
 
 	void clear();
 

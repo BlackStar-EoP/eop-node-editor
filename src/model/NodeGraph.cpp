@@ -65,6 +65,16 @@ void NodeGraph::disconnect(NodeConnection* connection)
     delete connection;
 }
 
+void NodeGraph::move_endpoint(NodeConnection* connection, NodePortModel* from_port, NodePortModel* to_port)
+{
+    from_port->remove_connection_silent(connection);
+    to_port->add_connection_silent(connection);
+    connection->swap_endpoint(from_port, to_port);
+
+    emit from_port->node_port_connections_changed();
+    emit to_port->node_port_connections_changed();
+}
+
 void NodeGraph::disconnect_all(NodePortModel* port)
 {
     QList<NodeConnection*> connections;
