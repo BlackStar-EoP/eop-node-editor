@@ -27,10 +27,15 @@ public:
 
     void notify_updated(const NodePortModel* source);
 
+private:
+    friend class NodeGraph;
+    void swap_endpoint(NodePortModel* from_port, NodePortModel* to_port);
+
 signals:
 	void connection_destroyed();
     void input_updated(const NodeConnection* connection);
     void output_updated(const NodeConnection* connection);
+    void endpoint_changed(const NodeConnection* connection);
 
 private:
 	NodePortModel* m_input = nullptr;

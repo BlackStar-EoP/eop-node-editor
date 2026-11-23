@@ -190,6 +190,8 @@ void NodeConnectionGraphicsItem::set_connection(NodeConnection* connection)
 {
 	m_connection = connection;
 	connect(connection, &NodeConnection::connection_destroyed, this, &NodeConnectionGraphicsItem::self_destruct);
+    // Trigger recreation of the item
+    connect(connection, &NodeConnection::endpoint_changed, this, &NodeConnectionGraphicsItem::self_destruct);
 }
 
 NodeConnection* NodeConnectionGraphicsItem::connection()

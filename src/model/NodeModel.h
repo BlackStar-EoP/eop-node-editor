@@ -36,6 +36,8 @@ public:
     QString label = {};
 };
 
+using SwapPortModelsList = QList<std::pair<NodePortModel*, PortPresentation>>;
+
 class NodeModel : public QObject
 {
 	Q_OBJECT
@@ -66,6 +68,7 @@ public:
 	void add_input_port_model(NodePortModel* port_model, PortPresentation presentation = {});
     void remove_input_port_model(NodePortModel* port_model);
     NodePortModel* take_input_port_model(NodePortModel* port_model);
+    void swap_input_port_models(const SwapPortModelsList& new_port_models);
 	void destroy_input_port_models();
 	int32_t input_port_nr(NodePortModel* port_model) const;
     QString input_port_label(NodePortModel* port_model) const;
@@ -163,6 +166,7 @@ public:
 	void add_output_port_model(NodePortModel* port_model, PortPresentation presentation = {});
     void remove_output_port_model(NodePortModel* port_model);
     NodePortModel* take_output_port_model(NodePortModel* port_model);
+    void swap_output_port_models(const SwapPortModelsList& new_port_models);
 	void destroy_output_port_models();
 	int32_t output_port_nr(NodePortModel* port_model) const;
     QString output_port_label(NodePortModel* port_model) const;
@@ -277,6 +281,11 @@ protected:
     void notify_input_ports() const;
     void notify_output_ports() const;
 
+    // Opt-in to change notifications. Otherwise you get connection_removed + connection_added.
+    virtual bool handles_endpoint_changes() const { return false; }
+    virtual void connection_endpoint_changed(NodePortModel* own_port, NodeConnection* connection)
+    { Q_UNUSED(own_port); Q_UNUSED(connection); }
+
 protected slots:
     /**
      * By default propagates updates down or up the graph. Override if you need to intercept the updates.
@@ -287,6 +296,14 @@ protected slots:
 private:
     QJsonArray input_ports_user_data() const;
     QJsonArray output_ports_user_data() const;
+
+    struct PendingChangeNotification
+    {
+        QPointer<NodePortModel> far_port;
+        QPointer<NodeConnection> conn;
+    };
+    void move_connections(NodePortModel* from_port, NodePortModel* to_port,
+            QList<PendingChangeNotification>& pending_notifications);
 
 private:
 	QVector<NodePortModel*> m_input_port_models;

@@ -65,3 +65,20 @@ void NodeConnection::notify_updated(const NodePortModel* source)
         emit output_updated(this);
     }
 }
+
+void NodeConnection::swap_endpoint(NodePortModel* from_port, NodePortModel* to_port)
+{
+    if (from_port == m_input)
+    {
+        m_input = to_port;
+    }
+    else if (from_port == m_output)
+    {
+        m_output = to_port;
+    }
+    else
+    {
+        assert(false && "`from_port` is not part of this connection.");
+    }
+    emit endpoint_changed(this);
+}

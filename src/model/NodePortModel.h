@@ -77,6 +77,11 @@ public:
      */
     void notify_node_updated() const;
 
+private:
+    friend class NodeGraph;
+    void add_connection_silent(NodeConnection* connection);
+    void remove_connection_silent(NodeConnection* connection);
+
 private slots:
     void on_connection_updated(const NodeConnection* connection);
 
