@@ -46,6 +46,36 @@ void NodeGraph::remove_node(NodeModel* node)
 	}
 }
 
+NodeConnectionCheck NodeGraph::check_connection(NodePortModel* input_port, NodePortModel* output_port) const
+{
+	if ((input_port->num_connections() > 0) && (not input_port->supports_multiple_connections()))
+		return NodeConnectionCheck::INPUT_FULL;
+
+	if ((output_port->num_connections() > 0) && (not output_port->supports_multiple_connections()))
+		return NodeConnectionCheck::OUTPUT_FULL;
+
+    if (input_port == output_port)
+        return NodeConnectionCheck::SAME_PORT;
+
+    if (input_port->port_type() == output_port->port_type())
+        return NodeConnectionCheck::SAME_PORT_TYPE;
+
+    if (input_port->owning_node() == output_port->owning_node())
+        return NodeConnectionCheck::SAME_NODE;
+
+    if (input_port->has_connection(output_port))
+        return NodeConnectionCheck::ALREADY_CONNECTED;
+
+    if (not input_port->may_connect_to(*output_port) || not output_port->may_connect_to(*input_port))
+        return NodeConnectionCheck::TYPES_NOT_COMPATIBLE;
+
+	// If output goes to an input of node earlier in graph, we have a circular dependency
+    if (scan_left(output_port->owning_node(), input_port->owning_node()))
+        return NodeConnectionCheck::CIRCULAR;
+
+    return NodeConnectionCheck::OK;
+}
+
 NodeConnection* NodeGraph::connect(NodePortModel* input_port, NodePortModel* output_port)
 {
     assert(input_port != nullptr);
