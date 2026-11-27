@@ -50,6 +50,11 @@ const QVector<NodeModel*>& NodeGraphWidget::nodes() const
 	return m_node_graph->nodes();
 }
 
+const NodeGraph& NodeGraphWidget::node_graph() const
+{
+    return *m_node_graph;
+}
+
 void NodeGraphWidget::set_persisted()
 {
 	m_controller.set_persisted();
