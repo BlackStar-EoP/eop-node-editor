@@ -25,6 +25,8 @@ public:
 
 public:
 	const QVector<NodeModel*>& nodes() const;
+    const NodeGraph& node_graph() const;
+
 	void set_persisted();
 	bool is_persisted() const;
 

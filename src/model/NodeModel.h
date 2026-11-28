@@ -51,7 +51,6 @@ public:
     virtual void set_title(const QString& title) = 0;
 	virtual QJsonObject user_data() const = 0;
 	virtual bool load_from_user_data(const QJsonObject& user_data) = 0;
-    virtual bool data_loaded() const = 0;
 
     virtual QWidget* create_widget() { return nullptr; }
 

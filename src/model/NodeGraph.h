@@ -8,6 +8,12 @@ class NodeModel;
 class NodePolicy;
 class NodePortModel;
 
+enum class NodeConnectionCheck
+{
+    OK, SAME_PORT, SAME_PORT_TYPE, SAME_NODE, ALREADY_CONNECTED,
+    INPUT_FULL, OUTPUT_FULL, TYPES_NOT_COMPATIBLE, CIRCULAR
+};
+
 class NodeGraph
 {
 public:
@@ -19,6 +25,7 @@ public:
 	void give_node(NodeModel* node);
 	void remove_node(NodeModel* node);
 
+    NodeConnectionCheck check_connection(NodePortModel* input_port, NodePortModel* output_port) const;
     NodeConnection* connect(NodePortModel* input_port, NodePortModel* output_port);
     void disconnect(NodeConnection* connection);
     void disconnect_all(NodePortModel* port);

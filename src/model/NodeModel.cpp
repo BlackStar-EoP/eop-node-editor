@@ -161,7 +161,7 @@ void NodeModel::swap_input_port_models(const SwapPortModelsList& new_port_models
             if (existing_port != nullptr)
             {
                 move_connections(existing_port, port_model, pending_notifications);
-                port_model->load_from_user_data(existing_port->user_data());
+                port_model->copy_state_from(existing_port);
             }
         }
     }
@@ -317,7 +317,7 @@ void NodeModel::swap_output_port_models(const SwapPortModelsList& new_port_model
             if (existing_port != nullptr)
             {
                 move_connections(existing_port, port_model, pending_notifications);
-                port_model->load_from_user_data(existing_port->user_data());
+                port_model->copy_state_from(existing_port);
             }
         }
     }

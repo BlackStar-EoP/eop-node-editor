@@ -35,6 +35,7 @@ public:
 
     virtual QJsonObject user_data() const;
     virtual bool load_from_user_data(const QJsonObject& user_data);
+    virtual void copy_state_from(const NodePortModel* other) { Q_UNUSED(other); }
 
 signals:
     void node_port_connections_changed();
